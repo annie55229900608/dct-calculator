@@ -529,7 +529,8 @@
         "雪花紫纖飲": { cat: "纖體", unit: "盒", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
         "爆纖錠": { cat: "纖體", unit: "盒", L2: 520, L3_sup: 560, L3_ret: 580, intern: 660, vip: 740, discount: 800, retail: 880 },
         "植萃纖酵素": { cat: "纖體", unit: "盒", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "肽纖飲": { cat: "纖體", unit: "盒", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "肽纖飲（可可風味）": { cat: "纖體", unit: "盒", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "肽纖飲（奶茶風味）": { cat: "纖體", unit: "盒", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
         "水光錠": { cat: "美肌", unit: "盒", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 },
         "水光面膜": { cat: "美肌", unit: "盒", L2: 450, L3_sup: 485, L3_ret: 500, intern: 550, vip: 600, discount: 650, retail: 700 },
         "雪聚露": { cat: "美肌", unit: "盒", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
@@ -539,7 +540,14 @@
         "護手霜": { cat: "美肌", unit: "盒", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
         "高機能益生菌": { cat: "保健", unit: "盒", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
         "葉黃素晶亮凍": { cat: "保健", unit: "盒", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
-        "固樂纖": { cat: "保健", unit: "盒", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 }
+        "固樂纖": { cat: "保健", unit: "盒", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 },
+        "爆纖錠體驗包": { cat: "纖體", unit: "包", L2: 146, L3_sup: 158, L3_ret: 164, intern: 190, vip: 200, discount: 220, retail: 240 },
+        "植萃纖酵宿體驗包": { cat: "纖體", unit: "包", L2: 103, L3_sup: 113, L3_ret: 117, intern: 145, vip: 170, discount: 180, retail: 190 },
+        "9國英雄TURBO極速錠": { cat: "保健", unit: "盒", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "檸肺草正冠茶": { cat: "保健", unit: "盒", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "葉黃素EX飲": { cat: "保健", unit: "盒", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
+        "法樂蓬洗髮露": { cat: "美肌", unit: "瓶", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "法樂蓬養髮原液": { cat: "美肌", unit: "瓶", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 }
     };
 
     const quotes = ["每一次成交都是因為妳傳遞了價值。", "溫柔且堅定，讓妳的專業帶領客戶。", "最好的招商力，就是活出妳想要的樣子。", "目標不是用來達成的，是用來超越的。"];
@@ -572,10 +580,19 @@
         for(let n in products) {
             if(products[n].cat !== currentCat) continue;
             let qty = cart[n] || 0;
+            const costPrice = products[n][currentSeller];
+            const sellPrice = products[n][currentBuyer];
+            const profit = sellPrice - costPrice;
+            const profitColor = profit >= 0 ? 'var(--rose)' : '#e05050';
             div.innerHTML += `<div class="product-item">
-                <div>
+                <div style="flex:1; min-width:0;">
                     <div class="product-name">${n}</div>
-                    <div class="product-price">$${products[n][currentSeller].toLocaleString()} / ${products[n].unit}</div>
+                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top:3px;">
+                        <span style="font-size:0.72rem; color:var(--text-muted);">成本 $${costPrice.toLocaleString()}</span>
+                        <span style="font-size:0.68rem; color:var(--beige-dark);">→</span>
+                        <span style="font-size:0.8rem; color:var(--rose); font-weight:600;">售 $${sellPrice.toLocaleString()}</span>
+                        <span style="font-size:0.7rem; color:${profitColor};">利 $${profit.toLocaleString()}</span>
+                    </div>
                 </div>
                 <div class="qty-control">
                     <button class="btn-qty" onclick="changeQty('${n}',-1)">−</button>
