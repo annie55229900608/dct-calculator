@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DCT團隊 淨利計算器</title>
+    <title>DCT淨利產生器</title>
     <style>
         :root {
             --primary: #D15598;
@@ -18,90 +18,53 @@
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 80px; }
         header { background: var(--level-active); color: white; padding: 15px 20px; text-align: center; font-size: 1.3rem; font-weight: bold; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .quote-box { background: white; padding: 12px 20px; font-size: 0.85rem; color: var(--primary); text-align: center; border-bottom: 1px solid var(--secondary); font-style: italic; }
         .nav-tabs { display: flex; background: white; border-bottom: 1px solid #ddd; }
         .nav-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 0.95rem; font-weight: bold; color: var(--text-light); cursor: pointer; }
         .nav-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
-        
         .container { padding: 15px; display: none; }
         .container.active { display: block; }
-        
         .card { background: var(--card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: var(--card-shadow); }
         .card-header { font-size: 0.95rem; color: var(--text-light); margin-bottom: 10px; font-weight: bold; }
-        .form-group { margin-bottom: 15px; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-        
-        /* 級別選擇器 */
         .level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .level-btn { background: white; border: 1px solid #eee; border-radius: 10px; padding: 15px; text-align: left; cursor: pointer; color: var(--text-light); transition: background 0.2s, color 0.2s; }
+        .level-btn { background: white; border: 1px solid #eee; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; color: var(--text-light); transition: all 0.2s; }
         .level-btn.active { background: var(--level-active); color: white; border: none; box-shadow: 0 4px 6px rgba(209, 85, 152, 0.3); }
-        .level-btn .name { font-size: 1.1rem; font-weight: bold; }
-        .level-btn .desc { font-size: 0.8rem; }
-        .level-btn .emoji { display: block; font-size: 1.2rem; margin-top: 5px;}
-
-        /* 售價方式選擇器 */
+        .level-btn .name { font-size: 0.85rem; font-weight: bold; display: block; }
         .buyer-btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-        .buyer-btn { background: white; border: 1px solid #eee; border-radius: 8px; padding: 8px 15px; cursor: pointer; color: var(--text-light); font-size: 0.9rem; transition: background 0.2s, color 0.2s; }
-        .buyer-btn.active { background: var(--primary); color: white; border: none; box-shadow: 0 4px 6px rgba(209, 85, 152, 0.3); }
-
-        /* 產品清單 */
+        .buyer-btn { background: white; border: 1px solid #eee; border-radius: 8px; padding: 8px 12px; cursor: pointer; color: var(--text-light); font-size: 0.85rem; transition: all 0.2s; }
+        .buyer-btn.active { background: var(--primary); color: white; border: none; }
+        .category-tabs { display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; overflow-x: auto; }
+        .cat-tab { font-size: 0.85rem; color: var(--text-light); cursor: pointer; padding: 6px 14px; border-radius: 20px; background: #eee; white-space: nowrap; }
+        .cat-tab.active { background: var(--primary); color: white; }
         .product-list { display: flex; flex-direction: column; gap: 10px; }
         .product-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 10px; }
         .product-item.active { border-color: var(--primary); background-color: var(--secondary); }
-        .product-name-block { flex: 1; }
-        .product-name { font-size: 0.95rem; font-weight: 500; }
-        .product-cost { font-size: 0.8rem; color: var(--text-light); margin-top: 3px; }
+        .product-name { font-size: 0.9rem; font-weight: 500; }
+        .product-cost { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; }
         .qty-controls { display: flex; align-items: center; gap: 10px; }
-        .btn-qty { width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--secondary); color: var(--primary); font-size: 1.2rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-        .qty-input { width: 35px; text-align: center; border: none; font-size: 1rem; font-weight: bold; background: transparent; }
-        
-        /* 額外成本與備註 */
+        .btn-qty { width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--secondary); color: var(--primary); font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .qty-input { width: 30px; text-align: center; font-size: 1rem; font-weight: bold; }
         .extra-input { border-radius: 8px; padding: 12px; margin-bottom: 10px; width: 100%; border: 1px solid #eee; font-size: 0.95rem; }
-
-        /* 提交按鈕 */
-        .btn-submit { width: 100%; padding: 14px; background: var(--level-active); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 6px rgba(209, 85, 152, 0.3); transition: transform 0.1s; }
-        .btn-submit:active { transform: translateY(2px); }
-
-        /* 計算結果卡片 */
+        .btn-submit { width: 100%; padding: 14px; background: var(--level-active); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .result-card { background: var(--secondary); padding: 15px; border-radius: 10px; }
-        .result-header { font-size: 0.9rem; color: #a64478; margin-bottom: 5px; }
-        .result-profit { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
-        .result-sub { font-size: 1.1rem; color: var(--text-dark); margin-top: 5px; }
-        
-        /* 利潤率進度條 */
-        .progress-block { margin-top: 15px; position: relative; }
-        .progress-bar { height: 10px; background: #FFFFFF; border-radius: 5px; }
-        .progress-fill { height: 100%; background: var(--primary); border-radius: 5px; width: 0%; transition: width 0.3s; }
-        .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-light); margin-top: 5px; }
-
-        /* 說明卡片 */
-        .desc-card { border-radius: 10px; background: #FFF; padding: 15px; margin-bottom: 20px; font-size: 0.85rem; color: var(--text-light); }
-        .desc-title { font-weight: bold; color: var(--text-dark); margin-bottom: 8px; }
-        .desc-list { list-style: none; padding: 0; margin: 0; }
-        .desc-list li { display: flex; gap: 5px; align-items: flex-start; margin-bottom: 5px;}
-
-        /* 報表樣式 */
-        .stat-box { background: var(--secondary); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; box-shadow: var(--card-shadow); }
-        .stat-box .title { font-size: 1rem; color: #a64478; font-weight: bold; }
-        .stat-box .value { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin: 5px 0; }
-        
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .summary-card { background: white; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #eee; box-shadow: var(--card-shadow); }
-        .summary-card .label { font-size: 0.85rem; color: var(--text-light); }
-        .summary-card .num { font-size: 1.4rem; font-weight: bold; color: var(--text-dark); margin-top: 5px; }
-
+        .result-profit { font-size: 2rem; font-weight: bold; color: var(--primary); }
+        .progress-bar { height: 10px; background: #FFFFFF; border-radius: 5px; margin-top: 8px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+        .stat-box { background: var(--secondary); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
+        .stat-box .value { font-size: 2rem; font-weight: bold; color: var(--primary); }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .summary-card { background: white; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #eee; }
         .record-item { padding: 15px; border-bottom: 1px solid #eee; }
-        .record-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .record-note { font-weight: bold; font-size: 1.05rem; color: var(--text-dark); }
-        .record-profit-line { color: #d32f2f; font-weight: bold; display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
-        .delete-btn { color: #fff; background: #e57373; border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
-        .delete-btn:hover { background: #d32f2f; }
-
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 25px; border-radius: 20px; font-size: 0.95rem; display: none; z-index: 1000; box-shadow: var(--card-shadow); }
+        .delete-btn { color: #fff; background: #e57373; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; }
+        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; display: none; z-index: 1000; }
+        .goal-input-box { margin-bottom: 15px; }
+        .goal-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; font-size: 1rem; color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<header>💰 淨利計算器</header>
+<header>💰 DCT淨利產生器</header>
+<div class="quote-box" id="dailyQuote">每一次成交都是因為妳傳遞了價值。</div>
 
 <div class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('new-order', this)">➕ 新增訂單</div>
@@ -110,457 +73,245 @@
 </div>
 
 <div id="new-order" class="container active">
-    <div class="card-header">你的加盟等級</div>
+    <div class="card-header">❶ 你的加盟等級</div>
     <div class="level-grid" id="sellerLevelSelector"></div>
-
-    <div class="card-header">銷售對象/售價方式</div>
+    <div class="card-header">❷ 銷售對象/售價方式</div>
     <div class="buyer-btn-group" id="buyerLevelSelector"></div>
-
     <div class="card">
-        <div class="card-header">選擇產品與數量</div>
+        <div class="card-header">❸ 選擇產品與數量</div>
+        <div class="category-tabs">
+            <div class="cat-tab active" onclick="switchCategory('纖體', this)">纖體系列</div>
+            <div class="cat-tab" onclick="switchCategory('美肌', this)">美肌系列</div>
+            <div class="cat-tab" onclick="switchCategory('保健', this)">保健系列</div>
+        </div>
         <div class="product-list" id="productList"></div>
     </div>
-
     <div class="card">
-        <div class="card-header">額外成本與備註</div>
-        <input type="number" id="extraCost" class="extra-input" placeholder="運費、包材、手續費等" min="0" oninput="updateResults()">
-        <input type="text" id="orderNote" class="extra-input" placeholder="客戶IG/蝦皮/姓名備註">
+        <div class="card-header">❹ 額外成本與備註</div>
+        <input type="number" id="extraCost" class="extra-input" placeholder="運費、包材費等" oninput="updateResults()">
+        <input type="text" id="orderNote" class="extra-input" placeholder="客戶備註 (如：IG帳號)">
     </div>
-
     <div class="card result-card">
-        <div class="result-header">淨利潤 (NT$)</div>
+        <div style="font-size: 0.85rem; color: #a64478;">預估淨利 (NT$)</div>
         <div class="result-profit" id="profitTotal">$0</div>
-        <div class="result-sub" id="profitRate">利潤率 0%</div>
-        
-        <div class="progress-block">
-            <div class="progress-bar">
-                <div class="progress-fill" id="profitProgressFill"></div>
-            </div>
-            <div class="progress-labels">
-                <span>0%</span>
-                <span>50%</span>
-                <span>100%</span>
-            </div>
-        </div>
-        
-        <div class="result-sub" style="font-size: 0.9rem; margin-top: 10px;">
-            <span id="costTotal">總成本 $0</span> · 
-            <span id="revTotal">總銷售額 $0</span> · 
-            <span id="itemTotalCount">商品盒數 0 盒</span>
+        <div id="profitRate" style="font-size: 0.9rem;">利潤率 0%</div>
+        <div class="progress-bar"><div class="progress-fill" id="profitProgressFill"></div></div>
+        <div style="font-size: 0.8rem; margin-top: 10px; color: var(--text-light);">
+            總成本 <span id="costTotal">$0</span> · 總銷售額 <span id="revTotal">$0</span>
         </div>
     </div>
-
-    <div class="card desc-card">
-        <div class="desc-title">📋 說明：</div>
-        <ul class="desc-list">
-            <li><span>✅</span><span>成本價：依你選擇的等級帶入進貨成本</span></li>
-            <li><span>✅</span><span>售價：可選客人零售價、VIP價、優惠兩盒價，或自訂單盒售價</span></li>
-            <li><span>✅</span><span>淨利 = 總售價 - 總成本 - 額外成本</span></li>
-            <li><span>✅</span><span>利潤率 = 淨利 / 總售價</span></li>
-        </ul>
-    </div>
-
-    <button class="btn-submit" onclick="saveOrder()">將訂單加入報表</button>
+    <button class="btn-submit" onclick="saveOrder()">將訂單存入報表</button>
 </div>
 
 <div id="daily-summary" class="container">
-    <div class="stat-box">
-        <div class="title">今日總淨利 (NT$)</div>
-        <div class="value" id="dailyProfitTotal">0</div>
-    </div>
+    <div class="stat-box"><div class="value" id="dailyProfitTotal">0</div><div style="font-size:0.9rem; color:#a64478;">今日總淨利</div></div>
     <div class="summary-grid">
-        <div class="summary-card"><div class="label">今日銷售額</div><div class="num" id="dailyRevTotal">0</div></div>
-        <div class="summary-card"><div class="label">今日總成本</div><div class="num" id="dailyCostTotal">0</div></div>
+        <div class="summary-card"><div>銷售額</div><div id="dailyRevTotal">0</div></div>
+        <div class="summary-card"><div>總成本</div><div id="dailyCostTotal">0</div></div>
     </div>
-    <div class="card" style="padding: 0;">
-        <h4 style="margin:0; padding: 20px; border-bottom: 1px solid #eee; text-align: center;">今日訂單明細</h4>
-        <div id="dailyRecords"></div>
-    </div>
+    <div class="card" id="dailyRecords" style="padding:0"></div>
 </div>
 
 <div id="monthly-summary" class="container">
-    <div class="stat-box">
-        <div class="title">本月累積淨利 (NT$)</div>
-        <div class="value" id="monthlyProfitTotal">0</div>
-    </div>
-    <div class="summary-grid">
-        <div class="summary-card"><div class="label">本月銷售額</div><div class="num" id="monthlyRevTotal">0</div></div>
-        <div class="summary-card"><div class="label">本月總成本</div><div class="num" id="monthlyCostTotal">0</div></div>
-    </div>
     <div class="card">
-        <h4 style="margin-top:0; text-align: center;">本月產品售出總數</h4>
-        <div id="monthlyItemsList" style="line-height: 1.8; font-size: 0.95rem; text-align: center;"></div>
+        <div class="card-header" style="text-align:center;">🎯 設定本月淨利目標</div>
+        <div class="goal-input-box">
+            <input type="number" id="monthlyGoal" class="goal-input" placeholder="輸入目標金額" onchange="saveGoal()">
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-light);">
+            <span>目前進度</span>
+            <span id="goalPercent">0%</span>
+        </div>
+        <div class="progress-bar" style="background:#eee;"><div class="progress-fill" id="goalProgressFill"></div></div>
     </div>
 
-    <div class="card-header" style="margin-top: 30px; font-size: 1.1rem; color: var(--primary);">📅 歷史紀錄：上月報表</div>
+    <div class="stat-box"><div class="value" id="monthlyProfitTotal">0</div><div style="font-size:0.9rem; color:#a64478;">本月累積淨利</div></div>
     <div class="summary-grid">
-        <div class="summary-card"><div class="label">上月淨利</div><div class="num" id="lastMonthProfitTotal" style="color: var(--primary);">0</div></div>
-        <div class="summary-card"><div class="label">上月銷售額</div><div class="num" id="lastMonthRevTotal">0</div></div>
+        <div class="summary-card"><div>本月銷售額</div><div id="monthlyRevTotal">0</div></div>
+        <div class="summary-card"><div>平均客單價</div><div id="avgOrderValue">0</div></div>
     </div>
-    <div class="card desc-card">
-        <h4 style="margin-top:0; text-align: center; color: var(--text-dark);">上月產品售出總數</h4>
-        <div id="lastMonthItemsList" style="line-height: 1.8; font-size: 0.95rem; text-align: center;"></div>
+    
+    <div class="card">
+        <h4 style="text-align:center; margin-top:0; color:var(--primary);">🔥 熱銷品項佔比</h4>
+        <div id="monthlyItemsList" style="text-align:center; font-size:0.9rem;"></div>
     </div>
 
-    <button onclick="clearAllData()" style="width: 100%; padding: 14px; background: #ffebee; color: #d32f2f; border: none; border-radius: 10px; font-weight: bold; margin-top: 10px; cursor: pointer; box-shadow: var(--card-shadow);">🗑️ 清空所有歷史紀錄</button>
+    <button onclick="clearAllData()" style="width: 100%; padding: 14px; background: #ffebee; color: #d32f2f; border: none; border-radius: 10px; font-weight: bold;">🗑️ 清空所有歷史紀錄</button>
 </div>
 
 <div id="toast">訂單已儲存！</div>
 
 <script>
     const pricingData = {
-        "纖纖飲X": { emoji: "🍷", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
-        "纖飄錠": { emoji: "💊", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
-        "雪花紫纖飲": { emoji: "🥤", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "爆纖錠": { emoji: "💥", L2: 520, L3_sup: 560, L3_ret: 580, intern: 660, vip: 740, discount: 800, retail: 880 },
-        "植萃纖酵素": { emoji: "🌿", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "肽纖飲": { emoji: "🍶", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "複方金盞花葉黃素EX飲": { emoji: "👁️", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
-        "金盞花葉黃素晶亮凍": { emoji: "👁️", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
-        "高機能益生菌": { emoji: "🦠", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "9國英雄TURBO極速錠": { emoji: "⚡", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
-        "療肺草正冠茶": { emoji: "🍵", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "固樂纖": { emoji: "🦴", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 },
-        "水光錠": { emoji: "✨", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 },
-        "水光繃帶面膜盒裝": { emoji: "👺", L2: 450, L3_sup: 485, L3_ret: 500, intern: 550, vip: 600, discount: 650, retail: 700 },
-        "雪聚露": { emoji: "🧴", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "婕肌零": { emoji: "🫧", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "Vitalab精純玻尿酸保濕原液": { emoji: "🧪", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "急救小白瓶": { emoji: "🚑", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "積雪草護手霜": { emoji: "🤲", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
-        "法樂蓬洗髮露": { emoji: "🚿", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "法樂蓬養髮原液": { emoji: "🚿", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 }
+        "纖纖飲X": { cat: "纖體", emoji: "🍷", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
+        "纖飄錠": { cat: "纖體", emoji: "💊", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
+        "雪花紫纖飲": { cat: "纖體", emoji: "🥤", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "爆纖錠": { cat: "纖體", emoji: "💥", L2: 520, L3_sup: 560, L3_ret: 580, intern: 660, vip: 740, discount: 800, retail: 880 },
+        "植萃纖酵素": { cat: "纖體", emoji: "🌿", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "肽纖飲": { cat: "纖體", emoji: "🍶", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "水光錠": { cat: "美肌", emoji: "✨", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 },
+        "水光面膜": { cat: "美肌", emoji: "👺", L2: 450, L3_sup: 485, L3_ret: 500, intern: 550, vip: 600, discount: 650, retail: 700 },
+        "雪聚露": { cat: "美肌", emoji: "🧴", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "婕肌零": { cat: "美肌", emoji: "🫧", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "玻尿酸": { cat: "美肌", emoji: "🧪", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "急救小白瓶": { cat: "美肌", emoji: "🚑", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "護手霜": { cat: "美肌", emoji: "🤲", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
+        "法樂蓬洗髮露": { cat: "美肌", emoji: "🚿", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "法樂蓬養髮原液": { cat: "美肌", emoji: "💧", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
+        "複方葉黃素飲": { cat: "保健", emoji: "👁️", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
+        "葉黃素晶亮凍": { cat: "保健", emoji: "🍮", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
+        "高機能益生菌": { cat: "保健", emoji: "🦠", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "9國英雄極速錠": { cat: "保健", emoji: "⚡", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
+        "療肺草正冠茶": { cat: "保健", emoji: "🍵", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "固樂纖": { cat: "保健", emoji: "🦴", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 }
     };
 
+    const quotes = [
+        "每一次成交都是因為妳傳遞了價值。",
+        "溫柔且堅定，讓妳的專業帶領客戶。",
+        "目標不是用來達成的，是用來超越的。",
+        "妳現在的努力，是在為未來的成功鋪路。",
+        "專注於妳能控制的行動，結果自然會跟隨。",
+        "最好的招商力，就是活出妳想要的樣子。"
+    ];
+
     const levels = [
-        { id: "L2", name: "二級輔導督導", emoji: "🏆", desc: "可招商・可培訓" },
-        { id: "L3_sup", name: "三級輔導督導", emoji: "🏅", desc: "可招商・可培訓" },
-        { id: "L3_ret", name: "三級零售加盟商", emoji: "🛒", desc: "不可招商" },
-        { id: "intern", name: "實習零售加盟商", emoji: "🌱", desc: "不可招商" }
+        { id: "L2", name: "二級輔導督導", emoji: "🏆" },
+        { id: "L3_sup", name: "三級輔導督導", emoji: "🏅" },
+        { id: "L3_ret", name: "三級零售加盟商", emoji: "🛒" },
+        { id: "intern", name: "實習零售加盟商", emoji: "🌱" }
     ];
 
     const buyers = [
-        { id: "retail", name: "客人-單盒零售價" },
-        { id: "vip", name: "客人-VIP價" },
-        { id: "discount", name: "客人-兩盒優惠價" },
+        { id: "retail", name: "單盒零售價" },
+        { id: "vip", name: "VIP價" },
+        { id: "discount", name: "兩盒優惠價" },
         { id: "intern", name: "實習零售價" },
         { id: "L3_ret", name: "三級零售價" },
         { id: "L3_sup", name: "三級輔導價" }
     ];
 
-    let currentSellerLevel = "L2";
-    let currentBuyerLevel = "retail";
+    let currentSellerLevel = "L2", currentBuyerLevel = "retail", currentCategory = "纖體", cart = {};
 
-    window.onload = () => {
-        renderLevels();
-        renderBuyers();
-        renderProducts();
-        updateResults();
-        loadDashboards();
+    window.onload = () => { 
+        renderLevels(); renderBuyers(); renderProducts(); loadDashboards(); 
+        document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById('monthlyGoal').value = localStorage.getItem('dct_monthly_goal') || 0;
     };
+
+    function renderLevels() {
+        const div = document.getElementById('sellerLevelSelector');
+        div.innerHTML = levels.map(l => `<div class="level-btn ${l.id===currentSellerLevel?'active':''}" onclick="currentSellerLevel='${l.id}';renderLevels();renderProducts();updateResults();"><span class="emoji">${l.emoji}</span><span class="name">${l.name}</span></div>`).join('');
+    }
+
+    function renderBuyers() {
+        const div = document.getElementById('buyerLevelSelector');
+        div.innerHTML = buyers.map(b => `<div class="buyer-btn ${b.id===currentBuyerLevel?'active':''}" onclick="currentBuyerLevel='${b.id}';renderBuyers();updateResults();">${b.name}</div>`).join('');
+    }
+
+    function switchCategory(cat, el) {
+        currentCategory = cat;
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderProducts();
+    }
+
+    function renderProducts() {
+        const list = document.getElementById('productList'); list.innerHTML = '';
+        for(let name in pricingData) {
+            if(pricingData[name].cat !== currentCategory) continue;
+            let qty = cart[name] || 0;
+            list.innerHTML += `<div class="product-item ${qty>0?'active':''}">
+                <div class="product-name-block"><div class="product-name">${pricingData[name].emoji} ${name}</div><div class="product-cost">成本 $${pricingData[name][currentSellerLevel]}</div></div>
+                <div class="qty-controls"><button class="btn-qty" onclick="changeQty('${name}', -1)">-</button><div class="qty-input">${qty}</div><button class="btn-qty" onclick="changeQty('${name}', 1)">+</button></div>
+            </div>`;
+        }
+    }
+
+    function changeQty(name, delta) {
+        cart[name] = (cart[name] || 0) + delta; if(cart[name] < 0) cart[name] = 0;
+        renderProducts(); updateResults();
+    }
+
+    function updateResults() {
+        let totalRev = 0, totalCost = 0, extra = parseInt(document.getElementById('extraCost').value) || 0;
+        for(let name in cart) { totalCost += (pricingData[name][currentSellerLevel] * cart[name]); totalRev += (pricingData[name][currentBuyerLevel] * cart[name]); }
+        let profit = totalRev - totalCost - extra, rate = totalRev > 0 ? (profit/totalRev*100).toFixed(0) : 0;
+        document.getElementById('profitTotal').innerText = `$${profit.toLocaleString()}`;
+        document.getElementById('profitRate').innerText = `利潤率 ${rate}%`;
+        document.getElementById('costTotal').innerText = `$${(totalCost+extra).toLocaleString()}`;
+        document.getElementById('revTotal').innerText = `$${totalRev.toLocaleString()}`;
+        document.getElementById('profitProgressFill').style.width = `${Math.min(rate,100)}%`;
+    }
+
+    function saveOrder() {
+        let orderItems = [], totalRev = 0, totalCost = 0, extra = parseInt(document.getElementById('extraCost').value) || 0;
+        for(let name in cart) { if(cart[name] > 0) { orderItems.push({ name, qty: cart[name], emoji: pricingData[name].emoji }); totalCost += (pricingData[name][currentSellerLevel]*cart[name]); totalRev += (pricingData[name][currentBuyerLevel]*cart[name]); } }
+        if(orderItems.length === 0) return alert("請先選擇產品！");
+        let records = JSON.parse(localStorage.getItem('jerosse_orders')) || [];
+        records.push({ id: Date.now(), date: new Date().toLocaleString(), note: document.getElementById('orderNote').value||"無", profit: totalRev-totalCost-extra, totalRev, totalCost: totalCost+extra, items: orderItems });
+        localStorage.setItem('jerosse_orders', JSON.stringify(records));
+        cart = {}; document.getElementById('extraCost').value = ''; document.getElementById('orderNote').value = '';
+        renderProducts(); updateResults(); showToast();
+    }
+
+    function showToast() { let t = document.getElementById('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none', 2000); }
 
     function switchTab(tabId, el) {
         document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        el.classList.add('active');
+        document.getElementById(tabId).classList.add('active'); el.classList.add('active');
         if(tabId !== 'new-order') loadDashboards();
     }
 
-    function renderLevels() {
-        const selector = document.getElementById('sellerLevelSelector');
-        selector.innerHTML = '';
-        levels.forEach(level => {
-            let activeClass = level.id === currentSellerLevel ? 'active' : '';
-            selector.innerHTML += `
-                <div class="level-btn ${activeClass}" id="level-${level.id}" onclick="selectSellerLevel('${level.id}')">
-                    <span class="name">${level.name}</span>
-                    <span class="desc">${level.desc}</span>
-                    <span class="emoji">${level.emoji}</span>
-                </div>
-            `;
-        });
-    }
+    function saveGoal() { localStorage.setItem('dct_monthly_goal', document.getElementById('monthlyGoal').value); loadDashboards(); }
 
-    function selectSellerLevel(levelId) {
-        currentSellerLevel = levelId;
-        renderLevels();
-        updateProductsUI();
-        updateResults();
-    }
-
-    function renderBuyers() {
-        const selector = document.getElementById('buyerLevelSelector');
-        selector.innerHTML = '';
-        buyers.forEach(buyer => {
-            let activeClass = buyer.id === currentBuyerLevel ? 'active' : '';
-            selector.innerHTML += `
-                <div class="buyer-btn ${activeClass}" id="buyer-${buyer.id}" onclick="selectBuyerLevel('${buyer.id}')">
-                    ${buyer.name}
-                </div>
-            `;
-        });
-    }
-
-    function selectBuyerLevel(buyerId) {
-        currentBuyerLevel = buyerId;
-        renderBuyers();
-        updateProductsUI();
-        updateResults();
-    }
-
-    function renderProducts() {
-        const list = document.getElementById('productList');
-        list.innerHTML = '';
-        for(let item in pricingData) {
-            let idText = item.replace(/\s+/g, '');
-            list.innerHTML += `
-                <div class="product-item" id="product-${idText}">
-                    <div class="product-name-block">
-                        <div class="product-name">${pricingData[item].emoji} ${item}</div>
-                        <div class="product-cost" id="cost-text-${idText}">成本 $${pricingData[item][currentSellerLevel]}</div>
-                    </div>
-                    <div class="qty-controls">
-                        <button class="btn-qty" onclick="changeQty('${idText}', -1)">-</button>
-                        <input type="number" id="qty_${idText}" class="qty-input" value="0" min="0" readonly>
-                        <button class="btn-qty" onclick="changeQty('${idText}', 1)">+</button>
-                    </div>
-                </div>
-            `;
-        }
-    }
-
-    function updateProductsUI() {
-        for(let item in pricingData) {
-            let idText = item.replace(/\s+/g, '');
-            document.getElementById(`cost-text-${idText}`).innerText = `成本 $${pricingData[item][currentSellerLevel]}`;
-            let qty = parseInt(document.getElementById(`qty_${idText}`).value) || 0;
-            if(qty > 0) {
-                document.getElementById(`product-${idText}`).classList.add('active');
-            } else {
-                document.getElementById(`product-${idText}`).classList.remove('active');
-            }
-        }
-    }
-
-    function changeQty(id, delta) {
-        const input = document.getElementById(`qty_${id}`);
-        let current = parseInt(input.value) || 0;
-        let next = current + delta;
-        if(next >= 0) {
-            input.value = next;
-            updateProductsUI();
-            updateResults();
-        }
-    }
-
-    function updateResults() {
-        let totalRev = 0;
-        let totalCost = 0;
-        let totalItems = 0;
-        let extraCost = parseInt(document.getElementById('extraCost').value) || 0;
-
-        for(let name in pricingData) {
-            let idText = name.replace(/\s+/g, '');
-            let qty = parseInt(document.getElementById(`qty_${idText}`).value) || 0;
-            if(qty > 0) {
-                let unitCost = pricingData[name][currentSellerLevel];
-                let unitPrice = pricingData[name][currentBuyerLevel];
-                totalCost += (unitCost * qty);
-                totalRev += (unitPrice * qty);
-                totalItems += qty;
-            }
-        }
-
-        const grossProfit = totalRev - totalCost;
-        const netProfit = grossProfit - extraCost;
-        const profitRate = totalRev > 0 ? (netProfit / totalRev * 100).toFixed(0) : 0;
-
-        document.getElementById('profitTotal').innerText = `$${netProfit.toLocaleString()}`;
-        document.getElementById('profitRate').innerText = `利潤率 ${profitRate}%`;
-        document.getElementById('costTotal').innerText = `總成本 $${(totalCost + extraCost).toLocaleString()}`;
-        document.getElementById('revTotal').innerText = `總銷售額 $${totalRev.toLocaleString()}`;
-        document.getElementById('itemTotalCount').innerText = `商品盒數 ${totalItems} 盒`;
-        
-        document.getElementById('profitProgressFill').style.width = `${Math.min(profitRate, 100)}%`;
-    }
-
-    function saveOrder() {
-        const note = document.getElementById('orderNote').value || "無備註";
-        const extraCost = parseInt(document.getElementById('extraCost').value) || 0;
-        
-        let items = [];
-        let totalRev = 0;
-        let totalCost = 0;
-        let totalQty = 0;
-
-        for(let name in pricingData) {
-            let idText = name.replace(/\s+/g, '');
-            let qty = parseInt(document.getElementById(`qty_${idText}`).value) || 0;
-            if(qty > 0) {
-                let unitCost = pricingData[name][currentSellerLevel];
-                let unitPrice = pricingData[name][currentBuyerLevel];
-                items.push({ name, qty, emoji: pricingData[name].emoji });
-                totalCost += (unitCost * qty);
-                totalRev += (unitPrice * qty);
-                totalQty += qty;
-            }
-        }
-
-        if(items.length === 0) {
-            alert("請至少選擇一項產品數量！");
-            return;
-        }
-
-        const profit = totalRev - totalCost - extraCost;
-        const order = {
-            id: Date.now(),
-            date: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
-            note,
-            extraCost,
-            totalCost: totalCost + extraCost,
-            totalRev,
-            profit,
-            items,
-            sellerLevel: currentSellerLevel,
-            buyerLevel: currentBuyerLevel,
-            totalQty
-        };
-
-        let records = JSON.parse(localStorage.getItem('jerosse_orders')) || [];
-        records.push(order);
-        localStorage.setItem('jerosse_orders', JSON.stringify(records));
-
-        for(let name in pricingData) {
-            document.getElementById(`qty_${name.replace(/\s+/g, '')}`).value = 0;
-        }
-        document.getElementById('extraCost').value = '';
-        document.getElementById('orderNote').value = '';
-        
-        updateProductsUI();
-        updateResults();
-        showToast();
-    }
-
-    function showToast() {
-        const toast = document.getElementById('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2000);
-    }
-
-    function deleteOrder(id) {
-        if(confirm("確定要刪除這筆訂單嗎？")) {
-            let records = JSON.parse(localStorage.getItem('jerosse_orders')) || [];
-            records = records.filter(r => r.id !== id);
-            localStorage.setItem('jerosse_orders', JSON.stringify(records));
-            loadDashboards();
-        }
-    }
-
-    function clearAllData() {
-        if(confirm("⚠️ 警告：這將會永久刪除這台設備內所有的歷史訂單紀錄，歸零後無法復原。確定要清空嗎？")) {
-            localStorage.removeItem('jerosse_orders');
-            loadDashboards();
-            alert("紀錄已全數歸零！");
-        }
-    }
+    function clearAllData() { if(confirm("確定要清空所有紀錄嗎？")) { localStorage.removeItem('jerosse_orders'); loadDashboards(); } }
 
     function loadDashboards() {
         let records = JSON.parse(localStorage.getItem('jerosse_orders')) || [];
         const now = new Date();
-        const todayStr = now.toLocaleDateString('zh-TW', { timeZone: 'Asia/Taipei' });
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
-
-        // 計算上個月的年與月
-        let lastMonth = currentMonth - 1;
-        let lastMonthYear = currentYear;
-        if (lastMonth < 0) {
-            lastMonth = 11;
-            lastMonthYear -= 1;
-        }
-
-        let dRev = 0, dCost = 0, dProfit = 0;
-        let mRev = 0, mCost = 0, mProfit = 0;
-        let lmRev = 0, lmCost = 0, lmProfit = 0; // 上個月
-        
-        let mItems = {};
-        let lmItems = {}; // 上個月產品
+        let dRev=0, dCost=0, dProfit=0, mRev=0, mCost=0, mProfit=0, mOrderCount=0, mItems={};
         let dailyHTML = '';
-
         records.forEach(r => {
-            const rDate = new Date(r.id);
-            const rDateStr = rDate.toLocaleDateString('zh-TW', { timeZone: 'Asia/Taipei' });
-            
-            // 本月統計
-            if(rDate.getMonth() === currentMonth && rDate.getFullYear() === currentYear) {
-                mRev += r.totalRev;
-                mCost += r.totalCost;
-                mProfit += r.profit;
-                r.items.forEach(i => { mItems[i.name] = { qty: (mItems[i.name]?.qty || 0) + i.qty, emoji: i.emoji } });
+            let rDate = new Date(r.id);
+            if(rDate.toDateString() === now.toDateString()) {
+                dRev+=r.totalRev; dCost+=r.totalCost; dProfit+=r.profit;
+                dailyHTML += `<div class="record-item"><div style="display:flex;justify-content:space-between"><b>${r.note}</b><small>${r.date.split(' ')[1]}</small></div><div>${r.items.map(i=>i.emoji+i.name+'x'+i.qty).join(', ')}</div><div style="display:flex;justify-content:space-between;margin-top:5px;color:#d32f2f;font-weight:bold">淨利 $${r.profit} <button class="delete-btn" onclick="deleteOrder(${r.id})">刪除</button></div></div>`;
             }
-
-            // 上月統計
-            if(rDate.getMonth() === lastMonth && rDate.getFullYear() === lastMonthYear) {
-                lmRev += r.totalRev;
-                lmCost += r.totalCost;
-                lmProfit += r.profit;
-                r.items.forEach(i => { lmItems[i.name] = { qty: (lmItems[i.name]?.qty || 0) + i.qty, emoji: i.emoji } });
-            }
-
-            // 今日統計與列表
-            if(rDateStr === todayStr) {
-                dRev += r.totalRev;
-                dCost += r.totalCost;
-                dProfit += r.profit;
-
-                let itemsStr = r.items.map(i => `${i.emoji} ${i.name} x${i.qty}`).join('、');
-                
-                dailyHTML = `
-                    <div class="record-item">
-                        <div class="record-header">
-                            <span class="record-note">備註：${r.note}</span>
-                            <span class="record-time">${r.date.split(' ')[1]}</span>
-                        </div>
-                        <div class="record-details">品項：${itemsStr}</div>
-                        <div class="record-details" style="font-size: 0.85rem; color:#999; margin-top:3px;">
-                            ${levels.find(l=>l.id===r.sellerLevel).emoji} ${levels.find(l=>l.id===r.sellerLevel).name} ➡️ ${buyers.find(b=>b.id===r.buyerLevel).name}
-                        </div>
-                        <div class="record-profit-line">
-                            淨利 $${r.profit}
-                            <button class="delete-btn" onclick="deleteOrder(${r.id})">刪除</button>
-                        </div>
-                    </div>
-                ` + dailyHTML;
+            if(rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear()) {
+                mRev+=r.totalRev; mCost+=r.totalCost; mProfit+=r.profit; mOrderCount++;
+                r.items.forEach(i => mItems[i.name] = (mItems[i.name]||0) + i.qty);
             }
         });
 
-        // 寫入今日畫面
+        // 今日數據
         document.getElementById('dailyProfitTotal').innerText = dProfit.toLocaleString();
         document.getElementById('dailyRevTotal').innerText = dRev.toLocaleString();
         document.getElementById('dailyCostTotal').innerText = dCost.toLocaleString();
-        document.getElementById('dailyRecords').innerHTML = dailyHTML || '<div style="padding: 20px; color:#999; text-align:center;">今日尚無訂單紀錄。</div>';
+        document.getElementById('dailyRecords').innerHTML = dailyHTML || '<div style="padding:20px;text-align:center;color:#999;">今日無紀錄</div>';
 
-        // 寫入本月畫面
+        // 月度數據與目標
         document.getElementById('monthlyProfitTotal').innerText = mProfit.toLocaleString();
         document.getElementById('monthlyRevTotal').innerText = mRev.toLocaleString();
-        document.getElementById('monthlyCostTotal').innerText = mCost.toLocaleString();
+        document.getElementById('avgOrderValue').innerText = mOrderCount > 0 ? (mRev / mOrderCount).toFixed(0).toLocaleString() : 0;
         
-        let mItemsHTML = '';
-        for(let item in mItems) {
-            mItemsHTML += `<span style="display:inline-block; background:#fce4ec; color:#D15598; padding:5px 15px; border-radius:20px; margin:5px 8px 5px 0; font-size:0.95rem;">${mItems[item].emoji} ${item} <b>x${mItems[item].qty}</b></span>`;
-        }
-        document.getElementById('monthlyItemsList').innerHTML = mItemsHTML || '<div style="color:#999;">本月尚無銷售紀錄。</div>';
+        let goal = localStorage.getItem('dct_monthly_goal') || 0;
+        let goalPercent = goal > 0 ? Math.min((mProfit / goal * 100), 100).toFixed(1) : 0;
+        document.getElementById('goalPercent').innerText = goalPercent + '%';
+        document.getElementById('goalProgressFill').style.width = goalPercent + '%';
 
-        // 寫入上月畫面
-        document.getElementById('lastMonthProfitTotal').innerText = lmProfit.toLocaleString();
-        document.getElementById('lastMonthRevTotal').innerText = lmRev.toLocaleString();
-        let lmItemsHTML = '';
-        for(let item in lmItems) {
-            lmItemsHTML += `<span style="display:inline-block; background:#f5f5f5; color:#666; padding:5px 15px; border-radius:20px; margin:5px 8px 5px 0; font-size:0.95rem;">${lmItems[item].emoji} ${item} <b>x${lmItems[item].qty}</b></span>`;
+        // 品項佔比分析
+        let totalItems = Object.values(mItems).reduce((a,b)=>a+b, 0);
+        let itemsHTML = ''; 
+        for(let n in mItems) {
+            let percent = ((mItems[n] / totalItems) * 100).toFixed(0);
+            itemsHTML += `<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;"><span>${n} x${mItems[n]}</span><span>${percent}%</span></div><div class="progress-bar" style="height:6px; background:#f0f0f0;"><div class="progress-fill" style="width:${percent}%"></div></div></div>`;
         }
-        document.getElementById('lastMonthItemsList').innerHTML = lmItemsHTML || '<div style="color:#999;">上月尚無銷售紀錄。</div>';
+        document.getElementById('monthlyItemsList').innerHTML = itemsHTML || '無紀錄';
     }
+
+    function deleteOrder(id) { let rs = JSON.parse(localStorage.getItem('jerosse_orders')); localStorage.setItem('jerosse_orders', JSON.stringify(rs.filter(r=>r.id!==id))); loadDashboards(); }
 </script>
 </body>
 </html>
