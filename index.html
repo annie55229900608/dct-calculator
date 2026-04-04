@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DCT淨利產生器</title>
+    
+    <link rel="icon" href="https://annie55229900608.github.io/dct-calculator/IMG_2570.JPG" type="image/jpeg">
+    <link rel="apple-touch-icon" href="https://annie55229900608.github.io/dct-calculator/IMG_2570.JPG">
+    <meta name="apple-mobile-web-app-title" content="DCT產成器">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <style>
         :root {
             --primary: #D15598;
@@ -15,7 +22,11 @@
             --card-shadow: 0 4px 10px rgba(0,0,0,0.05);
             --level-active: linear-gradient(135deg, #D15598 0%, #a64478 100%);
         }
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+            letter-spacing: 1px; /* 這裡幫妳加上了字間距 1px */
+        }
         body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 80px; }
         header { background: var(--level-active); color: white; padding: 15px 20px; text-align: center; font-size: 1.3rem; font-weight: bold; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .quote-box { background: white; padding: 12px 20px; font-size: 0.85rem; color: var(--primary); text-align: center; border-bottom: 1px solid var(--secondary); font-style: italic; }
@@ -143,27 +154,27 @@
 
 <script>
     const pricingData = {
-        "纖纖飲X": { cat: "纖體", emoji: "🍷", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
-        "纖飄錠": { cat: "纖體", emoji: "💊", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
-        "雪花紫纖飲": { cat: "纖體", emoji: "🥤", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "爆纖錠": { cat: "纖體", emoji: "💥", L2: 520, L3_sup: 560, L3_ret: 580, intern: 660, vip: 740, discount: 800, retail: 880 },
-        "植萃纖酵素": { cat: "纖體", emoji: "🌿", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "肽纖飲": { cat: "纖體", emoji: "🍶", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "纖纖飲X": { cat: "纖體", emoji: "💧", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
+        "纖飄錠": { cat: "纖體", emoji: "💧", L2: 880, L3_sup: 955, L3_ret: 990, intern: 1160, vip: 1280, discount: 1380, retail: 1480 },
+        "雪花紫纖飲": { cat: "纖體", emoji: "💧", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "爆纖錠": { cat: "纖體", emoji: "💧", L2: 520, L3_sup: 560, L3_ret: 580, intern: 660, vip: 740, discount: 800, retail: 880 },
+        "植萃纖酵素": { cat: "纖體", emoji: "💧", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "肽纖飲": { cat: "纖體", emoji: "💧", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
         "水光錠": { cat: "美肌", emoji: "✨", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 },
-        "水光面膜": { cat: "美肌", emoji: "👺", L2: 450, L3_sup: 485, L3_ret: 500, intern: 550, vip: 600, discount: 650, retail: 700 },
-        "雪聚露": { cat: "美肌", emoji: "🧴", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "婕肌零": { cat: "美肌", emoji: "🫧", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "玻尿酸": { cat: "美肌", emoji: "🧪", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "急救小白瓶": { cat: "美肌", emoji: "🚑", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "護手霜": { cat: "美肌", emoji: "🤲", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
-        "法樂蓬洗髮露": { cat: "美肌", emoji: "🚿", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "法樂蓬養髮原液": { cat: "美肌", emoji: "💧", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
-        "複方葉黃素飲": { cat: "保健", emoji: "👁️", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
-        "葉黃素晶亮凍": { cat: "保健", emoji: "🍮", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
-        "高機能益生菌": { cat: "保健", emoji: "🦠", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
-        "9國英雄極速錠": { cat: "保健", emoji: "⚡", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
-        "療肺草正冠茶": { cat: "保健", emoji: "🍵", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
-        "固樂纖": { cat: "保健", emoji: "🦴", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 }
+        "水光面膜": { cat: "美肌", emoji: "✨", L2: 450, L3_sup: 485, L3_ret: 500, intern: 550, vip: 600, discount: 650, retail: 700 },
+        "雪聚露": { cat: "美肌", emoji: "✨", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "婕肌零": { cat: "美肌", emoji: "✨", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "玻尿酸": { cat: "美肌", emoji: "✨", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "急救小白瓶": { cat: "美肌", emoji: "✨", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "護手霜": { cat: "美肌", emoji: "✨", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
+        "法樂蓬洗髮露": { cat: "美肌", emoji: "✨", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "法樂蓬養髮原液": { cat: "美肌", emoji: "✨", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
+        "複方葉黃素飲": { cat: "保健", emoji: "🛡️", L2: 640, L3_sup: 695, L3_ret: 720, intern: 840, vip: 900, discount: 990, retail: 1080 },
+        "葉黃素晶亮凍": { cat: "保健", emoji: "🛡️", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
+        "高機能益生菌": { cat: "保健", emoji: "🛡️", L2: 770, L3_sup: 830, L3_ret: 860, intern: 990, vip: 1100, discount: 1180, retail: 1280 },
+        "9國英雄極速錠": { cat: "保健", emoji: "🛡️", L2: 410, L3_sup: 440, L3_ret: 455, intern: 530, vip: 600, discount: 630, retail: 680 },
+        "療肺草正冠茶": { cat: "保健", emoji: "🛡️", L2: 580, L3_sup: 635, L3_ret: 660, intern: 780, vip: 830, discount: 900, retail: 990 },
+        "固樂纖": { cat: "保健", emoji: "🛡️", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 }
     };
 
     const quotes = [
@@ -306,7 +317,7 @@
         let itemsHTML = ''; 
         for(let n in mItems) {
             let percent = ((mItems[n] / totalItems) * 100).toFixed(0);
-            itemsHTML += `<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;"><span>${n} x${mItems[n]}</span><span>${percent}%</span></div><div class="progress-bar" style="height:6px; background:#f0f0f0;"><div class="progress-fill" style="width:${percent}%"></div></div></div>`;
+            itemsHTML += `<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;"><span>${mItems[n].emoji} ${n} x${mItems[n]}</span><span>${percent}%</span></div><div class="progress-bar" style="height:6px; background:#f0f0f0;"><div class="progress-fill" style="width:${percent}%"></div></div></div>`;
         }
         document.getElementById('monthlyItemsList').innerHTML = itemsHTML || '無紀錄';
     }
