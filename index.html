@@ -39,23 +39,24 @@
         /* Header */
         header {
             background: var(--white);
-            padding: 18px 20px 14px;
+            padding: 22px 20px 18px;
             border-bottom: 1px solid var(--border);
             position: sticky; top: 0; z-index: 100;
+            text-align: center;
         }
         .header-inner {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         .header-logo {
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 10px;
         }
         .header-dot {
-            width: 8px; height: 8px; border-radius: 50%;
+            width: 9px; height: 9px; border-radius: 50%;
             background: var(--rose);
         }
         .header-title {
-            font-size: 1.05rem; font-weight: 600;
-            color: var(--text-main); letter-spacing: 1px;
+            font-size: 1.9rem; font-weight: 600;
+            color: var(--text-main); letter-spacing: 3px;
         }
 
         /* Quote */
@@ -404,11 +405,9 @@
 
 <header>
     <div class="header-inner">
-        <div class="header-logo">
-            <div class="header-dot"></div>
-            <span class="header-title">DCT Money</span>
-        </div>
-        <span style="font-size:0.72rem; color:var(--text-muted); letter-spacing:0.5px;">業績紀錄</span>
+        <div class="header-dot"></div>
+        <span class="header-title">DCT Money</span>
+        <div class="header-dot"></div>
     </div>
 </header>
 <div class="quote-bar" id="dailyQuote">載入中…</div>
@@ -549,7 +548,11 @@
     let currentSeller = "L2", currentBuyer = "retail", currentCat = "活動", cart = {};
 
     window.onload = () => {
-        document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random()*quotes.length)];
+        const lastQ = parseInt(localStorage.getItem('dct_last_quote') ?? '-1');
+        let idx;
+        do { idx = Math.floor(Math.random() * quotes.length); } while (idx === lastQ && quotes.length > 1);
+        localStorage.setItem('dct_last_quote', idx);
+        document.getElementById('dailyQuote').innerText = quotes[idx];
         initUI(); loadDashboards();
     };
 
