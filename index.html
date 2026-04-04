@@ -5,160 +5,520 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DCT Money</title>
-    
     <link rel="icon" href="https://annie55229900608.github.io/dct-calculator/IMG_2570.JPG" type="image/jpeg">
     <link rel="apple-touch-icon" href="https://annie55229900608.github.io/dct-calculator/IMG_2570.JPG">
     <meta name="apple-mobile-web-app-title" content="DCT Money">
     <meta name="apple-mobile-web-app-capable" content="yes">
-
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #D15598; --secondary: #fce4ec; --text-dark: #333; --bg-color: #f7f8fa; --level-active: linear-gradient(135deg, #D15598 0%, #a64478 100%); }
-        * { box-sizing: border-box; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; letter-spacing: 0.5px; }
-        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 80px; }
-        header { background: var(--level-active); color: white; padding: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; position: sticky; top: 0; z-index: 100; }
-        .quote-box { background: white; padding: 12px 20px; font-size: 0.85rem; color: var(--primary); text-align: center; border-bottom: 1px solid var(--secondary); font-style: italic; min-height: 45px; display: flex; align-items: center; justify-content: center; }
-        .nav-tabs { display: flex; background: white; border-bottom: 1px solid #ddd; }
-        .nav-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 0.9rem; font-weight: bold; color: #666; cursor: pointer; }
-        .nav-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
-        .container { padding: 15px; display: none; }
-        .container.active { display: block; }
-        .card { background: #fff; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .card-header { font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; border-left: 4px solid var(--primary); padding-left: 10px; }
-        
-        /* 級別與對象分開的樣式 */
-        .level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .level-btn { background: white; border: 1px solid #eee; border-radius: 10px; padding: 12px; text-align: center; font-size: 0.85rem; cursor: pointer; }
-        .level-btn.active { background: var(--level-active); color: white; border: none; }
-        .buyer-btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .buyer-btn { background: white; border: 1px solid #eee; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; cursor: pointer; flex: 1 1 40%; text-align: center; }
-        .buyer-btn.active { background: var(--primary); color: white; border: none; }
-        
-        .category-tabs { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 5px; }
-        .cat-tab { font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; background: #eee; white-space: nowrap; cursor: pointer; color: #666; }
-        .cat-tab.active { background: var(--primary); color: white; }
-        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
-        .btn-qty { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--secondary); color: var(--primary); font-weight: bold; font-size: 1.2rem; cursor: pointer; }
-        .qty-input { width: 35px; text-align: center; font-weight: bold; font-size: 1rem; }
-        
-        .result-card { background: var(--level-active); color: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 10px; }
-        .rev-hero { font-size: 2.5rem; font-weight: 900; margin: 5px 0; }
-        .profit-detail { font-size: 1rem; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 4px 12px; border-radius: 20px; margin-top: 5px; }
+        :root {
+            --rose: #C8748A;
+            --rose-light: #F2D9E0;
+            --rose-pale: #FAF2F4;
+            --rose-deep: #A05068;
+            --beige: #F7F3EE;
+            --beige-dark: #EDE7DE;
+            --cream: #FDFAF7;
+            --text-main: #2C2226;
+            --text-sub: #7A6872;
+            --text-muted: #B09EA8;
+            --border: #E8DDE3;
+            --white: #FFFFFF;
+            --shadow: 0 2px 20px rgba(140, 80, 105, 0.08);
+            --shadow-sm: 0 1px 8px rgba(140, 80, 105, 0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans TC', "PingFang TC", sans-serif;
+            background: var(--beige);
+            color: var(--text-main);
+            padding-bottom: 90px;
+            letter-spacing: 0.3px;
+        }
 
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-box { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .stat-box .label { font-size: 0.75rem; color: #999; margin-bottom: 5px; display: block; }
-        .stat-box .value { font-size: 1.1rem; font-weight: bold; color: var(--primary); }
-        .progress-bar { height: 12px; background: #eee; border-radius: 6px; overflow: hidden; margin-top: 5px; }
-        .progress-fill { height: 100%; background: var(--primary); transition: width 0.5s; }
-        
-        .custom-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 1rem; margin-bottom: 10px; outline: none; }
-        .cost-input { color: #d32f2f; font-weight: bold; border-left: 4px solid #d32f2f; }
-        
-        .series-container { margin-bottom: 10px; }
-        .series-label { font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; }
-        .series-bar { height: 10px; background: #eee; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
-        .series-fill { height: 100%; transition: width 0.8s ease-in-out; }
-        .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-bottom: 1px dotted #eee; }
-        .delete-btn { background: #ff4d4f; color: white; border: none; padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
+        /* Header */
+        header {
+            background: var(--white);
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-inner {
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-logo {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .header-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--rose);
+        }
+        .header-title {
+            font-size: 1.05rem; font-weight: 600;
+            color: var(--text-main); letter-spacing: 1px;
+        }
+
+        /* Quote */
+        .quote-bar {
+            background: var(--rose-pale);
+            padding: 10px 20px;
+            font-size: 0.78rem;
+            color: var(--rose-deep);
+            text-align: center;
+            letter-spacing: 0.8px;
+            font-weight: 400;
+            border-bottom: 1px solid var(--rose-light);
+            font-style: italic;
+            min-height: 38px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Nav */
+        .nav-tabs {
+            display: flex;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 8px;
+            position: sticky; top: 57px; z-index: 99;
+        }
+        .nav-tab {
+            flex: 1; text-align: center;
+            padding: 13px 0;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+        .nav-tab.active {
+            color: var(--rose);
+            border-bottom-color: var(--rose);
+        }
+
+        /* Container */
+        .container { padding: 16px; display: none; }
+        .container.active { display: block; }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        .card-header {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .card-header::before {
+            content: '';
+            display: inline-block;
+            width: 3px; height: 12px;
+            background: var(--rose);
+            border-radius: 2px;
+        }
+
+        /* Level grid */
+        .level-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 8px; margin-bottom: 14px;
+        }
+        .level-btn {
+            background: var(--beige);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .level-btn.active {
+            background: var(--rose);
+            color: var(--white);
+            border-color: var(--rose);
+            box-shadow: 0 3px 12px rgba(200, 116, 138, 0.3);
+        }
+
+        /* Buyer buttons */
+        .buyer-btn-group { display: flex; flex-wrap: wrap; gap: 7px; }
+        .buyer-btn {
+            background: var(--beige);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 7px 14px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.18s;
+            letter-spacing: 0.3px;
+        }
+        .buyer-btn.active {
+            background: var(--rose-light);
+            color: var(--rose-deep);
+            border-color: var(--rose);
+        }
+
+        /* Category tabs */
+        .category-tabs {
+            display: flex; gap: 6px; margin-bottom: 14px;
+            overflow-x: auto; padding-bottom: 4px;
+        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .cat-tab {
+            font-size: 0.75rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: var(--beige);
+            border: 1px solid var(--border);
+            white-space: nowrap;
+            cursor: pointer;
+            color: var(--text-sub);
+            font-weight: 500;
+            transition: all 0.18s;
+        }
+        .cat-tab.active {
+            background: var(--rose);
+            color: var(--white);
+            border-color: var(--rose);
+        }
+
+        /* Product items */
+        .product-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 13px 0; border-bottom: 1px solid var(--beige-dark);
+        }
+        .product-item:last-child { border-bottom: none; }
+        .product-name { font-size: 0.88rem; font-weight: 500; color: var(--text-main); }
+        .product-price { font-size: 0.75rem; color: var(--rose); margin-top: 2px; font-weight: 400; }
+        .qty-control { display: flex; align-items: center; gap: 10px; }
+        .btn-qty {
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--beige);
+            color: var(--rose);
+            font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: all 0.15s;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+        }
+        .btn-qty:active { background: var(--rose); color: white; border-color: var(--rose); transform: scale(0.92); }
+        .qty-input {
+            width: 28px; text-align: center;
+            font-weight: 600; font-size: 0.95rem;
+            color: var(--text-main);
+            border: none; background: transparent; outline: none;
+        }
+
+        /* Result card */
+        .result-card {
+            background: var(--rose);
+            color: white;
+            padding: 22px 20px;
+            border-radius: 18px;
+            text-align: center;
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .result-card::before {
+            content: '';
+            position: absolute; top: -30px; right: -20px;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+        }
+        .result-card::after {
+            content: '';
+            position: absolute; bottom: -20px; left: 10px;
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+        .result-label { font-size: 0.75rem; opacity: 0.85; letter-spacing: 1px; text-transform: uppercase; }
+        .rev-hero { font-size: 2.6rem; font-weight: 600; margin: 6px 0 8px; letter-spacing: -1px; }
+        .profit-pill {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 16px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 500;
+        }
+        .cost-note { font-size: 0.75rem; opacity: 0.7; margin-top: 10px; }
+
+        /* Save button */
+        .save-btn {
+            width: 100%; padding: 17px;
+            background: var(--text-main);
+            color: white; border: none;
+            border-radius: 14px;
+            font-weight: 500; font-size: 0.95rem;
+            margin-top: 14px;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .save-btn:active { background: var(--rose-deep); transform: scale(0.99); }
+
+        /* Stats grid */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .stat-box {
+            background: var(--white);
+            padding: 16px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; display: block; letter-spacing: 0.8px; text-transform: uppercase; }
+        .stat-value { font-size: 1.15rem; font-weight: 600; color: var(--rose); }
+        .stat-hero { font-size: 2rem; font-weight: 600; color: var(--rose); }
+
+        /* Hero stat box */
+        .stat-hero-box {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Progress */
+        .progress-bar {
+            height: 6px; background: var(--beige-dark);
+            border-radius: 3px; overflow: hidden; margin-top: 8px;
+        }
+        .progress-fill {
+            height: 100%; background: var(--rose);
+            border-radius: 3px; transition: width 0.6s ease;
+        }
+
+        /* Item rows */
+        .item-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.83rem; padding: 9px 0;
+            border-bottom: 1px solid var(--beige-dark);
+            color: var(--text-main);
+        }
+        .item-row:last-child { border-bottom: none; }
+        .item-row b { color: var(--rose); font-weight: 600; }
+        .delete-btn {
+            background: transparent; color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 4px 10px; border-radius: 6px;
+            font-size: 0.7rem; cursor: pointer;
+            transition: all 0.15s;
+        }
+        .delete-btn:active { background: #fee; color: #c33; border-color: #c33; }
+
+        /* Input */
+        .input-group { margin-bottom: 14px; }
+        .input-label {
+            font-size: 0.75rem; font-weight: 600;
+            color: var(--text-sub); margin-bottom: 7px; display: block;
+            text-transform: uppercase; letter-spacing: 0.8px;
+        }
+        .custom-input {
+            width: 100%; padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px; font-size: 0.9rem;
+            outline: none; background: var(--beige);
+            color: var(--text-main);
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .custom-input:focus { border-color: var(--rose); background: var(--white); }
+        .cost-input { color: var(--rose-deep); border-left: 3px solid var(--rose); }
+
+        /* Series chart */
+        .series-container { margin-bottom: 12px; }
+        .series-label {
+            font-size: 0.78rem; display: flex; justify-content: space-between;
+            margin-bottom: 5px; color: var(--text-sub); font-weight: 500;
+        }
+        .series-bar { height: 6px; background: var(--beige-dark); border-radius: 3px; overflow: hidden; }
+        .series-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+
+        /* Monthly cards */
+        .goal-card {
+            background: var(--rose-pale);
+            border: 1px solid var(--rose-light);
+            border-radius: 16px; padding: 18px; margin-bottom: 12px;
+        }
+        .goal-card .card-header { color: var(--rose-deep); }
+        .goal-card .card-header::before { background: var(--rose-deep); }
+
+        .section-label {
+            font-size: 0.72rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1.2px;
+            margin: 18px 0 8px; font-weight: 600;
+            padding-left: 2px;
+        }
+
+        .last-month-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .blue-box {
+            background: #F0F6FF; border: 1px solid #D5E5FF;
+            border-radius: 14px; padding: 14px; text-align: center;
+        }
+        .blue-box .stat-label { color: #7A9AC0; }
+        .blue-box .stat-value { color: #3A78C9; }
+        .amber-box {
+            background: #FEF8EE; border: 1px solid #FAE5B8;
+            border-radius: 14px; padding: 14px; text-align: center;
+            grid-column: span 2;
+        }
+        .amber-box .stat-label { color: #B08840; }
+        .amber-box .stat-value { color: #D4960A; font-size: 1.3rem; }
+
+        .clear-btn {
+            width: 100%; padding: 12px; background: transparent;
+            color: var(--text-muted); border: 1px solid var(--border);
+            border-radius: 10px; font-size: 0.78rem; cursor: pointer;
+            font-family: inherit; letter-spacing: 0.5px; margin-top: 6px;
+        }
+
+        /* Retail/Team bar */
+        .dual-bar { height: 6px; background: var(--beige-dark); border-radius: 3px; overflow: hidden; display: flex; }
+        .dual-bar-r { height: 100%; background: var(--rose); }
+        .dual-bar-t { height: 100%; background: var(--rose-deep); }
+        .dual-label {
+            display: flex; justify-content: space-between;
+            font-size: 0.78rem; margin-bottom: 7px; color: var(--text-sub);
+        }
+        .dual-label b { color: var(--rose); }
     </style>
 </head>
 <body>
 
-<header>💰 DCT Money</header>
-<div class="quote-box" id="dailyQuote">加載中...</div>
+<header>
+    <div class="header-inner">
+        <div class="header-logo">
+            <div class="header-dot"></div>
+            <span class="header-title">DCT Money</span>
+        </div>
+        <span style="font-size:0.72rem; color:var(--text-muted); letter-spacing:0.5px;">業績紀錄</span>
+    </div>
+</header>
+<div class="quote-bar" id="dailyQuote">載入中…</div>
 
 <div class="nav-tabs">
-    <div class="nav-tab active" onclick="switchTab('tab-new', this)">➕ 開單</div>
-    <div class="nav-tab" onclick="switchTab('tab-daily', this)">📅 今日</div>
-    <div class="nav-tab" onclick="switchTab('tab-monthly', this)">📊 月報表</div>
+    <div class="nav-tab active" onclick="switchTab('tab-new', this)">開單</div>
+    <div class="nav-tab" onclick="switchTab('tab-daily', this)">今日</div>
+    <div class="nav-tab" onclick="switchTab('tab-monthly', this)">月報表</div>
 </div>
 
+<!-- 開單 -->
 <div id="tab-new" class="container active">
     <div class="card">
-        <div class="card-header">❶ 你的加盟級別</div>
+        <div class="card-header">我的等級</div>
         <div class="level-grid" id="sellerSelector"></div>
+    </div>
+    <div class="card">
+        <div class="card-header">銷售對象</div>
+        <div class="buyer-btn-group" id="buyerSelector"></div>
     </div>
 
     <div class="card">
-        <div class="card-header">❷ 銷售對象</div>
-        <div class="buyer-btn-group" id="buyerSelector"></div>
-    </div>
-    
-    <div class="card">
-        <div class="card-header">❸ 選擇產品</div>
+        <div class="card-header">選擇產品</div>
         <div class="category-tabs">
-            <div class="cat-tab active" onclick="switchCat('活動', this)">🎁 活動專區</div>
-            <div class="cat-tab" onclick="switchCat('纖體', this)">💧 纖體</div>
-            <div class="cat-tab" onclick="switchCat('美肌', this)">✨ 美肌</div>
-            <div class="cat-tab" onclick="switchCat('保健', this)">🛡️ 保健</div>
+            <div class="cat-tab active" onclick="switchCat('活動', this)">活動專區</div>
+            <div class="cat-tab" onclick="switchCat('纖體', this)">纖體</div>
+            <div class="cat-tab" onclick="switchCat('美肌', this)">美肌</div>
+            <div class="cat-tab" onclick="switchCat('保健', this)">保健</div>
         </div>
         <div id="productList"></div>
     </div>
 
     <div class="card">
-        <div class="card-header">❹ 其它費用與備註</div>
-        <div style="font-size:0.8rem; color:#d32f2f; margin-bottom:5px; font-weight:bold;">💸 額外成本 (如運費/手續費)</div>
-        <input type="number" id="extraCost" class="custom-input cost-input" placeholder="請輸入金額" oninput="updateCalc()">
-        <div style="font-size:0.8rem; color:#666; margin-bottom:5px; font-weight:bold;">📝 客戶備註</div>
-        <input type="text" id="orderNote" class="custom-input" placeholder="客戶 IG 帳號或姓名">
-    </div>
-
-    <div class="result-card">
-        <div style="font-size: 1rem; font-weight: bold; opacity: 0.9;">本次銷售金額 (售價)</div>
-        <div id="revDisplay" class="rev-hero">$0</div>
-        <div id="profitDisplay" class="profit-detail">預估淨利 $0</div>
-        <div id="costDisplay" style="font-size: 0.8rem; opacity: 0.8; margin-top: 10px;">總成本 (含額外) $0</div>
-    </div>
-    <button onclick="saveOrder()" style="width:100%; padding:18px; background:var(--level-active); color:white; border:none; border-radius:15px; font-weight:bold; margin-top:15px; font-size:1.1rem; box-shadow: 0 4px 15px rgba(209, 85, 152, 0.3);">儲存這筆訂單</button>
-</div>
-
-<div id="tab-daily" class="container">
-    <div class="stat-box" style="margin-bottom:10px;"><span class="label">今日總淨利</span><div class="value" id="dTotalProfit" style="font-size: 2rem;">$0</div></div>
-    <div class="stat-grid">
-        <div class="stat-box"><span class="label">今日營業額</span><div class="value" id="dTotalRev">$0</div></div>
-        <div class="stat-box"><span class="label">今日總成本</span><div class="value" id="dTotalCost" style="color:#666;">$0</div></div>
-    </div>
-    <div class="card"><div class="card-header">📦 今日銷售商品</div><div id="dItemStats"></div></div>
-    <div class="card"><div class="card-header">📝 今日訂單明細</div><div id="dOrderList"></div></div>
-</div>
-
-<div id="tab-monthly" class="container">
-    <div class="card" style="background:var(--secondary); border:none;">
-        <div class="card-header">🎯 本月淨利目標達成 %</div>
-        <input type="number" id="mGoalInput" class="custom-input" style="text-align:center; font-weight:bold; color:var(--primary);" placeholder="設定目標淨利" onchange="updateGoal(this.value)">
-        <div class="progress-container" style="margin-top:10px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:var(--primary);"><span>目前達成</span><span id="mGoalPercent">0%</span></div>
-            <div class="progress-bar"><div id="mGoalBar" class="progress-fill" style="width:0%"></div></div>
+        <div class="card-header">費用與備註</div>
+        <div class="input-group">
+            <span class="input-label">額外成本（運費 / 手續費）</span>
+            <input type="number" id="extraCost" class="custom-input cost-input" placeholder="請輸入金額" oninput="updateCalc()">
+        </div>
+        <div class="input-group" style="margin-bottom:0">
+            <span class="input-label">客戶備註</span>
+            <input type="text" id="orderNote" class="custom-input" placeholder="客戶 IG 帳號或姓名">
         </div>
     </div>
 
-    <div class="card-header">📊 本月經營數據</div>
+    <div class="result-card">
+        <div class="result-label">本次銷售金額</div>
+        <div id="revDisplay" class="rev-hero">$0</div>
+        <div id="profitDisplay" class="profit-pill">預估淨利 $0</div>
+        <div id="costDisplay" class="cost-note">總成本（含額外）$0</div>
+    </div>
+    <button class="save-btn" onclick="saveOrder()">儲存這筆訂單</button>
+</div>
+
+<!-- 今日 -->
+<div id="tab-daily" class="container">
+    <div class="stat-hero-box">
+        <span class="stat-label">今日總淨利</span>
+        <div id="dTotalProfit" class="stat-hero">$0</div>
+    </div>
     <div class="stat-grid">
-        <div class="stat-box"><span class="label">本月營業額</span><div class="value" id="mTotalRev">$0</div></div>
-        <div class="stat-box"><span class="label">本月總成本</span><div class="value" id="mTotalCost" style="color:#d32f2f;">$0</div></div>
-        <div class="stat-box" style="grid-column: span 2;"><span class="label">本月總淨利</span><div class="value" id="mTotalProfit" style="font-size:1.5rem;">$0</div></div>
+        <div class="stat-box"><span class="stat-label">今日營業額</span><div id="dTotalRev" class="stat-value">$0</div></div>
+        <div class="stat-box"><span class="stat-label">今日總成本</span><div id="dTotalCost" class="stat-value" style="color:var(--text-sub)">$0</div></div>
+    </div>
+    <div class="card"><div class="card-header">今日銷售商品</div><div id="dItemStats"></div></div>
+    <div class="card"><div class="card-header">今日訂單明細</div><div id="dOrderList"></div></div>
+</div>
+
+<!-- 月報表 -->
+<div id="tab-monthly" class="container">
+    <div class="goal-card">
+        <div class="card-header">本月目標達成率</div>
+        <input type="number" id="mGoalInput" class="custom-input" style="text-align:center; background:white;" placeholder="設定目標淨利" onchange="updateGoal(this.value)">
+        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--rose-deep); margin-top:10px; margin-bottom:4px;">
+            <span>達成進度</span><span id="mGoalPercent" style="font-weight:600;">0%</span>
+        </div>
+        <div class="progress-bar"><div id="mGoalBar" class="progress-fill" style="width:0%"></div></div>
     </div>
 
-    <div class="card-header" style="border-left-color: #999; color: #666;">⏳ 上月歷史數據對照</div>
-    <div class="stat-grid">
-        <div class="stat-box" style="background:#f0f7ff;"><span class="label">上月營業額</span><div class="value" id="lastMRev" style="color:#2196F3;">$0</div></div>
-        <div class="stat-box" style="background:#f0f7ff;"><span class="label">上月總成本</span><div class="value" id="lastMCost" style="color:#2196F3;">$0</div></div>
-        <div class="stat-box" style="background:#fdf6ec; grid-column: span 2;"><span class="label">上月總淨利</span><div class="value" id="lastMProfit" style="color:#E6A23C;">$0</div></div>
+    <div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="stat-box"><span class="stat-label">本月營業額</span><div id="mTotalRev" class="stat-value">$0</div></div>
+        <div class="stat-box"><span class="stat-label">本月總成本</span><div id="mTotalCost" class="stat-value" style="color:var(--text-sub)">$0</div></div>
+        <div class="stat-box"><span class="stat-label">本月淨利</span><div id="mTotalProfit" class="stat-value">$0</div></div>
     </div>
-    
+
+    <div class="section-label">上月對照</div>
+    <div class="last-month-grid">
+        <div class="blue-box"><span class="stat-label">上月營業額</span><div id="lastMRev" class="stat-value">$0</div></div>
+        <div class="blue-box"><span class="stat-label">上月總成本</span><div id="lastMCost" class="stat-value">$0</div></div>
+        <div class="amber-box"><span class="stat-label">上月淨利</span><div id="lastMProfit" class="stat-value">$0</div></div>
+    </div>
+
     <div class="card">
-        <div class="card-header">📈 系列業績佔比 (本月)</div>
+        <div class="card-header">系列業績佔比</div>
         <div id="seriesChart"></div>
     </div>
 
     <div class="card">
-        <div class="card-header">👥 零售 vs 團隊 (本月)</div>
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;"><span>零售: <b id="mRetailP">0%</b></span><span>團隊: <b id="mTeamP">0%</b></span></div>
-        <div class="progress-bar"><div id="mRetailBar" style="height:100%; background:var(--primary); width:0%; float:left;"></div><div id="mTeamBar" style="height:100%; background:#a64478; width:0%; float:left;"></div></div>
+        <div class="card-header">零售 vs 團隊</div>
+        <div class="dual-label">
+            <span>零售 <b id="mRetailP">0%</b></span>
+            <span style="color:var(--rose-deep)">團隊 <b id="mTeamP" style="color:var(--rose-deep)">0%</b></span>
+        </div>
+        <div class="dual-bar">
+            <div id="mRetailBar" class="dual-bar-r" style="width:0%"></div>
+            <div id="mTeamBar" class="dual-bar-t" style="width:0%"></div>
+        </div>
     </div>
 
-    <div class="card"><div class="card-header">🏆 本月熱銷排行</div><div id="mItemStats"></div></div>
-    <button onclick="clearData()" style="width:100%; padding:10px; background:#f5f5f5; color:#999; border:none; border-radius:10px; font-size:0.8rem;">清空所有數據紀錄</button>
+    <div class="card"><div class="card-header">本月熱銷排行</div><div id="mItemStats"></div></div>
+    <button class="clear-btn" onclick="clearData()">清空所有數據紀錄</button>
 </div>
 
 <script>
@@ -185,17 +545,21 @@
 
     const quotes = ["每一次成交都是因為妳傳遞了價值。", "溫柔且堅定，讓妳的專業帶領客戶。", "最好的招商力，就是活出妳想要的樣子。", "目標不是用來達成的，是用來超越的。"];
     const levels = [{id:"L2", name:"二級輔導"}, {id:"L3_sup", name:"三級輔導"}, {id:"L3_ret", name:"三級零售"}, {id:"intern", name:"實習零售"}];
-    const buyers = [{id:"retail", name:"單盒零售", t:"retail"}, {id:"vip", name:"VIP價", t:"retail"}, {id:"discount", name:"兩盒優惠", t:"retail"}, {id:"intern", name:"實習價", t:"team"}, {id:"L3_ret", name:"三級價", t:"team"}, {id:"L3_sup", name:"三級輔導", t:"team"}];
+    const buyers = [{id:"retail", name:"單盒零售", t:"retail"}, {id:"vip", name:"VIP 價", t:"retail"}, {id:"discount", name:"兩盒優惠", t:"retail"}, {id:"intern", name:"實習價", t:"team"}, {id:"L3_ret", name:"三級價", t:"team"}, {id:"L3_sup", name:"三級輔導", t:"team"}];
     let currentSeller = "L2", currentBuyer = "retail", currentCat = "活動", cart = {};
 
-    window.onload = () => { 
+    window.onload = () => {
         document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random()*quotes.length)];
-        initUI(); loadDashboards(); 
+        initUI(); loadDashboards();
     };
 
     function initUI() {
-        document.getElementById('sellerSelector').innerHTML = levels.map(l => `<div class="level-btn ${l.id===currentSeller?'active':''}" onclick="currentSeller='${l.id}';initUI();updateCalc();">${l.name}</div>`).join('');
-        document.getElementById('buyerSelector').innerHTML = buyers.map(b => `<div class="buyer-btn ${b.id===currentBuyer?'active':''}" onclick="currentBuyer='${b.id}';initUI();updateCalc();">${b.name}</div>`).join('');
+        document.getElementById('sellerSelector').innerHTML = levels.map(l =>
+            `<div class="level-btn ${l.id===currentSeller?'active':''}" onclick="currentSeller='${l.id}';initUI();updateCalc();">${l.name}</div>`
+        ).join('');
+        document.getElementById('buyerSelector').innerHTML = buyers.map(b =>
+            `<div class="buyer-btn ${b.id===currentBuyer?'active':''}" onclick="currentBuyer='${b.id}';initUI();updateCalc();">${b.name}</div>`
+        ).join('');
         renderProducts();
         document.getElementById('mGoalInput').value = localStorage.getItem('dct_goal') || 0;
     }
@@ -205,7 +569,17 @@
         for(let n in products) {
             if(products[n].cat !== currentCat) continue;
             let qty = cart[n] || 0;
-            div.innerHTML += `<div class="product-item"><span>${n}<br><small>$${products[n][currentSeller]} / ${products[n].unit}</small></span><div style="display:flex;align-items:center;"><button class="btn-qty" onclick="changeQty('${n}',-1)">-</button><div class="qty-input">${qty}</div><button class="btn-qty" onclick="changeQty('${n}',1)">+</button></div></div>`;
+            div.innerHTML += `<div class="product-item">
+                <div>
+                    <div class="product-name">${n}</div>
+                    <div class="product-price">$${products[n][currentSeller].toLocaleString()} / ${products[n].unit}</div>
+                </div>
+                <div class="qty-control">
+                    <button class="btn-qty" onclick="changeQty('${n}',-1)">−</button>
+                    <div class="qty-input">${qty}</div>
+                    <button class="btn-qty" onclick="changeQty('${n}',1)">+</button>
+                </div>
+            </div>`;
         }
     }
 
@@ -216,32 +590,53 @@
         for(let n in cart) { cost += products[n][currentSeller]*cart[n]; rev += products[n][currentBuyer]*cart[n]; }
         document.getElementById('revDisplay').innerText = `$${rev.toLocaleString()}`;
         document.getElementById('profitDisplay').innerText = `預估淨利 $${(rev-cost-extra).toLocaleString()}`;
-        document.getElementById('costDisplay').innerText = `總成本 (含額外) $${(cost+extra).toLocaleString()}`;
+        document.getElementById('costDisplay').innerText = `總成本（含額外）$${(cost+extra).toLocaleString()}`;
     }
 
     function saveOrder() {
         let items = [], cost=0, rev=0, extra = parseInt(document.getElementById('extraCost').value) || 0;
-        for(let n in cart) { if(cart[n]>0) { items.push({name:n, qty:cart[n], unit:products[n].unit, cat:products[n].cat}); cost+=products[n][currentSeller]*cart[n]; rev+=products[n][currentBuyer]*cart[n]; } }
+        for(let n in cart) {
+            if(cart[n]>0) {
+                items.push({name:n, qty:cart[n], unit:products[n].unit, cat:products[n].cat});
+                cost+=products[n][currentSeller]*cart[n];
+                rev+=products[n][currentBuyer]*cart[n];
+            }
+        }
         if(items.length === 0) return alert("請先選擇產品數量！");
-        const records = JSON.parse(localStorage.getItem('dct_v10_final')) || [];
-        records.push({ id: Date.now(), month: new Date().getMonth(), profit: rev-cost-extra, rev: rev, cost: cost+extra, type: buyers.find(b=>b.id===currentBuyer).t, note: document.getElementById('orderNote').value || "無備註", items: items });
-        localStorage.setItem('dct_v10_final', JSON.stringify(records));
-        cart = {}; document.getElementById('orderNote').value = ''; document.getElementById('extraCost').value = '';
-        initUI(); updateCalc(); alert("訂單儲存成功！");
+        const records = JSON.parse(localStorage.getItem('dct_v9_ultimate')) || [];
+        records.push({
+            id: Date.now(), month: new Date().getMonth(),
+            profit: rev-cost-extra, rev: rev, cost: cost+extra,
+            type: buyers.find(b=>b.id===currentBuyer).t,
+            note: document.getElementById('orderNote').value || "無備註",
+            items: items
+        });
+        localStorage.setItem('dct_v9_ultimate', JSON.stringify(records));
+        cart = {};
+        document.getElementById('orderNote').value = '';
+        document.getElementById('extraCost').value = '';
+        initUI(); updateCalc();
+        alert("訂單儲存成功！");
     }
 
     function switchTab(id, el) {
         document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); el.classList.add('active');
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
         if(id !== 'tab-new') loadDashboards();
     }
 
-    function switchCat(cat, el) { currentCat = cat; document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); renderProducts(); }
+    function switchCat(cat, el) {
+        currentCat = cat;
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderProducts();
+    }
     function updateGoal(v) { localStorage.setItem('dct_goal', v); loadDashboards(); }
 
     function loadDashboards() {
-        const records = JSON.parse(localStorage.getItem('dct_v10_final')) || [];
+        const records = JSON.parse(localStorage.getItem('dct_v9_ultimate')) || [];
         const today = new Date().toDateString(), curM = new Date().getMonth();
         const lastM = curM === 0 ? 11 : curM - 1;
         let dP=0, dR=0, dC=0, dI={}, dL='', mR=0, mP=0, mC=0, mRR=0, mTR=0, mI={}, lR=0, lP=0, lC=0;
@@ -252,14 +647,14 @@
             if(rd.toDateString() === today) {
                 dP += r.profit; dR += r.rev; dC += r.cost;
                 r.items.forEach(i => dI[i.name] = {q: (dI[i.name]?.q||0) + i.qty, u: i.unit});
-                dL += `<div class="item-row"><span>${r.note} ($${r.profit})</span><button class="delete-btn" onclick="deleteOrder(${r.id})">刪除</button></div>`;
+                dL += `<div class="item-row"><span>${r.note} <span style="color:var(--rose)">+$${r.profit.toLocaleString()}</span></span><button class="delete-btn" onclick="deleteOrder(${r.id})">刪除</button></div>`;
             }
             if(rd.getMonth() === curM) {
                 mR += r.rev; mP += r.profit; mC += r.cost;
                 if(r.type === 'retail') mRR += r.rev; else mTR += r.rev;
                 r.items.forEach(i => {
                     mI[i.name] = {q: (mI[i.name]?.q||0) + i.qty, u: i.unit};
-                    seriesData[i.cat] += r.rev; 
+                    seriesData[i.cat] += r.rev;
                 });
             }
             if(rd.getMonth() === lastM) { lR += r.rev; lP += r.profit; lC += r.cost; }
@@ -268,48 +663,58 @@
         document.getElementById('dTotalProfit').innerText = `$${dP.toLocaleString()}`;
         document.getElementById('dTotalRev').innerText = `$${dR.toLocaleString()}`;
         document.getElementById('dTotalCost').innerText = `$${dC.toLocaleString()}`;
-        document.getElementById('dOrderList').innerHTML = dL || '今日尚未開單';
-        let dIH = ''; for(let n in dI) dIH += `<div class="item-row"><span>${n}</span><b>${dI[n].q} ${dI[n].u}</b></div>`;
-        document.getElementById('dItemStats').innerHTML = dIH || '無數據';
+        document.getElementById('dOrderList').innerHTML = dL || '<span style="font-size:0.82rem;color:var(--text-muted)">今日尚未開單</span>';
+        let dIH = '';
+        for(let n in dI) dIH += `<div class="item-row"><span>${n}</span><b>${dI[n].q} ${dI[n].u}</b></div>`;
+        document.getElementById('dItemStats').innerHTML = dIH || '<span style="font-size:0.82rem;color:var(--text-muted)">無數據</span>';
 
         document.getElementById('mTotalRev').innerText = `$${mR.toLocaleString()}`;
-        document.getElementById('mTotalProfit').innerText = `$${mP.toLocaleString()}`;
         document.getElementById('mTotalCost').innerText = `$${mC.toLocaleString()}`;
+        document.getElementById('mTotalProfit').innerText = `$${mP.toLocaleString()}`;
         document.getElementById('lastMRev').innerText = `$${lR.toLocaleString()}`;
         document.getElementById('lastMProfit').innerText = `$${lP.toLocaleString()}`;
         document.getElementById('lastMCost').innerText = `$${lC.toLocaleString()}`;
-        
+
         let g = localStorage.getItem('dct_goal') || 0, gp = g > 0 ? Math.min(Math.round(mP/g*100), 100) : 0;
         document.getElementById('mGoalPercent').innerText = gp + '%';
         document.getElementById('mGoalBar').style.width = gp + '%';
 
         let mrp = mR > 0 ? Math.round(mRR/mR*100) : 0, mtp = mR > 0 ? Math.round(mTR/mR*100) : 0;
-        document.getElementById('mRetailP').innerText = mrp + '%'; document.getElementById('mTeamP').innerText = mtp + '%';
-        document.getElementById('mRetailBar').style.width = mrp + '%'; document.getElementById('mTeamBar').style.width = mtp + '%';
+        document.getElementById('mRetailP').innerText = mrp + '%';
+        document.getElementById('mTeamP').innerText = mtp + '%';
+        document.getElementById('mRetailBar').style.width = mrp + '%';
+        document.getElementById('mTeamBar').style.width = mtp + '%';
 
-        let mIH = ''; let sorted = Object.entries(mI).sort((a,b) => b[1].q - a[1].q);
-        sorted.forEach(e => mIH += `<div class="item-row"><span>${e[0]}</span><b>${e[1].q} ${e[1].u}</b></div>`);
-        document.getElementById('mItemStats').innerHTML = mIH || '無數據';
+        let mIH = '';
+        Object.entries(mI).sort((a,b)=>b[1].q-a[1].q).forEach(e =>
+            mIH += `<div class="item-row"><span>${e[0]}</span><b>${e[1].q} ${e[1].u}</b></div>`
+        );
+        document.getElementById('mItemStats').innerHTML = mIH || '<span style="font-size:0.82rem;color:var(--text-muted)">無數據</span>';
 
         let totalS = Object.values(seriesData).reduce((a,b)=>a+b, 0);
+        const sColors = {"活動":"#C8748A", "纖體":"#7BBFDB", "美肌":"#A98BC7", "保健":"#7AB894"};
         let sHTML = '';
-        const sColors = {"活動":"#FF80AB", "纖體":"#4FC3F7", "美肌":"#BA68C8", "保健":"#81C784"};
         for(let s in seriesData) {
             let p = totalS > 0 ? Math.round(seriesData[s]/totalS*100) : 0;
             sHTML += `<div class="series-container">
-                        <div class="series-label"><span>${s}</span><span>${p}%</span></div>
-                        <div class="series-bar"><div class="series-fill" style="width:${p}%; background:${sColors[s]}"></div></div>
-                      </div>`;
+                <div class="series-label"><span>${s}</span><span>${p}%</span></div>
+                <div class="series-bar"><div class="series-fill" style="width:${p}%; background:${sColors[s]}"></div></div>
+            </div>`;
         }
         document.getElementById('seriesChart').innerHTML = sHTML;
     }
 
     function deleteOrder(id) {
-        let rs = JSON.parse(localStorage.getItem('dct_v10_final'));
-        localStorage.setItem('dct_v10_final', JSON.stringify(rs.filter(r=>r.id!==id)));
+        let rs = JSON.parse(localStorage.getItem('dct_v9_ultimate'));
+        localStorage.setItem('dct_v9_ultimate', JSON.stringify(rs.filter(r=>r.id!==id)));
         loadDashboards();
     }
-    function clearData() { if(confirm("確定要歸零所有數據嗎？")) {localStorage.removeItem('dct_v10_final'); loadDashboards();} }
+    function clearData() {
+        if(confirm("確定要歸零所有數據嗎？")) {
+            localStorage.removeItem('dct_v9_ultimate');
+            loadDashboards();
+        }
+    }
 </script>
 </body>
 </html>
