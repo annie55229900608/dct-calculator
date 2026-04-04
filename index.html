@@ -24,12 +24,15 @@
         .container.active { display: block; }
         .card { background: #fff; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .card-header { font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        
+        /* 級別與對象分開的樣式 */
         .level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .level-btn { background: white; border: 1px solid #eee; border-radius: 10px; padding: 10px; text-align: center; font-size: 0.85rem; cursor: pointer; }
+        .level-btn { background: white; border: 1px solid #eee; border-radius: 10px; padding: 12px; text-align: center; font-size: 0.85rem; cursor: pointer; }
         .level-btn.active { background: var(--level-active); color: white; border: none; }
         .buyer-btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .buyer-btn { background: white; border: 1px solid #eee; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; cursor: pointer; }
+        .buyer-btn { background: white; border: 1px solid #eee; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; cursor: pointer; flex: 1 1 40%; text-align: center; }
         .buyer-btn.active { background: var(--primary); color: white; border: none; }
+        
         .category-tabs { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 5px; }
         .cat-tab { font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; background: #eee; white-space: nowrap; cursor: pointer; color: #666; }
         .cat-tab.active { background: var(--primary); color: white; }
@@ -47,18 +50,16 @@
         .stat-box .value { font-size: 1.1rem; font-weight: bold; color: var(--primary); }
         .progress-bar { height: 12px; background: #eee; border-radius: 6px; overflow: hidden; margin-top: 5px; }
         .progress-fill { height: 100%; background: var(--primary); transition: width 0.5s; }
-        .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-bottom: 1px dotted #eee; }
-        .delete-btn { background: #ff4d4f; color: white; border: none; padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
         
-        .input-group { margin-bottom: 15px; }
-        .input-label { font-size: 0.85rem; font-weight: bold; color: #666; margin-bottom: 6px; display: block; }
-        .custom-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 1rem; outline: none; }
+        .custom-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 10px; font-size: 1rem; margin-bottom: 10px; outline: none; }
         .cost-input { color: #d32f2f; font-weight: bold; border-left: 4px solid #d32f2f; }
         
         .series-container { margin-bottom: 10px; }
         .series-label { font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; }
         .series-bar { height: 10px; background: #eee; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
         .series-fill { height: 100%; transition: width 0.8s ease-in-out; }
+        .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-bottom: 1px dotted #eee; }
+        .delete-btn { background: #ff4d4f; color: white; border: none; padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -74,13 +75,17 @@
 
 <div id="tab-new" class="container active">
     <div class="card">
-        <div class="card-header">❶ 設定等級與對象</div>
+        <div class="card-header">❶ 你的加盟級別</div>
         <div class="level-grid" id="sellerSelector"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">❷ 銷售對象</div>
         <div class="buyer-btn-group" id="buyerSelector"></div>
     </div>
     
     <div class="card">
-        <div class="card-header">❷ 選擇產品</div>
+        <div class="card-header">❸ 選擇產品</div>
         <div class="category-tabs">
             <div class="cat-tab active" onclick="switchCat('活動', this)">🎁 活動專區</div>
             <div class="cat-tab" onclick="switchCat('纖體', this)">💧 纖體</div>
@@ -91,15 +96,11 @@
     </div>
 
     <div class="card">
-        <div class="card-header">❸ 費用與備註</div>
-        <div class="input-group">
-            <span class="input-label">💸 額外成本 (運費/手續費/包材)</span>
-            <input type="number" id="extraCost" class="custom-input cost-input" placeholder="請輸入金額" oninput="updateCalc()">
-        </div>
-        <div class="input-group">
-            <span class="input-label">📝 客戶備註</span>
-            <input type="text" id="orderNote" class="custom-input" placeholder="客戶 IG 帳號或姓名">
-        </div>
+        <div class="card-header">❹ 其它費用與備註</div>
+        <div style="font-size:0.8rem; color:#d32f2f; margin-bottom:5px; font-weight:bold;">💸 額外成本 (如運費/手續費)</div>
+        <input type="number" id="extraCost" class="custom-input cost-input" placeholder="請輸入金額" oninput="updateCalc()">
+        <div style="font-size:0.8rem; color:#666; margin-bottom:5px; font-weight:bold;">📝 客戶備註</div>
+        <input type="text" id="orderNote" class="custom-input" placeholder="客戶 IG 帳號或姓名">
     </div>
 
     <div class="result-card">
@@ -134,14 +135,15 @@
     <div class="card-header">📊 本月經營數據</div>
     <div class="stat-grid">
         <div class="stat-box"><span class="label">本月營業額</span><div class="value" id="mTotalRev">$0</div></div>
-        <div class="stat-box"><span class="label">本月淨利</span><div class="value" id="mTotalProfit">$0</div></div>
+        <div class="stat-box"><span class="label">本月總成本</span><div class="value" id="mTotalCost" style="color:#d32f2f;">$0</div></div>
+        <div class="stat-box" style="grid-column: span 2;"><span class="label">本月總淨利</span><div class="value" id="mTotalProfit" style="font-size:1.5rem;">$0</div></div>
     </div>
 
     <div class="card-header" style="border-left-color: #999; color: #666;">⏳ 上月歷史數據對照</div>
     <div class="stat-grid">
         <div class="stat-box" style="background:#f0f7ff;"><span class="label">上月營業額</span><div class="value" id="lastMRev" style="color:#2196F3;">$0</div></div>
         <div class="stat-box" style="background:#f0f7ff;"><span class="label">上月總成本</span><div class="value" id="lastMCost" style="color:#2196F3;">$0</div></div>
-        <div class="stat-box" style="background:#fdf6ec; grid-column: span 2;"><span class="label">上月淨利</span><div class="value" id="lastMProfit" style="color:#E6A23C;">$0</div></div>
+        <div class="stat-box" style="background:#fdf6ec; grid-column: span 2;"><span class="label">上月總淨利</span><div class="value" id="lastMProfit" style="color:#E6A23C;">$0</div></div>
     </div>
     
     <div class="card">
@@ -155,7 +157,7 @@
         <div class="progress-bar"><div id="mRetailBar" style="height:100%; background:var(--primary); width:0%; float:left;"></div><div id="mTeamBar" style="height:100%; background:#a64478; width:0%; float:left;"></div></div>
     </div>
 
-    <div class="card"><div class="card-header">🏆 本月熱銷排行 (盒/組)</div><div id="mItemStats"></div></div>
+    <div class="card"><div class="card-header">🏆 本月熱銷排行</div><div id="mItemStats"></div></div>
     <button onclick="clearData()" style="width:100%; padding:10px; background:#f5f5f5; color:#999; border:none; border-radius:10px; font-size:0.8rem;">清空所有數據紀錄</button>
 </div>
 
@@ -221,9 +223,9 @@
         let items = [], cost=0, rev=0, extra = parseInt(document.getElementById('extraCost').value) || 0;
         for(let n in cart) { if(cart[n]>0) { items.push({name:n, qty:cart[n], unit:products[n].unit, cat:products[n].cat}); cost+=products[n][currentSeller]*cart[n]; rev+=products[n][currentBuyer]*cart[n]; } }
         if(items.length === 0) return alert("請先選擇產品數量！");
-        const records = JSON.parse(localStorage.getItem('dct_v9_ultimate')) || [];
+        const records = JSON.parse(localStorage.getItem('dct_v10_final')) || [];
         records.push({ id: Date.now(), month: new Date().getMonth(), profit: rev-cost-extra, rev: rev, cost: cost+extra, type: buyers.find(b=>b.id===currentBuyer).t, note: document.getElementById('orderNote').value || "無備註", items: items });
-        localStorage.setItem('dct_v9_ultimate', JSON.stringify(records));
+        localStorage.setItem('dct_v10_final', JSON.stringify(records));
         cart = {}; document.getElementById('orderNote').value = ''; document.getElementById('extraCost').value = '';
         initUI(); updateCalc(); alert("訂單儲存成功！");
     }
@@ -239,10 +241,10 @@
     function updateGoal(v) { localStorage.setItem('dct_goal', v); loadDashboards(); }
 
     function loadDashboards() {
-        const records = JSON.parse(localStorage.getItem('dct_v9_ultimate')) || [];
+        const records = JSON.parse(localStorage.getItem('dct_v10_final')) || [];
         const today = new Date().toDateString(), curM = new Date().getMonth();
         const lastM = curM === 0 ? 11 : curM - 1;
-        let dP=0, dR=0, dC=0, dI={}, dL='', mR=0, mP=0, mRR=0, mTR=0, mI={}, lR=0, lP=0, lC=0;
+        let dP=0, dR=0, dC=0, dI={}, dL='', mR=0, mP=0, mC=0, mRR=0, mTR=0, mI={}, lR=0, lP=0, lC=0;
         let seriesData = {"活動":0, "纖體":0, "美肌":0, "保健":0};
 
         records.forEach(r => {
@@ -253,7 +255,7 @@
                 dL += `<div class="item-row"><span>${r.note} ($${r.profit})</span><button class="delete-btn" onclick="deleteOrder(${r.id})">刪除</button></div>`;
             }
             if(rd.getMonth() === curM) {
-                mR += r.rev; mP += r.profit;
+                mR += r.rev; mP += r.profit; mC += r.cost;
                 if(r.type === 'retail') mRR += r.rev; else mTR += r.rev;
                 r.items.forEach(i => {
                     mI[i.name] = {q: (mI[i.name]?.q||0) + i.qty, u: i.unit};
@@ -272,6 +274,7 @@
 
         document.getElementById('mTotalRev').innerText = `$${mR.toLocaleString()}`;
         document.getElementById('mTotalProfit').innerText = `$${mP.toLocaleString()}`;
+        document.getElementById('mTotalCost').innerText = `$${mC.toLocaleString()}`;
         document.getElementById('lastMRev').innerText = `$${lR.toLocaleString()}`;
         document.getElementById('lastMProfit').innerText = `$${lP.toLocaleString()}`;
         document.getElementById('lastMCost').innerText = `$${lC.toLocaleString()}`;
@@ -302,11 +305,11 @@
     }
 
     function deleteOrder(id) {
-        let rs = JSON.parse(localStorage.getItem('dct_v9_ultimate'));
-        localStorage.setItem('dct_v9_ultimate', JSON.stringify(rs.filter(r=>r.id!==id)));
+        let rs = JSON.parse(localStorage.getItem('dct_v10_final'));
+        localStorage.setItem('dct_v10_final', JSON.stringify(rs.filter(r=>r.id!==id)));
         loadDashboards();
     }
-    function clearData() { if(confirm("確定要歸零所有數據嗎？")) {localStorage.removeItem('dct_v9_ultimate'); loadDashboards();} }
+    function clearData() { if(confirm("確定要歸零所有數據嗎？")) {localStorage.removeItem('dct_v10_final'); loadDashboards();} }
 </script>
 </body>
 </html>
