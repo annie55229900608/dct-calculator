@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DCT money - 淨利產生器</title>
+    <title>DCT money - 業績分析</title>
     
     <link rel="icon" href="https://annie55229900608.github.io/dct-calculator/IMG_2570.JPG" type="image/jpeg">
     <link rel="apple-touch-icon" href="https://annie55229900608.github.io/dct-calculator/IMG_2570.JPG">
@@ -70,6 +70,8 @@
         #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; display: none; z-index: 1000; }
         .goal-input-box { margin-bottom: 15px; }
         .goal-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; text-align: center; font-size: 1rem; color: var(--primary); font-weight: bold; }
+        .analysis-label { font-size: 0.75rem; color: var(--text-light); margin-bottom: 4px; display: block; }
+        .analysis-value { font-size: 0.95rem; font-weight: bold; color: var(--text-dark); }
     </style>
 </head>
 <body>
@@ -116,10 +118,25 @@
 
 <div id="daily-summary" class="container">
     <div class="stat-box"><div class="value" id="dailyProfitTotal">0</div><div style="font-size:0.9rem; color:#a64478;">今日總淨利</div></div>
-    <div class="summary-grid">
-        <div class="summary-card"><div>銷售額</div><div id="dailyRevTotal">0</div></div>
-        <div class="summary-card"><div>總成本</div><div id="dailyCostTotal">0</div></div>
+    
+    <div class="card">
+        <div class="card-header">📈 今日結構分析</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <span class="analysis-label">零售業績 (佔比)</span>
+                <span class="analysis-value" id="dailyRetailVal">$0 (0%)</span>
+            </div>
+            <div>
+                <span class="analysis-label">團隊業績 (佔比)</span>
+                <span class="analysis-value" id="dailyTeamVal">$0 (0%)</span>
+            </div>
+        </div>
+        <div class="progress-bar" style="background:#eee; height: 6px; margin-top:12px;">
+            <div id="dailyRetailBar" style="height:100%; background:var(--primary); width:0%; float:left;"></div>
+            <div id="dailyTeamBar" style="height:100%; background:#a64478; width:0%; float:left;"></div>
+        </div>
     </div>
+
     <div class="card" id="dailyRecords" style="padding:0"></div>
 </div>
 
@@ -137,9 +154,23 @@
     </div>
 
     <div class="stat-box"><div class="value" id="monthlyProfitTotal">0</div><div style="font-size:0.9rem; color:#a64478;">本月累積淨利</div></div>
-    <div class="summary-grid">
-        <div class="summary-card"><div>本月銷售額</div><div id="monthlyRevTotal">0</div></div>
-        <div class="summary-card"><div>平均客單價</div><div id="avgOrderValue">0</div></div>
+
+    <div class="card">
+        <div class="card-header">📊 本月業績佔比</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <span class="analysis-label">零售總額 (自己賣)</span>
+                <span class="analysis-value" id="monthlyRetailVal">$0 (0%)</span>
+            </div>
+            <div>
+                <span class="analysis-label">團隊總額 (代理商)</span>
+                <span class="analysis-value" id="monthlyTeamVal">$0 (0%)</span>
+            </div>
+        </div>
+        <div class="progress-bar" style="background:#eee; height: 10px; margin-top:15px;">
+            <div id="monthlyRetailBar" style="height:100%; background:var(--primary); width:0%; float:left;"></div>
+            <div id="monthlyTeamBar" style="height:100%; background:#a64478; width:0%; float:left;"></div>
+        </div>
     </div>
     
     <div class="card">
@@ -182,7 +213,6 @@
         "溫柔且堅定，讓妳的專業帶領客戶。",
         "目標不是用來達成的，是用來超越的。",
         "妳現在的努力，是在為未來的成功鋪路。",
-        "專注於妳能控制的行動，結果自然會跟隨。",
         "最好的招商力，就是活出妳想要的樣子。"
     ];
 
@@ -194,12 +224,12 @@
     ];
 
     const buyers = [
-        { id: "retail", name: "單盒零售價" },
-        { id: "vip", name: "VIP價" },
-        { id: "discount", name: "兩盒優惠價" },
-        { id: "intern", name: "實習零售價" },
-        { id: "L3_ret", name: "三級零售價" },
-        { id: "L3_sup", name: "三級輔導價" }
+        { id: "retail", name: "單盒零售價", type: "retail" },
+        { id: "vip", name: "VIP價", type: "retail" },
+        { id: "discount", name: "兩盒優惠價", type: "retail" },
+        { id: "intern", name: "實習零售價", type: "team" },
+        { id: "L3_ret", name: "三級零售價", type: "team" },
+        { id: "L3_sup", name: "三級輔導價", type: "team" }
     ];
 
     let currentSellerLevel = "L2", currentBuyerLevel = "retail", currentCategory = "纖體", cart = {};
@@ -257,11 +287,21 @@
 
     function saveOrder() {
         let orderItems = [], totalRev = 0, totalCost = 0, extra = parseInt(document.getElementById('extraCost').value) || 0;
-        for(let name in cart) { if(cart[name] > 0) { orderItems.push({ name, qty: cart[name], emoji: pricingData[name].emoji }); totalCost += (pricingData[name][currentSellerLevel]*cart[name]); totalRev += (pricingData[name][currentBuyerLevel]*cart[name]); } }
+        let saleType = buyers.find(b => b.id === currentBuyerLevel).type;
+
+        for(let name in cart) { 
+            if(cart[name] > 0) { 
+                orderItems.push({ name, qty: cart[name], emoji: pricingData[name].emoji }); 
+                totalCost += (pricingData[name][currentSellerLevel]*cart[name]); 
+                totalRev += (pricingData[name][currentBuyerLevel]*cart[name]); 
+            } 
+        }
         if(orderItems.length === 0) return alert("請先選擇產品！");
+        
         let records = JSON.parse(localStorage.getItem('jerosse_orders')) || [];
-        records.push({ id: Date.now(), date: new Date().toLocaleString(), note: document.getElementById('orderNote').value||"無", profit: totalRev-totalCost-extra, totalRev, totalCost: totalCost+extra, items: orderItems });
+        records.push({ id: Date.now(), date: new Date().toLocaleString(), note: document.getElementById('orderNote').value||"無", profit: totalRev-totalCost-extra, totalRev, totalCost: totalCost+extra, items: orderItems, type: saleType });
         localStorage.setItem('jerosse_orders', JSON.stringify(records));
+        
         cart = {}; document.getElementById('extraCost').value = ''; document.getElementById('orderNote').value = '';
         renderProducts(); updateResults(); showToast();
     }
@@ -282,42 +322,59 @@
     function loadDashboards() {
         let records = JSON.parse(localStorage.getItem('jerosse_orders')) || [];
         const now = new Date();
-        let dRev=0, dCost=0, dProfit=0, mRev=0, mCost=0, mProfit=0, mOrderCount=0, mItems={};
+        
+        let dRev=0, dCost=0, dProfit=0, dRetailRev=0, dTeamRev=0;
+        let mRev=0, mCost=0, mProfit=0, mRetailRev=0, mTeamRev=0, mItems={};
         let dailyHTML = '';
+
         records.forEach(r => {
             let rDate = new Date(r.id);
+            // 今日
             if(rDate.toDateString() === now.toDateString()) {
                 dRev+=r.totalRev; dCost+=r.totalCost; dProfit+=r.profit;
-                dailyHTML += `<div class="record-item"><div style="display:flex;justify-content:space-between"><b>${r.note}</b><small>${r.date.split(' ')[1]}</small></div><div>${r.items.map(i=>i.emoji+i.name+'x'+i.qty).join(', ')}</div><div style="display:flex;justify-content:space-between;margin-top:5px;color:#d32f2f;font-weight:bold">淨利 $${r.profit} <button class="delete-btn" onclick="deleteOrder(${r.id})">刪除</button></div></div>`;
+                if(r.type === 'retail') dRetailRev += r.totalRev; else dTeamRev += r.totalRev;
+                dailyHTML += `<div class="record-item"><div style="display:flex;justify-content:space-between"><b>${r.note} [${r.type==='retail'?'零售':'團隊'}]</b><small>${r.date.split(' ')[1]}</small></div><div>${r.items.map(i=>i.emoji+i.name+'x'+i.qty).join(', ')}</div><div style="display:flex;justify-content:space-between;margin-top:5px;color:#d32f2f;font-weight:bold">淨利 $${r.profit} <button class="delete-btn" onclick="deleteOrder(${r.id})">刪除</button></div></div>`;
             }
+            // 本月
             if(rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear()) {
-                mRev+=r.totalRev; mCost+=r.totalCost; mProfit+=r.profit; mOrderCount++;
+                mRev+=r.totalRev; mCost+=r.totalCost; mProfit+=r.profit;
+                if(r.type === 'retail') mRetailRev += r.totalRev; else mTeamRev += r.totalRev;
                 r.items.forEach(i => mItems[i.name] = (mItems[i.name]||0) + i.qty);
             }
         });
 
-        // 今日數據
+        // 今日 UI
         document.getElementById('dailyProfitTotal').innerText = dProfit.toLocaleString();
         document.getElementById('dailyRevTotal').innerText = dRev.toLocaleString();
         document.getElementById('dailyCostTotal').innerText = dCost.toLocaleString();
+        let drP = dRev > 0 ? (dRetailRev/dRev*100).toFixed(0) : 0;
+        let dtP = dRev > 0 ? (dTeamRev/dRev*100).toFixed(0) : 0;
+        document.getElementById('dailyRetailVal').innerText = `$${dRetailRev.toLocaleString()} (${drP}%)`;
+        document.getElementById('dailyTeamVal').innerText = `$${dTeamRev.toLocaleString()} (${dtP}%)`;
+        document.getElementById('dailyRetailBar').style.width = drP + '%';
+        document.getElementById('dailyTeamBar').style.width = dtP + '%';
         document.getElementById('dailyRecords').innerHTML = dailyHTML || '<div style="padding:20px;text-align:center;color:#999;">今日無紀錄</div>';
 
-        // 月度數據與目標
+        // 月度 UI
         document.getElementById('monthlyProfitTotal').innerText = mProfit.toLocaleString();
         document.getElementById('monthlyRevTotal').innerText = mRev.toLocaleString();
-        document.getElementById('avgOrderValue').innerText = mOrderCount > 0 ? (mRev / mOrderCount).toFixed(0).toLocaleString() : 0;
-        
+        let mrP = mRev > 0 ? (mRetailRev/mRev*100).toFixed(0) : 0;
+        let mtP = mRev > 0 ? (mTeamRev/mRev*100).toFixed(0) : 0;
+        document.getElementById('monthlyRetailVal').innerText = `$${mRetailRev.toLocaleString()} (${mrP}%)`;
+        document.getElementById('monthlyTeamVal').innerText = `$${mTeamRev.toLocaleString()} (${mtP}%)`;
+        document.getElementById('monthlyRetailBar').style.width = mrP + '%';
+        document.getElementById('monthlyTeamBar').style.width = mtP + '%';
+
         let goal = localStorage.getItem('dct_monthly_goal') || 0;
         let goalPercent = goal > 0 ? Math.min((mProfit / goal * 100), 100).toFixed(1) : 0;
         document.getElementById('goalPercent').innerText = goalPercent + '%';
         document.getElementById('goalProgressFill').style.width = goalPercent + '%';
 
-        // 品項佔比分析
         let totalItems = Object.values(mItems).reduce((a,b)=>a+b, 0);
         let itemsHTML = ''; 
         for(let n in mItems) {
             let percent = ((mItems[n] / totalItems) * 100).toFixed(0);
-            itemsHTML += `<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;"><span>${mItems[n].emoji} ${n} x${mItems[n]}</span><span>${percent}%</span></div><div class="progress-bar" style="height:6px; background:#f0f0f0;"><div class="progress-fill" style="width:${percent}%"></div></div></div>`;
+            itemsHTML += `<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:0.8rem;"><span>${n} x${mItems[n]}</span><span>${percent}%</span></div><div class="progress-bar" style="height:6px; background:#f0f0f0;"><div class="progress-fill" style="width:${percent}%"></div></div></div>`;
         }
         document.getElementById('monthlyItemsList').innerHTML = itemsHTML || '無紀錄';
     }
