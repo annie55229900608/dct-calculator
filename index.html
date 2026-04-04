@@ -16,6 +16,7 @@
         * { box-sizing: border-box; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; letter-spacing: 0.5px; }
         body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-dark); padding-bottom: 80px; }
         header { background: var(--level-active); color: white; padding: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; position: sticky; top: 0; z-index: 100; }
+        .quote-box { background: white; padding: 12px 20px; font-size: 0.85rem; color: var(--primary); text-align: center; border-bottom: 1px solid var(--secondary); font-style: italic; min-height: 45px; display: flex; align-items: center; justify-content: center; }
         .nav-tabs { display: flex; background: white; border-bottom: 1px solid #ddd; }
         .nav-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 0.9rem; font-weight: bold; color: #666; cursor: pointer; }
         .nav-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
@@ -35,7 +36,11 @@
         .product-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
         .btn-qty { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--secondary); color: var(--primary); font-weight: bold; font-size: 1.2rem; cursor: pointer; }
         .qty-input { width: 35px; text-align: center; font-weight: bold; font-size: 1rem; }
+        
         .result-card { background: var(--level-active); color: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 10px; }
+        .rev-hero { font-size: 2.5rem; font-weight: 900; margin: 5px 0; }
+        .profit-detail { font-size: 1rem; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 4px 12px; border-radius: 20px; margin-top: 5px; }
+
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .stat-box { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
         .stat-box .label { font-size: 0.75rem; color: #999; margin-bottom: 5px; display: block; }
@@ -44,12 +49,18 @@
         .progress-fill { height: 100%; background: var(--primary); transition: width 0.5s; }
         .item-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-bottom: 1px dotted #eee; }
         .delete-btn { background: #ff4d4f; color: white; border: none; padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
-        .goal-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; text-align: center; font-size: 1rem; color: var(--primary); font-weight: bold; }
+        .goal-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; text-align: center; font-size: 1rem; color: var(--primary); font-weight: bold; margin-bottom: 10px; }
+        
+        .series-container { margin-bottom: 10px; }
+        .series-label { font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; }
+        .series-bar { height: 10px; background: #eee; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
+        .series-fill { height: 100%; transition: width 0.8s ease-in-out; }
     </style>
 </head>
 <body>
 
 <header>💰 DCT Money</header>
+<div class="quote-box" id="dailyQuote">加載中...</div>
 
 <div class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('tab-new', this)">➕ 開單</div>
@@ -73,13 +84,18 @@
         </div>
         <div id="productList"></div>
     </div>
-    <div class="card"><input type="text" id="orderNote" class="goal-input" style="border:1px solid #eee; color:#333; font-weight:normal;" placeholder="客戶備註 (如：IG帳號/姓名)"></div>
-    <div class="result-card">
-        <div style="font-size: 0.9rem; opacity: 0.9;">預計淨利</div>
-        <div id="profitDisplay" style="font-size: 2.2rem; font-weight: bold; margin: 5px 0;">$0</div>
-        <div id="detailDisplay" style="font-size: 0.8rem; opacity: 0.8;">成本 $0 | 售價 $0</div>
+    <div class="card">
+        <div class="card-header">❸ 額外成本與備註</div>
+        <input type="number" id="extraCost" class="goal-input" style="color:#d32f2f;" placeholder="額外成本 (如：運費、手續費、包材)" oninput="updateCalc()">
+        <input type="text" id="orderNote" class="goal-input" style="border:1px solid #eee; color:#333; font-weight:normal;" placeholder="客戶備註 (如：IG帳號/姓名)">
     </div>
-    <button onclick="saveOrder()" style="width:100%; padding:18px; background:var(--level-active); color:white; border:none; border-radius:15px; font-weight:bold; margin-top:15px; font-size:1.1rem;">儲存訂單</button>
+    <div class="result-card">
+        <div style="font-size: 1rem; font-weight: bold; opacity: 0.9;">本次銷售金額 (售價)</div>
+        <div id="revDisplay" class="rev-hero">$0</div>
+        <div id="profitDisplay" class="profit-detail">預估淨利 $0</div>
+        <div id="costDisplay" style="font-size: 0.8rem; opacity: 0.8; margin-top: 10px;">總成本 $0</div>
+    </div>
+    <button onclick="saveOrder()" style="width:100%; padding:18px; background:var(--level-active); color:white; border:none; border-radius:15px; font-weight:bold; margin-top:15px; font-size:1.1rem; box-shadow: 0 4px 15px rgba(209, 85, 152, 0.3);">儲存這筆訂單</button>
 </div>
 
 <div id="tab-daily" class="container">
@@ -94,26 +110,36 @@
 
 <div id="tab-monthly" class="container">
     <div class="card" style="background:var(--secondary); border:none;">
-        <div class="card-header">🎯 本月淨利目標</div>
-        <input type="number" id="mGoalInput" class="goal-input" placeholder="設定目標金額" onchange="updateGoal(this.value)">
+        <div class="card-header">🎯 本月淨利目標達成 %</div>
+        <input type="number" id="mGoalInput" class="goal-input" placeholder="設定目標淨利" onchange="updateGoal(this.value)">
         <div class="progress-container" style="margin-top:10px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:var(--primary);"><span>達成進度</span><span id="mGoalPercent">0%</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold; color:var(--primary);"><span>目前達成</span><span id="mGoalPercent">0%</span></div>
             <div class="progress-bar"><div id="mGoalBar" class="progress-fill" style="width:0%"></div></div>
         </div>
     </div>
     <div class="stat-grid">
         <div class="stat-box"><span class="label">本月營業額</span><div class="value" id="mTotalRev">$0</div></div>
         <div class="stat-box"><span class="label">本月淨利</span><div class="value" id="mTotalProfit">$0</div></div>
-        <div class="stat-box" style="background:#f0f7ff;"><span class="label">上月營業額</span><div class="value" id="lastMRev" style="color:#2196F3;">$0</div></div>
-        <div class="stat-box" style="background:#fdf6ec;"><span class="label">上月淨利</span><div class="value" id="lastMProfit" style="color:#E6A23C;">$0</div></div>
     </div>
+    
     <div class="card">
-        <div class="card-header">📊 業績結構分析</div>
+        <div class="card-header">📊 四大系列銷售比例</div>
+        <div id="seriesChart"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">📈 零售 vs 團隊</div>
         <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;"><span>零售: <b id="mRetailP">0%</b></span><span>團隊: <b id="mTeamP">0%</b></span></div>
         <div class="progress-bar"><div id="mRetailBar" style="height:100%; background:var(--primary); width:0%; float:left;"></div><div id="mTeamBar" style="height:100%; background:#a64478; width:0%; float:left;"></div></div>
     </div>
+
+    <div class="stat-grid">
+        <div class="stat-box" style="background:#f0f7ff;"><span class="label">上個月營業額</span><div class="value" id="lastMRev" style="color:#2196F3;">$0</div></div>
+        <div class="stat-box" style="background:#fdf6ec;"><span class="label">上個月淨利</span><div class="value" id="lastMProfit" style="color:#E6A23C;">$0</div></div>
+    </div>
+
     <div class="card"><div class="card-header">🏆 本月熱銷排行</div><div id="mItemStats"></div></div>
-    <button onclick="clearData()" style="width:100%; padding:10px; background:#f5f5f5; color:#999; border:none; border-radius:10px; font-size:0.8rem;">清空數據紀錄</button>
+    <button onclick="clearData()" style="width:100%; padding:10px; background:#f5f5f5; color:#999; border:none; border-radius:10px; font-size:0.8rem;">清空所有數據紀錄</button>
 </div>
 
 <script>
@@ -133,17 +159,23 @@
         "固樂纖": { cat: "保健", unit: "盒", L2: 920, L3_sup: 1040, L3_ret: 1080, intern: 1260, vip: 1480, discount: 1580, retail: 1680 }
     };
 
+    const quotes = ["每一次成交都是因為妳傳遞了價值。", "溫柔且堅定，讓妳的專業帶領客戶。", "最好的招商力，就是活出妳想要的樣子。", "目標不是用來達成的，是用來超越的。"];
     const levels = [{id:"L2", name:"二級輔導"}, {id:"L3_sup", name:"三級輔導"}, {id:"L3_ret", name:"三級零售"}, {id:"intern", name:"實習零售"}];
     const buyers = [{id:"retail", name:"單盒零售", t:"retail"}, {id:"vip", name:"VIP價", t:"retail"}, {id:"discount", name:"兩盒優惠", t:"retail"}, {id:"intern", name:"實習價", t:"team"}, {id:"L3_ret", name:"三級價", t:"team"}, {id:"L3_sup", name:"三級輔導", t:"team"}];
     let currentSeller = "L2", currentBuyer = "retail", currentCat = "活動", cart = {};
 
-    window.onload = () => { initUI(); loadDashboards(); };
+    window.onload = () => { 
+        document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random()*quotes.length)];
+        initUI(); loadDashboards(); 
+    };
+
     function initUI() {
         document.getElementById('sellerSelector').innerHTML = levels.map(l => `<div class="level-btn ${l.id===currentSeller?'active':''}" onclick="currentSeller='${l.id}';initUI();updateCalc();">${l.name}</div>`).join('');
         document.getElementById('buyerSelector').innerHTML = buyers.map(b => `<div class="buyer-btn ${b.id===currentBuyer?'active':''}" onclick="currentBuyer='${b.id}';initUI();updateCalc();">${b.name}</div>`).join('');
         renderProducts();
         document.getElementById('mGoalInput').value = localStorage.getItem('dct_goal') || 0;
     }
+
     function renderProducts() {
         const div = document.getElementById('productList'); div.innerHTML = '';
         for(let n in products) {
@@ -152,37 +184,45 @@
             div.innerHTML += `<div class="product-item"><span>${n}<br><small>$${products[n][currentSeller]} / ${products[n].unit}</small></span><div style="display:flex;align-items:center;"><button class="btn-qty" onclick="changeQty('${n}',-1)">-</button><div class="qty-input">${qty}</div><button class="btn-qty" onclick="changeQty('${n}',1)">+</button></div></div>`;
         }
     }
+
     function changeQty(n, d) { cart[n] = Math.max(0, (cart[n]||0)+d); renderProducts(); updateCalc(); }
+
     function updateCalc() {
-        let cost=0, rev=0; for(let n in cart) { cost += products[n][currentSeller]*cart[n]; rev += products[n][currentBuyer]*cart[n]; }
-        document.getElementById('profitDisplay').innerText = `$${(rev-cost).toLocaleString()}`;
-        document.getElementById('detailDisplay').innerText = `成本 $${cost.toLocaleString()} | 售價 $${rev.toLocaleString()}`;
+        let cost=0, rev=0, extra = parseInt(document.getElementById('extraCost').value) || 0;
+        for(let n in cart) { cost += products[n][currentSeller]*cart[n]; rev += products[n][currentBuyer]*cart[n]; }
+        document.getElementById('revDisplay').innerText = `$${rev.toLocaleString()}`;
+        document.getElementById('profitDisplay').innerText = `預估淨利 $${(rev-cost-extra).toLocaleString()}`;
+        document.getElementById('costDisplay').innerText = `總成本 $${(cost+extra).toLocaleString()}`;
     }
+
     function saveOrder() {
-        let items = [], cost=0, rev=0;
-        for(let n in cart) { if(cart[n]>0) { items.push({name:n, qty:cart[n], unit:products[n].unit}); cost+=products[n][currentSeller]*cart[n]; rev+=products[n][currentBuyer]*cart[n]; } }
-        if(items.length === 0) return alert("請選擇商品！");
-        const records = JSON.parse(localStorage.getItem('dct_v5_final')) || [];
-        records.push({ id: Date.now(), month: new Date().getMonth(), profit: rev-cost, rev: rev, cost: cost, type: buyers.find(b=>b.id===currentBuyer).t, note: document.getElementById('orderNote').value || "無備註", items: items });
-        localStorage.setItem('dct_v5_final', JSON.stringify(records));
-        cart = {}; document.getElementById('orderNote').value = ''; initUI(); updateCalc(); alert("訂單存入成功！");
+        let items = [], cost=0, rev=0, extra = parseInt(document.getElementById('extraCost').value) || 0;
+        for(let n in cart) { if(cart[n]>0) { items.push({name:n, qty:cart[n], unit:products[n].unit, cat:products[n].cat}); cost+=products[n][currentSeller]*cart[n]; rev+=products[n][currentBuyer]*cart[n]; } }
+        if(items.length === 0) return alert("請先選擇產品數量！");
+        const records = JSON.parse(localStorage.getItem('dct_v7_final_pro')) || [];
+        records.push({ id: Date.now(), month: new Date().getMonth(), profit: rev-cost-extra, rev: rev, cost: cost+extra, type: buyers.find(b=>b.id===currentBuyer).t, note: document.getElementById('orderNote').value || "無備註", items: items });
+        localStorage.setItem('dct_v7_final_pro', JSON.stringify(records));
+        cart = {}; document.getElementById('orderNote').value = ''; document.getElementById('extraCost').value = '';
+        initUI(); updateCalc(); alert("訂單儲存成功！");
     }
+
     function switchTab(id, el) {
         document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         document.getElementById(id).classList.add('active'); el.classList.add('active');
         if(id !== 'tab-new') loadDashboards();
     }
+
     function switchCat(cat, el) { currentCat = cat; document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); renderProducts(); }
     function updateGoal(v) { localStorage.setItem('dct_goal', v); loadDashboards(); }
+
     function loadDashboards() {
-        const records = JSON.parse(localStorage.getItem('dct_v5_final')) || [];
-        const today = new Date().toDateString();
-        const curM = new Date().getMonth();
+        const records = JSON.parse(localStorage.getItem('dct_v7_final_pro')) || [];
+        const today = new Date().toDateString(), curM = new Date().getMonth();
         const lastM = curM === 0 ? 11 : curM - 1;
-        let dP=0, dR=0, dC=0, dI={}, dL='';
-        let mR=0, mP=0, mRR=0, mTR=0, mI={};
-        let lR=0, lP=0;
+        let dP=0, dR=0, dC=0, dI={}, dL='', mR=0, mP=0, mRR=0, mTR=0, mI={}, lR=0, lP=0;
+        let seriesData = {"活動":0, "纖體":0, "美肌":0, "保健":0};
+
         records.forEach(r => {
             const rd = new Date(r.id);
             if(rd.toDateString() === today) {
@@ -193,35 +233,57 @@
             if(rd.getMonth() === curM) {
                 mR += r.rev; mP += r.profit;
                 if(r.type === 'retail') mRR += r.rev; else mTR += r.rev;
-                r.items.forEach(i => mI[i.name] = {q: (mI[i.name]?.q||0) + i.qty, u: i.unit});
+                r.items.forEach(i => {
+                    mI[i.name] = {q: (mI[i.name]?.q||0) + i.qty, u: i.unit};
+                    seriesData[i.cat] += r.rev; 
+                });
             }
             if(rd.getMonth() === lastM) { lR += r.rev; lP += r.profit; }
         });
+
         document.getElementById('dTotalProfit').innerText = `$${dP.toLocaleString()}`;
         document.getElementById('dTotalRev').innerText = `$${dR.toLocaleString()}`;
         document.getElementById('dTotalCost').innerText = `$${dC.toLocaleString()}`;
-        document.getElementById('dOrderList').innerHTML = dL || '尚無訂單';
+        document.getElementById('dOrderList').innerHTML = dL || '今日尚未開單';
         let dIH = ''; for(let n in dI) dIH += `<div class="item-row"><span>${n}</span><b>${dI[n].q} ${dI[n].u}</b></div>`;
         document.getElementById('dItemStats').innerHTML = dIH || '無數據';
+
         document.getElementById('mTotalRev').innerText = `$${mR.toLocaleString()}`;
         document.getElementById('mTotalProfit').innerText = `$${mP.toLocaleString()}`;
         document.getElementById('lastMRev').innerText = `$${lR.toLocaleString()}`;
         document.getElementById('lastMProfit').innerText = `$${lP.toLocaleString()}`;
+        
         let g = localStorage.getItem('dct_goal') || 0, gp = g > 0 ? Math.min(Math.round(mP/g*100), 100) : 0;
         document.getElementById('mGoalPercent').innerText = gp + '%';
         document.getElementById('mGoalBar').style.width = gp + '%';
+
         let mrp = mR > 0 ? Math.round(mRR/mR*100) : 0, mtp = mR > 0 ? Math.round(mTR/mR*100) : 0;
         document.getElementById('mRetailP').innerText = mrp + '%'; document.getElementById('mTeamP').innerText = mtp + '%';
         document.getElementById('mRetailBar').style.width = mrp + '%'; document.getElementById('mTeamBar').style.width = mtp + '%';
-        let mIH = ''; for(let n in mI) mIH += `<div class="item-row"><span>${n}</span><b>${mI[n].q} ${mI[n].u}</b></div>`;
+
+        let mIH = ''; let sorted = Object.entries(mI).sort((a,b) => b[1].q - a[1].q);
+        sorted.forEach(e => mIH += `<div class="item-row"><span>${e[0]}</span><b>${e[1].q} ${e[1].u}</b></div>`);
         document.getElementById('mItemStats').innerHTML = mIH || '無數據';
+
+        let totalS = Object.values(seriesData).reduce((a,b)=>a+b, 0);
+        let sHTML = '';
+        const sColors = {"活動":"#FF80AB", "纖體":"#4FC3F7", "美肌":"#BA68C8", "保健":"#81C784"};
+        for(let s in seriesData) {
+            let p = totalS > 0 ? Math.round(seriesData[s]/totalS*100) : 0;
+            sHTML += `<div class="series-container">
+                        <div class="series-label"><span>${s}</span><span>${p}%</span></div>
+                        <div class="series-bar"><div class="series-fill" style="width:${p}%; background:${sColors[s]}"></div></div>
+                      </div>`;
+        }
+        document.getElementById('seriesChart').innerHTML = sHTML;
     }
+
     function deleteOrder(id) {
-        let rs = JSON.parse(localStorage.getItem('dct_v5_final'));
-        localStorage.setItem('dct_v5_final', JSON.stringify(rs.filter(r=>r.id!==id)));
+        let rs = JSON.parse(localStorage.getItem('dct_v7_final_pro'));
+        localStorage.setItem('dct_v7_final_pro', JSON.stringify(rs.filter(r=>r.id!==id)));
         loadDashboards();
     }
-    function clearData() { if(confirm("確定清空？")) {localStorage.removeItem('dct_v5_final'); loadDashboards();} }
+    function clearData() { if(confirm("確定歸零所有數據？")) {localStorage.removeItem('dct_v7_final_pro'); loadDashboards();} }
 </script>
 </body>
 </html>
