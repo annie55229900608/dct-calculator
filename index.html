@@ -8,59 +8,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --rose: #C8748A;
-            --rose-light: #F2D9E0;
-            --rose-pale: #FAF2F4;
-            --rose-deep: #A05068;
-            --beige: #F7F3EE;
-            --beige-dark: #EDE7DE;
-            --cream: #FDFAF7;
-            --text-main: #2C2226;
-            --text-sub: #7A6872;
-            --text-muted: #B09EA8;
-            --border: #E8DDE3;
-            --white: #FFFFFF;
-            --c1: #5BC8C0; /* 零售 */
-            --c2: #3B6EDE; /* 團隊 */
-            --c3: #9B82D4; /* 返利 */
-            --shadow-sm: 0 1px 8px rgba(140,80,105,0.06);
+            --rose: #C8748A; --rose-light: #F2D9E0; --rose-pale: #FAF2F4; --rose-deep: #A05068;
+            --beige: #F7F3EE; --beige-dark: #EDE7DE; --text-main: #2C2226; --text-sub: #7A6872;
+            --text-muted: #B09EA8; --border: #E8DDE3; --white: #FFFFFF;
+            --c1: #5BC8C0; --c2: #3B6EDE; --shadow-sm: 0 1px 8px rgba(140,80,105,0.06);
         }
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Noto Sans TC',"PingFang TC",sans-serif;background:var(--beige);color:var(--text-main);padding-bottom:80px;letter-spacing:.3px;}
-
         header{background:var(--white);padding:18px 20px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;text-align:center;}
         .header-inner{display:flex;align-items:center;justify-content:center;gap:10px;}
         .header-dot{width:8px;height:8px;border-radius:50%;background:var(--rose);}
         .header-title{font-size:1.7rem;font-weight:600;color:var(--text-main);letter-spacing:3px;}
         .header-profile{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:.72rem;color:var(--text-sub);text-align:right;line-height:1.4;}
-
         .quote-bar{background:var(--rose-pale);padding:9px 20px;font-size:.76rem;color:var(--rose-deep);text-align:center;letter-spacing:.8px;font-style:italic;border-bottom:1px solid var(--rose-light);min-height:36px;display:flex;align-items:center;justify-content:center;}
-
         .nav-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:55px;z-index:199;overflow-x:auto;}
         .nav-tabs::-webkit-scrollbar{display:none;}
         .nav-tab{flex:0 0 auto;padding:11px 14px;font-size:.75rem;font-weight:500;color:var(--text-muted);cursor:pointer;letter-spacing:.5px;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
         .nav-tab.active{color:var(--rose);border-bottom-color:var(--rose);}
-
-        .container{padding:14px;display:none;}
-        .container.active{display:block;}
-
+        .container{padding:14px;display:none;} .container.active{display:block;}
         .card{background:var(--white);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow-sm);}
         .card-header{font-size:.78rem;font-weight:600;color:var(--text-sub);margin-bottom:12px;text-transform:uppercase;letter-spacing:1.2px;display:flex;align-items:center;gap:6px;}
         .card-header::before{content:'';display:inline-block;width:3px;height:12px;background:var(--rose);border-radius:2px;}
-
         .level-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
         .level-btn{background:var(--beige);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;font-size:.78rem;font-weight:500;color:var(--text-sub);cursor:pointer;transition:all .18s;}
         .level-btn.active{background:var(--rose);color:var(--white);border-color:var(--rose);box-shadow:0 3px 12px rgba(200,116,138,.3);}
-
         .buyer-btn-group{display:flex;flex-wrap:wrap;gap:7px;}
         .buyer-btn{background:var(--beige);border:1px solid var(--border);border-radius:20px;padding:7px 13px;font-size:.74rem;font-weight:500;color:var(--text-sub);cursor:pointer;transition:all .18s;}
         .buyer-btn.active{background:var(--rose-light);color:var(--rose-deep);border-color:var(--rose);}
-
         .category-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;}
         .category-tabs::-webkit-scrollbar{display:none;}
         .cat-tab{font-size:.74rem;padding:6px 14px;border-radius:20px;background:var(--beige);border:1px solid var(--border);white-space:nowrap;cursor:pointer;color:var(--text-sub);font-weight:500;transition:all .18s;}
         .cat-tab.active{background:var(--rose);color:var(--white);border-color:var(--rose);}
-
         .product-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--beige-dark);}
         .product-item:last-child{border-bottom:none;}
         .product-name{font-size:.86rem;font-weight:500;color:var(--text-main);}
@@ -68,98 +46,72 @@
         .btn-qty{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--beige);color:var(--rose);font-weight:600;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
         .btn-qty:active{background:var(--rose);color:white;transform:scale(.92);}
         .qty-input{width:26px;text-align:center;font-weight:600;font-size:.9rem;color:var(--text-main);border:none;background:transparent;outline:none;}
-
         .result-card{background:var(--rose);color:white;padding:20px;border-radius:18px;text-align:center;margin-top:12px;position:relative;overflow:hidden;}
         .result-card::before{content:'';position:absolute;top:-30px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.07);}
         .result-label{font-size:.74rem;opacity:.85;letter-spacing:1px;text-transform:uppercase;}
         .rev-hero{font-size:2.5rem;font-weight:600;margin:5px 0 7px;letter-spacing:-1px;}
         .profit-pill{display:inline-block;background:rgba(255,255,255,.2);padding:5px 15px;border-radius:20px;font-size:.83rem;font-weight:500;}
         .cost-note{font-size:.73rem;opacity:.7;margin-top:9px;}
-
         .save-btn{width:100%;padding:16px;background:var(--text-main);color:white;border:none;border-radius:14px;font-weight:500;font-size:.93rem;margin-top:12px;letter-spacing:.8px;cursor:pointer;transition:all .2s;font-family:inherit;}
         .save-btn:active{background:var(--rose-deep);transform:scale(.99);}
-
         .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
         .stat-box{background:var(--white);padding:14px;border-radius:14px;text-align:center;border:1px solid var(--border);}
         .stat-label{font-size:.68rem;color:var(--text-muted);margin-bottom:5px;display:block;letter-spacing:.8px;text-transform:uppercase;}
         .stat-value{font-size:1.1rem;font-weight:600;color:var(--rose);}
         .stat-hero{font-size:2rem;font-weight:600;color:var(--rose);}
         .stat-hero-box{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;margin-bottom:10px;}
-
         .progress-bar{height:6px;background:var(--beige-dark);border-radius:3px;overflow:hidden;margin-top:8px;}
         .progress-fill{height:100%;background:var(--rose);border-radius:3px;transition:width .6s ease;}
-
         .item-row{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;padding:9px 0;border-bottom:1px solid var(--beige-dark);color:var(--text-main);}
         .item-row:last-child{border-bottom:none;}
         .item-row b{color:var(--rose);font-weight:600;}
         .action-btn{background:transparent;color:var(--text-muted);border:1px solid var(--border);padding:4px 9px;border-radius:6px;font-size:.69rem;cursor:pointer;transition:all .15s;font-family:inherit;}
         .action-btn.edit{color:var(--rose);border-color:var(--rose-light);}
-        .action-btn:active{background:#fee;color:#c33;border-color:#c33;}
-
         .input-group{margin-bottom:13px;}
         .input-label{font-size:.73rem;font-weight:600;color:var(--text-sub);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.8px;}
         .custom-input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;font-size:.88rem;outline:none;background:var(--beige);color:var(--text-main);font-family:inherit;transition:border-color .2s;}
         .custom-input:focus{border-color:var(--rose);background:var(--white);}
         .cost-input{color:var(--rose-deep);border-left:3px solid var(--rose);}
-
         .goal-card{background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:16px;padding:16px;margin-bottom:12px;}
-        .clear-btn{width:100%;padding:11px;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:10px;font-size:.77rem;cursor:pointer;font-family:inherit;letter-spacing:.5px;margin-top:6px;}
-
         .series-container{margin-bottom:10px;}
         .series-label{font-size:.77rem;display:flex;justify-content:space-between;margin-bottom:5px;color:var(--text-sub);font-weight:500;}
         .series-bar{height:6px;background:var(--beige-dark);border-radius:3px;overflow:hidden;}
         .series-fill{height:100%;border-radius:3px;transition:width .8s ease;}
-
         .dual-bar{height:6px;background:var(--beige-dark);border-radius:3px;overflow:hidden;display:flex;}
-        .dual-bar-r{height:100%;background:var(--rose);}
-        .dual-bar-t{height:100%;background:var(--rose-deep);}
+        .dual-bar-r{height:100%;background:var(--rose);} .dual-bar-t{height:100%;background:var(--rose-deep);}
         .dual-label{display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:6px;color:var(--text-sub);}
         .dual-label b{color:var(--rose);}
-
         .last-month-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
         .blue-box{background:#F0F6FF;border:1px solid #D5E5FF;border-radius:14px;padding:13px;text-align:center;}
         .blue-box .stat-label{color:#7A9AC0;} .blue-box .stat-value{color:#3A78C9;}
         .amber-box{background:#FEF8EE;border:1px solid #FAE5B8;border-radius:14px;padding:13px;text-align:center;grid-column:span 2;}
         .amber-box .stat-label{color:#B08840;} .amber-box .stat-value{color:#D4960A;font-size:1.3rem;}
         .section-label{font-size:.71rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin:16px 0 8px;font-weight:600;padding-left:2px;}
-
-        /* History tab */
-        .month-picker{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;}
-        .month-picker::-webkit-scrollbar{display:none;}
-        .month-chip{flex:0 0 auto;padding:7px 16px;border-radius:20px;background:var(--beige);border:1px solid var(--border);font-size:.75rem;font-weight:500;color:var(--text-sub);cursor:pointer;transition:all .18s;white-space:nowrap;}
-        .month-chip.active{background:var(--rose);color:var(--white);border-color:var(--rose);}
-
+        /* Month select */
+        .month-select-wrap{position:relative;margin-bottom:14px;}
+        .month-select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--rose);font-size:.9rem;pointer-events:none;}
+        .month-select{width:100%;padding:13px 36px 13px 14px;border:1.5px solid var(--rose-light);border-radius:12px;font-size:.92rem;font-weight:500;color:var(--text-main);background:var(--white);font-family:inherit;appearance:none;-webkit-appearance:none;outline:none;cursor:pointer;}
+        .month-select:focus{border-color:var(--rose);}
+        /* Order cards */
         .order-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
         .order-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-        .order-date{font-size:.72rem;color:var(--text-muted);}
         .order-note{font-size:.9rem;font-weight:500;color:var(--text-main);}
         .order-profit{font-size:.95rem;font-weight:600;color:var(--rose);}
         .order-items{font-size:.75rem;color:var(--text-sub);margin-top:6px;}
         .order-actions{display:flex;gap:6px;margin-top:10px;}
-
-        /* Rebate input */
-        .rebate-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--beige-dark);}
-        .rebate-row:last-child{border-bottom:none;}
-        .rebate-label{flex:1;font-size:.85rem;color:var(--text-main);}
-        .rebate-input{width:110px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;text-align:right;outline:none;background:var(--beige);font-family:inherit;}
-        .rebate-input:focus{border-color:var(--rose);background:var(--white);}
-
+        .date-badge{display:inline-block;background:var(--rose-pale);color:var(--rose-deep);font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500;margin-left:5px;border:1px solid var(--rose-light);}
         /* Chart */
         .chart-wrap{overflow-x:auto;padding-bottom:8px;}
         .chart-wrap::-webkit-scrollbar{height:4px;}
-        .chart-wrap::-webkit-scrollbar-track{background:var(--beige-dark);border-radius:2px;}
         .chart-wrap::-webkit-scrollbar-thumb{background:var(--rose-light);border-radius:2px;}
-
         .chart-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
         .legend-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text-sub);}
         .legend-dot{width:10px;height:10px;border-radius:2px;}
-
         /* Settings */
         .profile-banner{background:linear-gradient(135deg,var(--rose),var(--rose-deep));border-radius:18px;padding:22px 20px;color:white;margin-bottom:14px;text-align:center;}
         .profile-name{font-size:1.5rem;font-weight:600;letter-spacing:1px;margin-bottom:4px;}
         .profile-sub{font-size:.8rem;opacity:.85;letter-spacing:.5px;}
-
-        /* Modal overlay */
+        /* Modal */
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:flex-end;}
         .modal-overlay.open{display:flex;}
         .modal-sheet{background:var(--white);border-radius:22px 22px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:20px 16px 40px;animation:slideUp .28s ease;}
@@ -173,18 +125,12 @@
     </style>
 </head>
 <body>
-
-<header style="position:sticky;top:0;z-index:200;">
-    <div class="header-inner">
-        <div class="header-dot"></div>
-        <span class="header-title">DCT Money</span>
-        <div class="header-dot"></div>
-    </div>
+<header>
+    <div class="header-inner"><div class="header-dot"></div><span class="header-title">DCT Money</span><div class="header-dot"></div></div>
     <div class="header-profile" id="headerProfile"></div>
 </header>
 <div class="quote-bar" id="dailyQuote">載入中…</div>
-
-<div class="nav-tabs" id="navTabs">
+<div class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('tab-new',this)">開單</div>
     <div class="nav-tab" onclick="switchTab('tab-daily',this)">今日</div>
     <div class="nav-tab" onclick="switchTab('tab-history',this)">歷史</div>
@@ -193,16 +139,10 @@
     <div class="nav-tab" onclick="switchTab('tab-settings',this)">設定</div>
 </div>
 
-<!-- ====== 開單 ====== -->
+<!-- 開單 -->
 <div id="tab-new" class="container active">
-    <div class="card">
-        <div class="card-header">我的等級</div>
-        <div class="level-grid" id="sellerSelector"></div>
-    </div>
-    <div class="card">
-        <div class="card-header">銷售對象</div>
-        <div class="buyer-btn-group" id="buyerSelector"></div>
-    </div>
+    <div class="card"><div class="card-header">我的等級</div><div class="level-grid" id="sellerSelector"></div></div>
+    <div class="card"><div class="card-header">銷售對象</div><div class="buyer-btn-group" id="buyerSelector"></div></div>
     <div class="card">
         <div class="card-header">選擇產品</div>
         <div class="category-tabs">
@@ -214,7 +154,11 @@
         <div id="productList"></div>
     </div>
     <div class="card">
-        <div class="card-header">費用與備註</div>
+        <div class="card-header">日期、費用與備註</div>
+        <div class="input-group">
+            <span class="input-label">訂單日期（可補登過去日期）</span>
+            <input type="datetime-local" id="orderDate" class="custom-input" style="color:var(--rose-deep);">
+        </div>
         <div class="input-group">
             <span class="input-label">額外成本（運費 / 手續費）</span>
             <input type="number" id="extraCost" class="custom-input cost-input" placeholder="請輸入金額" oninput="updateCalc()">
@@ -233,12 +177,9 @@
     <button class="save-btn" onclick="saveOrder()">儲存這筆訂單</button>
 </div>
 
-<!-- ====== 今日 ====== -->
+<!-- 今日 -->
 <div id="tab-daily" class="container">
-    <div class="stat-hero-box">
-        <span class="stat-label">今日總淨利</span>
-        <div id="dTotalProfit" class="stat-hero">$0</div>
-    </div>
+    <div class="stat-hero-box"><span class="stat-label">今日總淨利</span><div id="dTotalProfit" class="stat-hero">$0</div></div>
     <div class="stat-grid">
         <div class="stat-box"><span class="stat-label">今日營業額</span><div id="dTotalRev" class="stat-value">$0</div></div>
         <div class="stat-box"><span class="stat-label">今日總成本</span><div id="dTotalCost" class="stat-value" style="color:var(--text-sub)">$0</div></div>
@@ -247,49 +188,38 @@
     <div class="card"><div class="card-header">今日訂單</div><div id="dOrderList"></div></div>
 </div>
 
-<!-- ====== 歷史 ====== -->
+<!-- 歷史 -->
 <div id="tab-history" class="container">
     <div class="card">
         <div class="card-header">選擇月份</div>
-        <div class="month-picker" id="monthPicker"></div>
+        <div class="month-select-wrap">
+            <select class="month-select" id="monthSelect" onchange="onMonthChange()">
+                <option value="">— 請選擇月份 —</option>
+            </select>
+        </div>
     </div>
     <div id="historyContent"></div>
-    <!-- Rebate section -->
-    <div class="card" id="rebateCard" style="display:none;">
-        <div class="card-header">本月返利輸入</div>
-        <div class="rebate-row">
-            <span class="rebate-label">第三口袋 返利金額</span>
-            <input type="number" class="rebate-input" id="rebateInput" placeholder="0" oninput="saveRebate()">
-        </div>
-        <div style="font-size:.72rem;color:var(--text-muted);margin-top:8px;">輸入後自動存檔，圖表即時更新</div>
-    </div>
 </div>
 
-<!-- ====== 圖表 ====== -->
+<!-- 圖表 -->
 <div id="tab-chart" class="container">
     <div class="card">
-        <div class="card-header">業績三口袋條狀圖</div>
+        <div class="card-header">業績兩口袋條狀圖</div>
         <div class="chart-legend">
             <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>第一口袋 零售</div>
             <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>第二口袋 團隊</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--c3)"></div>第三口袋 返利</div>
         </div>
         <div class="chart-wrap" id="chartWrap"></div>
     </div>
-    <div class="card">
-        <div class="card-header">各月詳細數字</div>
-        <div id="chartTable"></div>
-    </div>
+    <div class="card"><div class="card-header">各月詳細數字</div><div id="chartTable"></div></div>
 </div>
 
-<!-- ====== 月報 ====== -->
+<!-- 月報 -->
 <div id="tab-monthly" class="container">
     <div class="goal-card">
         <div class="card-header">本月目標達成率</div>
         <input type="number" id="mGoalInput" class="custom-input" style="text-align:center;background:white;" placeholder="設定目標淨利" onchange="updateGoal(this.value)">
-        <div style="display:flex;justify-content:space-between;font-size:.74rem;color:var(--rose-deep);margin-top:10px;margin-bottom:4px;">
-            <span>達成進度</span><span id="mGoalPercent" style="font-weight:600;">0%</span>
-        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.74rem;color:var(--rose-deep);margin-top:10px;margin-bottom:4px;"><span>達成進度</span><span id="mGoalPercent" style="font-weight:600;">0%</span></div>
         <div class="progress-bar"><div id="mGoalBar" class="progress-fill" style="width:0%"></div></div>
     </div>
     <div class="stat-grid" style="grid-template-columns:1fr 1fr 1fr;">
@@ -310,50 +240,27 @@
         <div class="dual-bar"><div id="mRetailBar" class="dual-bar-r" style="width:0%"></div><div id="mTeamBar" class="dual-bar-t" style="width:0%"></div></div>
     </div>
     <div class="card"><div class="card-header">本月熱銷排行</div><div id="mItemStats"></div></div>
-    <button class="clear-btn" onclick="clearData()">清空所有數據紀錄</button>
 </div>
 
-<!-- ====== 設定 ====== -->
+<!-- 設定 -->
 <div id="tab-settings" class="container">
-    <div class="profile-banner" id="profileBanner">
-        <div class="profile-name" id="profileNameDisplay">—</div>
-        <div class="profile-sub" id="profileSubDisplay">尚未設定</div>
-    </div>
+    <div class="profile-banner"><div class="profile-name" id="profileNameDisplay">—</div><div class="profile-sub" id="profileSubDisplay">尚未設定</div></div>
     <div class="card">
         <div class="card-header">個人資料</div>
-        <div class="input-group">
-            <span class="input-label">姓名 / 暱稱</span>
-            <input type="text" id="settingName" class="custom-input" placeholder="輸入你的名字" oninput="saveProfile()">
-        </div>
-        <div class="input-group">
-            <span class="input-label">等級</span>
+        <div class="input-group"><span class="input-label">姓名 / 暱稱</span><input type="text" id="settingName" class="custom-input" placeholder="輸入你的名字" oninput="saveProfile()"></div>
+        <div class="input-group"><span class="input-label">等級</span>
             <select id="settingLevel" class="custom-input" onchange="saveProfile()">
                 <option value="">請選擇</option>
-                <option value="實習">實習</option>
-                <option value="三級零售">三級零售</option>
-                <option value="三級輔導">三級輔導</option>
-                <option value="二級輔導">二級輔導</option>
-                <option value="一級輔導">一級輔導</option>
-                <option value="執行">執行</option>
-                <option value="銀牌執行">銀牌執行</option>
-                <option value="金牌執行">金牌執行</option>
+                <option value="實習">實習</option><option value="三級零售">三級零售</option><option value="三級輔導">三級輔導</option>
+                <option value="二級輔導">二級輔導</option><option value="一級輔導">一級輔導</option><option value="執行">執行</option>
+                <option value="銀牌執行">銀牌執行</option><option value="金牌執行">金牌執行</option>
             </select>
         </div>
-        <div class="input-group" style="margin-bottom:0">
-            <span class="input-label">上家 / 推薦人</span>
-            <input type="text" id="settingUpline" class="custom-input" placeholder="輸入上家姓名" oninput="saveProfile()">
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">資料管理</div>
-        <div style="font-size:.82rem;color:var(--text-sub);margin-bottom:14px;line-height:1.6;">
-            訂單資料儲存於此裝置的本機儲存空間（localStorage）。清空後無法復原，請謹慎操作。
-        </div>
-        <button class="clear-btn" onclick="clearData()">清空所有訂單數據</button>
+        <div class="input-group" style="margin-bottom:0"><span class="input-label">上家 / 推薦人</span><input type="text" id="settingUpline" class="custom-input" placeholder="輸入上家姓名" oninput="saveProfile()"></div>
     </div>
 </div>
 
-<!-- ====== Edit Modal ====== -->
+<!-- Edit Modal -->
 <div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
     <div class="modal-sheet">
         <div class="modal-handle"></div>
@@ -363,213 +270,152 @@
 </div>
 
 <script>
-// ===== DATA =====
-const products = {
-    "益生菌 買三送一":       {cat:"活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
-    "葉黃素凍 買三送一":     {cat:"活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
-    "纖纖飲X":               {cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
-    "纖飄錠":                {cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
-    "雪花紫纖飲":            {cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
-    "爆纖錠":                {cat:"纖體",unit:"盒",L2:520,L3_sup:560,L3_ret:580,intern:660,vip:740,discount:800,retail:880},
-    "植萃纖酵素":            {cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
-    "肽纖飲（可可風味）":    {cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
-    "肽纖飲（奶茶風味）":    {cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
-    "水光錠":                {cat:"美肌",unit:"盒",L2:920,L3_sup:1040,L3_ret:1080,intern:1260,vip:1480,discount:1580,retail:1680},
-    "水光面膜（精裝盒5片）": {cat:"美肌",unit:"盒",L2:450,L3_sup:485,L3_ret:500,intern:550,vip:600,discount:650,retail:700},
-    "水光面膜（單片）":      {cat:"美肌",unit:"片",L2:90,L3_sup:97,L3_ret:100,intern:110,vip:150,discount:150,retail:150},
-    "雪聚露":                {cat:"美肌",unit:"盒",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
-    "婕肌零":                {cat:"美肌",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
-    "玻尿酸":                {cat:"美肌",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
-    "急救小白瓶":            {cat:"美肌",unit:"盒",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
-    "護手霜":                {cat:"美肌",unit:"盒",L2:410,L3_sup:440,L3_ret:455,intern:530,vip:600,discount:630,retail:680},
-    "高機能益生菌":          {cat:"保健",unit:"盒",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
-    "葉黃素晶亮凍":          {cat:"保健",unit:"盒",L2:410,L3_sup:440,L3_ret:455,intern:530,vip:600,discount:630,retail:680},
-    "固樂纖":                {cat:"保健",unit:"盒",L2:920,L3_sup:1040,L3_ret:1080,intern:1260,vip:1480,discount:1580,retail:1680},
-    "爆纖錠體驗包":          {cat:"纖體",unit:"包",L2:146,L3_sup:158,L3_ret:164,intern:190,vip:240,discount:240,retail:240},
-    "植萃纖酵宿體驗包":      {cat:"纖體",unit:"包",L2:103,L3_sup:113,L3_ret:117,intern:145,vip:190,discount:190,retail:190},
-    "9國英雄TURBO極速錠":    {cat:"保健",unit:"盒",L2:410,L3_sup:440,L3_ret:455,intern:530,vip:600,discount:630,retail:680},
-    "療肺草正冠茶":          {cat:"保健",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
-    "葉黃素EX飲":            {cat:"保健",unit:"盒",L2:640,L3_sup:695,L3_ret:720,intern:840,vip:900,discount:990,retail:1080},
-    "法樂蓬洗髮露":          {cat:"美肌",unit:"瓶",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
-    "法樂蓬養髮原液":        {cat:"美肌",unit:"瓶",L2:640,L3_sup:695,L3_ret:720,intern:840,vip:900,discount:990,retail:1080},
-    "法樂蓬洗髮露體驗包":    {cat:"美肌",unit:"包",L2:17,L3_sup:20,L3_ret:21,intern:24,vip:30,discount:30,retail:30},
-    "婕肌零體驗包":          {cat:"美肌",unit:"包",L2:20,L3_sup:24,L3_ret:25,intern:30,vip:40,discount:40,retail:40}
+const products={
+    "益生菌 買三送一":{cat:"活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
+    "葉黃素凍 買三送一":{cat:"活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
+    "纖纖飲X":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
+    "纖飄錠":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
+    "雪花紫纖飲":{cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
+    "爆纖錠":{cat:"纖體",unit:"盒",L2:520,L3_sup:560,L3_ret:580,intern:660,vip:740,discount:800,retail:880},
+    "植萃纖酵素":{cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
+    "肽纖飲（可可風味）":{cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
+    "肽纖飲（奶茶風味）":{cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
+    "水光錠":{cat:"美肌",unit:"盒",L2:920,L3_sup:1040,L3_ret:1080,intern:1260,vip:1480,discount:1580,retail:1680},
+    "水光面膜（精裝盒5片）":{cat:"美肌",unit:"盒",L2:450,L3_sup:485,L3_ret:500,intern:550,vip:600,discount:650,retail:700},
+    "水光面膜（單片）":{cat:"美肌",unit:"片",L2:90,L3_sup:97,L3_ret:100,intern:110,vip:150,discount:150,retail:150},
+    "雪聚露":{cat:"美肌",unit:"盒",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
+    "婕肌零":{cat:"美肌",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
+    "玻尿酸":{cat:"美肌",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
+    "急救小白瓶":{cat:"美肌",unit:"盒",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
+    "護手霜":{cat:"美肌",unit:"盒",L2:410,L3_sup:440,L3_ret:455,intern:530,vip:600,discount:630,retail:680},
+    "高機能益生菌":{cat:"保健",unit:"盒",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
+    "葉黃素晶亮凍":{cat:"保健",unit:"盒",L2:410,L3_sup:440,L3_ret:455,intern:530,vip:600,discount:630,retail:680},
+    "固樂纖":{cat:"保健",unit:"盒",L2:920,L3_sup:1040,L3_ret:1080,intern:1260,vip:1480,discount:1580,retail:1680},
+    "爆纖錠體驗包":{cat:"纖體",unit:"包",L2:146,L3_sup:158,L3_ret:164,intern:190,vip:240,discount:240,retail:240},
+    "植萃纖酵宿體驗包":{cat:"纖體",unit:"包",L2:103,L3_sup:113,L3_ret:117,intern:145,vip:190,discount:190,retail:190},
+    "9國英雄TURBO極速錠":{cat:"保健",unit:"盒",L2:410,L3_sup:440,L3_ret:455,intern:530,vip:600,discount:630,retail:680},
+    "療肺草正冠茶":{cat:"保健",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
+    "葉黃素EX飲":{cat:"保健",unit:"盒",L2:640,L3_sup:695,L3_ret:720,intern:840,vip:900,discount:990,retail:1080},
+    "法樂蓬洗髮露":{cat:"美肌",unit:"瓶",L2:770,L3_sup:830,L3_ret:860,intern:990,vip:1100,discount:1180,retail:1280},
+    "法樂蓬養髮原液":{cat:"美肌",unit:"瓶",L2:640,L3_sup:695,L3_ret:720,intern:840,vip:900,discount:990,retail:1080},
+    "法樂蓬洗髮露體驗包":{cat:"美肌",unit:"包",L2:17,L3_sup:20,L3_ret:21,intern:24,vip:30,discount:30,retail:30},
+    "婕肌零體驗包":{cat:"美肌",unit:"包",L2:20,L3_sup:24,L3_ret:25,intern:30,vip:40,discount:40,retail:40}
 };
+const quotes=["每一次成交都是因為妳傳遞了價值。","溫柔且堅定，讓妳的專業帶領客戶。","最好的招商力，就是活出妳想要的樣子。","目標不是用來達成的，是用來超越的。","真正的領袖，是把身邊的人都帶向更好的地方。","今天的每一步，都是明天格局的地基。","妳的自律，就是妳最強的名片。","不是等到準備好了才開始，是開始了才會準備好。","每一個相信妳的客人，都值得妳最真誠的回應。","成功從來不是偶然，是每一天選擇累積的結果。","妳的能量，決定妳吸引到的人。","把服務做到讓客人捨不得離開。","學會感謝每一個說不的人，他們讓妳更精準。","今日的業績，是昨日種下的信任。","妳不是在賣產品，妳是在傳遞一種生活方式。","讓自己發光，就是最好的行銷。","堅持，是把普通人和成功者分開的那條線。","每一通訊息背後，都可能是一個改變的開始。","妳的故事，就是妳最有說服力的案例。","不用完美，但要真實。","把每一位客人當成朋友，生意就會長久。","成長的速度，取決於妳願意學習的深度。","妳的熱情是會感染人的，請大方展現它。","相信自己，是所有行動最重要的前提。","今天比昨天多努力一點，就是進步。","妳的限制，往往只存在於妳的想法裡。","用心服務一個人，她會幫妳介紹十個人。","記錄每一筆成交，讓數字告訴妳妳有多厲害。","做生意最重要的資產，是關係。","不要害怕被拒絕，每一個不是都讓妳離對的人更近。","妳選擇的事業，值得妳全力以赴。","把困難看成課題，把挫折看成養分。","每天早晨，都是重新出發的機會。","細節決定信任，信任創造業績。","讓妳的專業成為客人最安心的依靠。","今天種下的善意，明天會開成花。","妳的堅持，終將被看見。","成功不是終點，是一種持續的狀態。","妳有多愛這份事業，客人就有多感受得到。","信念有多強，舞台就有多大。"];
+const levels=[{id:"L2",name:"二級輔導"},{id:"L3_sup",name:"三級輔導"},{id:"L3_ret",name:"三級零售"},{id:"intern",name:"實習零售"}];
+const buyers=[
+    {id:"retail",name:"單盒零售",t:"retail"},{id:"vip",name:"VIP 價",t:"retail"},{id:"discount",name:"兩盒優惠",t:"retail"},
+    {id:"intern",name:"實習價",t:"team"},{id:"L3_ret",name:"三級價",t:"team"},{id:"L3_sup",name:"三級輔導",t:"team"}
+];
+let currentSeller="L2",currentBuyer="retail",currentCat="活動",cart={};
+let editingOrderId=null,editCart={},selectedHistoryKey=null;
 
-const quotes = ["每一次成交都是因為妳傳遞了價值。","溫柔且堅定，讓妳的專業帶領客戶。","最好的招商力，就是活出妳想要的樣子。","目標不是用來達成的，是用來超越的。","真正的領袖，是把身邊的人都帶向更好的地方。","今天的每一步，都是明天格局的地基。","妳的自律，就是妳最強的名片。","不是等到準備好了才開始，是開始了才會準備好。","每一個相信妳的客人，都值得妳最真誠的回應。","成功從來不是偶然，是每一天選擇累積的結果。","妳的能量，決定妳吸引到的人。","把服務做到讓客人捨不得離開。","學會感謝每一個說不的人，他們讓妳更精準。","今日的業績，是昨日種下的信任。","妳不是在賣產品，妳是在傳遞一種生活方式。","讓自己發光，就是最好的行銷。","堅持，是把普通人和成功者分開的那條線。","每一通訊息背後，都可能是一個改變的開始。","妳的故事，就是妳最有說服力的案例。","不用完美，但要真實。真實的力量遠大於完美。","把每一位客人當成朋友，生意就會長久。","成長的速度，取決於妳願意學習的深度。","妳的熱情是會感染人的，請大方展現它。","相信自己，是所有行動最重要的前提。","今天比昨天多努力一點，就是進步。","妳的限制，往往只存在於妳的想法裡。","用心服務一個人，她會幫妳介紹十個人。","記錄每一筆成交，讓數字告訴妳妳有多厲害。","做生意最重要的資產，是關係。","不要害怕被拒絕，每一個不是都讓妳離對的人更近。","妳選擇的事業，值得妳全力以赴。","把困難看成課題，把挫折看成養分。","每天早晨，都是重新出發的機會。","細節決定信任，信任創造業績。","讓妳的專業成為客人最安心的依靠。","今天種下的善意，明天會開成花。","妳的堅持，終將被看見。","成功不是終點，是一種持續的狀態。","妳有多愛這份事業，客人就有多感受得到。","信念有多強，舞台就有多大。"];
+function getOrders(){return JSON.parse(localStorage.getItem('dct_v9_ultimate'))||[];}
+function saveOrders(rs){localStorage.setItem('dct_v9_ultimate',JSON.stringify(rs));}
+function getProfile(){return JSON.parse(localStorage.getItem('dct_profile'))||{};}
+function saveProfileData(p){localStorage.setItem('dct_profile',JSON.stringify(p));}
+function getOrderDate(r){return r.orderDate?new Date(r.orderDate):new Date(r.id);}
+function toLocalISO(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
 
-const levels = [{id:"L2",name:"二級輔導"},{id:"L3_sup",name:"三級輔導"},{id:"L3_ret",name:"三級零售"},{id:"intern",name:"實習零售"}];
-const buyers = [{id:"retail",name:"單盒零售",t:"retail"},{id:"vip",name:"VIP 價",t:"retail"},{id:"discount",name:"兩盒優惠",t:"retail"},{id:"intern",name:"實習價",t:"team"},{id:"L3_ret",name:"三級價",t:"team"},{id:"L3_sup",name:"三級輔導",t:"team"}];
-
-let currentSeller="L2", currentBuyer="retail", currentCat="活動", cart={};
-let editingOrderId=null, editCart={};
-
-// ===== STORAGE HELPERS =====
-function getOrders(){ return JSON.parse(localStorage.getItem('dct_v9_ultimate'))||[]; }
-function saveOrders(rs){ localStorage.setItem('dct_v9_ultimate',JSON.stringify(rs)); }
-function getRebates(){ return JSON.parse(localStorage.getItem('dct_rebates'))||{}; }
-function saveRebates(r){ localStorage.setItem('dct_rebates',JSON.stringify(r)); }
-function getProfile(){ return JSON.parse(localStorage.getItem('dct_profile'))||{}; }
-function saveProfileData(p){ localStorage.setItem('dct_profile',JSON.stringify(p)); }
-
-// ===== INIT =====
-window.onload = () => {
-    const lastQ = parseInt(localStorage.getItem('dct_last_quote')??'-1');
-    let idx; do { idx=Math.floor(Math.random()*quotes.length); } while(idx===lastQ && quotes.length>1);
+window.onload=()=>{
+    const lastQ=parseInt(localStorage.getItem('dct_last_quote')??'-1');
+    let idx; do{idx=Math.floor(Math.random()*quotes.length);}while(idx===lastQ&&quotes.length>1);
     localStorage.setItem('dct_last_quote',idx);
-    document.getElementById('dailyQuote').innerText = quotes[idx];
-    loadProfileUI();
-    initOrderUI();
-    loadDashboards();
+    document.getElementById('dailyQuote').innerText=quotes[idx];
+    document.getElementById('orderDate').value=toLocalISO(new Date());
+    loadProfileUI(); initOrderUI(); loadDashboards();
 };
 
-// ===== PROFILE =====
 function loadProfileUI(){
-    const p = getProfile();
-    document.getElementById('settingName').value = p.name||'';
-    document.getElementById('settingLevel').value = p.level||'';
-    document.getElementById('settingUpline').value = p.upline||'';
+    const p=getProfile();
+    document.getElementById('settingName').value=p.name||'';
+    document.getElementById('settingLevel').value=p.level||'';
+    document.getElementById('settingUpline').value=p.upline||'';
     updateProfileDisplay(p);
 }
 function saveProfile(){
-    const p = {
-        name: document.getElementById('settingName').value,
-        level: document.getElementById('settingLevel').value,
-        upline: document.getElementById('settingUpline').value
-    };
-    saveProfileData(p);
-    updateProfileDisplay(p);
+    const p={name:document.getElementById('settingName').value,level:document.getElementById('settingLevel').value,upline:document.getElementById('settingUpline').value};
+    saveProfileData(p);updateProfileDisplay(p);
 }
 function updateProfileDisplay(p){
-    document.getElementById('profileNameDisplay').innerText = p.name||'—';
-    document.getElementById('profileSubDisplay').innerText = [p.level,p.upline?'上家：'+p.upline:''].filter(Boolean).join(' ｜ ')||'尚未設定';
-    const hp = document.getElementById('headerProfile');
-    if(p.name) hp.innerHTML = `<span style="font-weight:600;color:var(--text-main)">${p.name}</span><br>${p.level||''}`;
-    else hp.innerHTML='';
+    document.getElementById('profileNameDisplay').innerText=p.name||'—';
+    document.getElementById('profileSubDisplay').innerText=[p.level,p.upline?'上家：'+p.upline:''].filter(Boolean).join(' ｜ ')||'尚未設定';
+    const hp=document.getElementById('headerProfile');
+    hp.innerHTML=p.name?`<span style="font-weight:600;color:var(--text-main)">${p.name}</span><br>${p.level||''}`:'';
 }
 
-// ===== ORDER UI =====
 function initOrderUI(){
-    document.getElementById('sellerSelector').innerHTML = levels.map(l=>
-        `<div class="level-btn ${l.id===currentSeller?'active':''}" onclick="currentSeller='${l.id}';initOrderUI();updateCalc();">${l.name}</div>`
-    ).join('');
-    document.getElementById('buyerSelector').innerHTML = buyers.map(b=>
-        `<div class="buyer-btn ${b.id===currentBuyer?'active':''}" onclick="currentBuyer='${b.id}';initOrderUI();updateCalc();">${b.name}</div>`
-    ).join('');
+    document.getElementById('sellerSelector').innerHTML=levels.map(l=>`<div class="level-btn ${l.id===currentSeller?'active':''}" onclick="currentSeller='${l.id}';initOrderUI();updateCalc();">${l.name}</div>`).join('');
+    document.getElementById('buyerSelector').innerHTML=buyers.map(b=>`<div class="buyer-btn ${b.id===currentBuyer?'active':''}" onclick="currentBuyer='${b.id}';initOrderUI();updateCalc();">${b.name}</div>`).join('');
     renderProducts();
-    document.getElementById('mGoalInput').value = localStorage.getItem('dct_goal')||0;
+    document.getElementById('mGoalInput').value=localStorage.getItem('dct_goal')||0;
 }
 function renderProducts(){
-    const div = document.getElementById('productList'); div.innerHTML='';
+    const div=document.getElementById('productList');div.innerHTML='';
     for(let n in products){
         if(products[n].cat!==currentCat) continue;
-        const qty=cart[n]||0, cp=products[n][currentSeller], sp=products[n][currentBuyer], profit=sp-cp;
-        const pc = profit>=0?'var(--rose)':'#e05050';
-        div.innerHTML += `<div class="product-item">
-            <div style="flex:1;min-width:0;">
-                <div class="product-name">${n}</div>
-                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:3px;">
-                    <span style="font-size:.71rem;color:var(--text-muted)">成本$${cp.toLocaleString()}</span>
-                    <span style="font-size:.67rem;color:var(--beige-dark)">→</span>
-                    <span style="font-size:.78rem;color:var(--rose);font-weight:600">售$${sp.toLocaleString()}</span>
-                    <span style="font-size:.69rem;color:${pc}">利$${profit.toLocaleString()}</span>
-                </div>
-            </div>
-            <div class="qty-control">
-                <button class="btn-qty" onclick="changeQty('${n}',-1)">−</button>
-                <div class="qty-input">${qty}</div>
-                <button class="btn-qty" onclick="changeQty('${n}',1)">+</button>
-            </div>
-        </div>`;
+        const qty=cart[n]||0,cp=products[n][currentSeller],sp=products[n][currentBuyer],profit=sp-cp;
+        div.innerHTML+=`<div class="product-item"><div style="flex:1;min-width:0;"><div class="product-name">${n}</div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:3px;"><span style="font-size:.71rem;color:var(--text-muted)">成本$${cp.toLocaleString()}</span><span style="font-size:.67rem;color:var(--beige-dark)">→</span><span style="font-size:.78rem;color:var(--rose);font-weight:600">售$${sp.toLocaleString()}</span><span style="font-size:.69rem;color:${profit>=0?'var(--rose)':'#e05050'}">利$${profit.toLocaleString()}</span></div></div><div class="qty-control"><button class="btn-qty" onclick="changeQty('${n}',-1)">−</button><div class="qty-input">${qty}</div><button class="btn-qty" onclick="changeQty('${n}',1)">+</button></div></div>`;
     }
 }
-function changeQty(n,d){ cart[n]=Math.max(0,(cart[n]||0)+d); renderProducts(); updateCalc(); }
+function changeQty(n,d){cart[n]=Math.max(0,(cart[n]||0)+d);renderProducts();updateCalc();}
 function updateCalc(){
     let cost=0,rev=0,extra=parseInt(document.getElementById('extraCost').value)||0;
-    for(let n in cart){ cost+=products[n][currentSeller]*cart[n]; rev+=products[n][currentBuyer]*cart[n]; }
+    for(let n in cart){cost+=products[n][currentSeller]*cart[n];rev+=products[n][currentBuyer]*cart[n];}
     document.getElementById('revDisplay').innerText=`$${rev.toLocaleString()}`;
     document.getElementById('profitDisplay').innerText=`預估淨利 $${(rev-cost-extra).toLocaleString()}`;
     document.getElementById('costDisplay').innerText=`總成本（含額外）$${(cost+extra).toLocaleString()}`;
 }
 function saveOrder(){
     let items=[],cost=0,rev=0,extra=parseInt(document.getElementById('extraCost').value)||0;
-    for(let n in cart){
-        if(cart[n]>0){
-            items.push({name:n,qty:cart[n],unit:products[n].unit,cat:products[n].cat});
-            cost+=products[n][currentSeller]*cart[n]; rev+=products[n][currentBuyer]*cart[n];
-        }
-    }
-    if(!items.length){ alert("請先選擇產品數量！"); return; }
+    for(let n in cart){if(cart[n]>0){items.push({name:n,qty:cart[n],unit:products[n].unit,cat:products[n].cat});cost+=products[n][currentSeller]*cart[n];rev+=products[n][currentBuyer]*cart[n];}}
+    if(!items.length){alert("請先選擇產品數量！");return;}
+    const dateVal=document.getElementById('orderDate').value;
+    const orderDateTs=dateVal?new Date(dateVal).getTime():Date.now();
+    const d=new Date(orderDateTs);
     const rs=getOrders();
-    const d=new Date();
-    rs.push({
-        id:Date.now(), year:d.getFullYear(), month:d.getMonth(),
-        sellerLevel:currentSeller, buyerType:currentBuyer,
-        profit:rev-cost-extra, rev, cost:cost+extra, itemsCost:cost, extraCost:extra,
-        type:buyers.find(b=>b.id===currentBuyer).t,
-        note:document.getElementById('orderNote').value||'無備註',
-        items
-    });
+    rs.push({id:Date.now(),orderDate:orderDateTs,year:d.getFullYear(),month:d.getMonth(),sellerLevel:currentSeller,buyerType:currentBuyer,profit:rev-cost-extra,rev,cost:cost+extra,itemsCost:cost,extraCost:extra,type:buyers.find(b=>b.id===currentBuyer).t,note:document.getElementById('orderNote').value||'無備註',items});
     saveOrders(rs);
-    cart={}; document.getElementById('orderNote').value=''; document.getElementById('extraCost').value='';
-    initOrderUI(); updateCalc(); loadDashboards(); renderChart();
+    cart={};document.getElementById('orderNote').value='';document.getElementById('extraCost').value='';
+    document.getElementById('orderDate').value=toLocalISO(new Date());
+    initOrderUI();updateCalc();loadDashboards();renderChart();
     alert("訂單儲存成功！");
 }
 
-// ===== TABS =====
 function switchTab(id,el){
     document.querySelectorAll('.container').forEach(c=>c.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    el.classList.add('active');
+    document.getElementById(id).classList.add('active');el.classList.add('active');
     if(id==='tab-daily'||id==='tab-monthly') loadDashboards();
     if(id==='tab-history') loadHistory();
     if(id==='tab-chart') renderChart();
 }
-function switchCat(cat,el){
-    currentCat=cat;
-    document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
-    el.classList.add('active'); renderProducts();
-}
-function updateGoal(v){ localStorage.setItem('dct_goal',v); loadDashboards(); }
+function switchCat(cat,el){currentCat=cat;document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderProducts();}
+function updateGoal(v){localStorage.setItem('dct_goal',v);loadDashboards();}
 
-// ===== DASHBOARDS =====
 function loadDashboards(){
     const rs=getOrders();
-    const today=new Date().toDateString(), curM=new Date().getMonth(), curY=new Date().getFullYear();
-    const lastM=curM===0?11:curM-1, lastY=curM===0?curY-1:curY;
+    const todayStr=new Date().toDateString(),curM=new Date().getMonth(),curY=new Date().getFullYear();
+    const lastM=curM===0?11:curM-1,lastY=curM===0?curY-1:curY;
     let dP=0,dR=0,dC=0,dI={},dL='',mR=0,mP=0,mC=0,mRR=0,mTR=0,mI={},lR=0,lP=0,lC=0;
-    let seriesData={"活動":0,"纖體":0,"美肌":0,"保健":0};
+    let ser={"活動":0,"纖體":0,"美肌":0,"保健":0};
     rs.forEach(r=>{
-        const rd=new Date(r.id);
-        if(rd.toDateString()===today){
-            dP+=r.profit; dR+=r.rev; dC+=r.cost;
+        const rd=getOrderDate(r);
+        if(rd.toDateString()===todayStr){
+            dP+=r.profit;dR+=r.rev;dC+=r.cost;
             r.items.forEach(i=>dI[i.name]={q:(dI[i.name]?.q||0)+i.qty,u:i.unit});
-            const buyerLabel = buyers.find(b=>b.id===r.buyerType)?.name || r.type;
-            dL+=`<div class="order-card">
-                <div class="order-card-header">
-                    <div><div class="order-note">${r.note}</div><div class="order-date">${buyerLabel} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div>
-                    <div class="order-profit">+$${r.profit.toLocaleString()}</div>
-                </div>
-                <div class="order-items">${r.items.map(i=>`${i.name}×${i.qty}`).join(' · ')}</div>
-                <div class="order-actions">
-                    <button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button>
-                    <button class="action-btn" onclick="deleteOrder(${r.id});loadDashboards()">刪除</button>
-                </div>
-            </div>`;
+            const bl=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
+            const back=r.orderDate&&new Date(r.orderDate).toDateString()!==new Date(r.id).toDateString();
+            dL+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}${back?'<span class="date-badge">補登</span>':''}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">${bl} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="order-profit">+$${r.profit.toLocaleString()}</div></div><div class="order-items">${r.items.map(i=>`${i.name}×${i.qty}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
         }
-        if(rd.getMonth()===curM && rd.getFullYear()===curY){
-            mR+=r.rev; mP+=r.profit; mC+=r.cost;
-            if(r.type==='retail') mRR+=r.rev; else mTR+=r.rev;
-            r.items.forEach(i=>{mI[i.name]={q:(mI[i.name]?.q||0)+i.qty,u:i.unit}; seriesData[i.cat]+=r.rev;});
-        }
-        if(rd.getMonth()===lastM && rd.getFullYear()===lastY){ lR+=r.rev; lP+=r.profit; lC+=r.cost; }
+        if(rd.getMonth()===curM&&rd.getFullYear()===curY){mR+=r.rev;mP+=r.profit;mC+=r.cost;if(r.type==='retail')mRR+=r.rev;else mTR+=r.rev;r.items.forEach(i=>{mI[i.name]={q:(mI[i.name]?.q||0)+i.qty,u:i.unit};ser[i.cat]+=r.rev;});}
+        if(rd.getMonth()===lastM&&rd.getFullYear()===lastY){lR+=r.rev;lP+=r.profit;lC+=r.cost;}
     });
     document.getElementById('dTotalProfit').innerText=`$${dP.toLocaleString()}`;
     document.getElementById('dTotalRev').innerText=`$${dR.toLocaleString()}`;
     document.getElementById('dTotalCost').innerText=`$${dC.toLocaleString()}`;
     document.getElementById('dOrderList').innerHTML=dL||'<span style="font-size:.81rem;color:var(--text-muted)">今日尚未開單</span>';
-    let dIH=''; for(let n in dI) dIH+=`<div class="item-row"><span>${n}</span><b>${dI[n].q} ${dI[n].u}</b></div>`;
+    let dIH='';for(let n in dI)dIH+=`<div class="item-row"><span>${n}</span><b>${dI[n].q} ${dI[n].u}</b></div>`;
     document.getElementById('dItemStats').innerHTML=dIH||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
     document.getElementById('mTotalRev').innerText=`$${mR.toLocaleString()}`;
     document.getElementById('mTotalCost').innerText=`$${mC.toLocaleString()}`;
@@ -577,313 +423,173 @@ function loadDashboards(){
     document.getElementById('lastMRev').innerText=`$${lR.toLocaleString()}`;
     document.getElementById('lastMProfit').innerText=`$${lP.toLocaleString()}`;
     document.getElementById('lastMCost').innerText=`$${lC.toLocaleString()}`;
-    let g=localStorage.getItem('dct_goal')||0, gp=g>0?Math.min(Math.round(mP/g*100),100):0;
-    document.getElementById('mGoalPercent').innerText=gp+'%';
-    document.getElementById('mGoalBar').style.width=gp+'%';
+    let g=localStorage.getItem('dct_goal')||0,gp=g>0?Math.min(Math.round(mP/g*100),100):0;
+    document.getElementById('mGoalPercent').innerText=gp+'%';document.getElementById('mGoalBar').style.width=gp+'%';
     let mrp=mR>0?Math.round(mRR/mR*100):0,mtp=mR>0?Math.round(mTR/mR*100):0;
-    document.getElementById('mRetailP').innerText=mrp+'%'; document.getElementById('mTeamP').innerText=mtp+'%';
-    document.getElementById('mRetailBar').style.width=mrp+'%'; document.getElementById('mTeamBar').style.width=mtp+'%';
-    let mIH=''; Object.entries(mI).sort((a,b)=>b[1].q-a[1].q).forEach(e=>mIH+=`<div class="item-row"><span>${e[0]}</span><b>${e[1].q} ${e[1].u}</b></div>`);
+    document.getElementById('mRetailP').innerText=mrp+'%';document.getElementById('mTeamP').innerText=mtp+'%';
+    document.getElementById('mRetailBar').style.width=mrp+'%';document.getElementById('mTeamBar').style.width=mtp+'%';
+    let mIH='';Object.entries(mI).sort((a,b)=>b[1].q-a[1].q).forEach(e=>mIH+=`<div class="item-row"><span>${e[0]}</span><b>${e[1].q} ${e[1].u}</b></div>`);
     document.getElementById('mItemStats').innerHTML=mIH||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
-    const sColors={"活動":"#C8748A","纖體":"#7BBFDB","美肌":"#A98BC7","保健":"#7AB894"};
-    let totalS=Object.values(seriesData).reduce((a,b)=>a+b,0),sHTML='';
-    for(let s in seriesData){ let p=totalS>0?Math.round(seriesData[s]/totalS*100):0; sHTML+=`<div class="series-container"><div class="series-label"><span>${s}</span><span>${p}%</span></div><div class="series-bar"><div class="series-fill" style="width:${p}%;background:${sColors[s]}"></div></div></div>`; }
-    document.getElementById('seriesChart').innerHTML=sHTML;
+    const sC={"活動":"#C8748A","纖體":"#7BBFDB","美肌":"#A98BC7","保健":"#7AB894"};
+    let ts=Object.values(ser).reduce((a,b)=>a+b,0),sH='';
+    for(let s in ser){let p=ts>0?Math.round(ser[s]/ts*100):0;sH+=`<div class="series-container"><div class="series-label"><span>${s}</span><span>${p}%</span></div><div class="series-bar"><div class="series-fill" style="width:${p}%;background:${sC[s]}"></div></div></div>`;}
+    document.getElementById('seriesChart').innerHTML=sH;
 }
 
-// ===== HISTORY =====
-let selectedHistoryMonth = null;
+// HISTORY
 function loadHistory(){
     const rs=getOrders();
-    // Build list of year-month combos that have data
-    const monthSet = new Set();
-    rs.forEach(r=>{ const d=new Date(r.id); monthSet.add(`${d.getFullYear()}-${d.getMonth()}`); });
-    // Also include rebate months
-    const rebates=getRebates();
-    Object.keys(rebates).forEach(k=>monthSet.add(k));
-    const months = Array.from(monthSet).sort((a,b)=>b.localeCompare(a));
-    if(!selectedHistoryMonth && months.length>0) selectedHistoryMonth=months[0];
-    
-    const picker=document.getElementById('monthPicker');
-    picker.innerHTML=months.map(m=>{
-        const [y,mo]=m.split('-');
-        return `<div class="month-chip ${m===selectedHistoryMonth?'active':''}" onclick="selectHistoryMonth('${m}')">${y}年${parseInt(mo)+1}月</div>`;
-    }).join('');
-    if(months.length===0){ picker.innerHTML='<span style="font-size:.8rem;color:var(--text-muted)">尚無歷史紀錄</span>'; }
+    const set=new Set();
+    rs.forEach(r=>{const d=getOrderDate(r);set.add(`${d.getFullYear()}-${d.getMonth()}`);});
+    const keys=Array.from(set).sort((a,b)=>b.localeCompare(a));
+    const sel=document.getElementById('monthSelect');
+    const prev=sel.value||selectedHistoryKey;
+    sel.innerHTML='<option value="">— 請選擇月份 —</option>';
+    keys.forEach(k=>{const[y,mo]=k.split('-');const o=document.createElement('option');o.value=k;o.textContent=`${y}年${parseInt(mo)+1}月`;sel.appendChild(o);});
+    if(keys.length){
+        if(prev&&keys.includes(prev))sel.value=prev;
+        else{sel.value=keys[0];selectedHistoryKey=keys[0];}
+    }
     renderHistoryMonth();
 }
-function selectHistoryMonth(m){
-    selectedHistoryMonth=m;
-    loadHistory();
-}
+function onMonthChange(){selectedHistoryKey=document.getElementById('monthSelect').value||null;renderHistoryMonth();}
 function renderHistoryMonth(){
-    const content=document.getElementById('historyContent');
-    const rebateCard=document.getElementById('rebateCard');
-    if(!selectedHistoryMonth){ content.innerHTML=''; rebateCard.style.display='none'; return; }
-    const [y,mo]=selectedHistoryMonth.split('-');
-    const rs=getOrders().filter(r=>{ const d=new Date(r.id); return d.getFullYear()==y&&d.getMonth()==mo; });
-    const rebates=getRebates();
-    document.getElementById('rebateInput').value=rebates[selectedHistoryMonth]||'';
-    rebateCard.style.display='block';
-    if(!rs.length){ content.innerHTML=`<div class="card"><div style="font-size:.82rem;color:var(--text-muted);text-align:center;padding:8px">本月暫無訂單</div></div>`; return; }
-    // Summary
-    let totalRev=0,totalProfit=0,totalCost=0;
-    rs.forEach(r=>{ totalRev+=r.rev; totalProfit+=r.profit; totalCost+=r.cost; });
-    let html=`<div class="card">
-        <div class="card-header">${y}年${parseInt(mo)+1}月 共${rs.length}筆</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px;">
-            <div style="text-align:center;"><div style="font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">營業額</div><div style="font-size:.95rem;font-weight:600;color:var(--rose)">$${totalRev.toLocaleString()}</div></div>
-            <div style="text-align:center;"><div style="font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">成本</div><div style="font-size:.95rem;font-weight:600;color:var(--text-sub)">$${totalCost.toLocaleString()}</div></div>
-            <div style="text-align:center;"><div style="font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">淨利</div><div style="font-size:.95rem;font-weight:600;color:var(--rose)">$${totalProfit.toLocaleString()}</div></div>
+    const c=document.getElementById('historyContent');
+    if(!selectedHistoryKey){c.innerHTML='';return;}
+    const[y,mo]=selectedHistoryKey.split('-');
+    const rs=getOrders().filter(r=>{const d=getOrderDate(r);return d.getFullYear()==y&&d.getMonth()==mo;});
+    if(!rs.length){c.innerHTML=`<div class="card"><div style="font-size:.82rem;color:var(--text-muted);text-align:center;padding:8px">本月暫無訂單</div></div>`;return;}
+    let tR=0,tP=0,tC=0,rP=0,tP2=0;
+    rs.forEach(r=>{tR+=r.rev;tP+=r.profit;tC+=r.cost;if(r.type==='retail')rP+=r.profit;else tP2+=r.profit;});
+    let html=`<div class="card"><div class="card-header">${y}年${parseInt(mo)+1}月 · 共${rs.length}筆</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div class="stat-box"><span class="stat-label">營業額</span><div class="stat-value">$${tR.toLocaleString()}</div></div>
+            <div class="stat-box"><span class="stat-label">成本</span><div class="stat-value" style="color:var(--text-sub)">$${tC.toLocaleString()}</div></div>
+            <div class="stat-box"><span class="stat-label">淨利</span><div class="stat-value">$${tP.toLocaleString()}</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:rgba(91,200,192,.1);border:1px solid rgba(91,200,192,.3);border-radius:10px;padding:12px;text-align:center;">
+                <div style="font-size:.67rem;color:#3A9E97;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第一口袋 零售</div>
+                <div style="font-size:1rem;font-weight:600;color:#3A9E97">$${rP.toLocaleString()}</div>
+            </div>
+            <div style="background:rgba(59,110,222,.08);border:1px solid rgba(59,110,222,.2);border-radius:10px;padding:12px;text-align:center;">
+                <div style="font-size:.67rem;color:#2856C8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第二口袋 團隊</div>
+                <div style="font-size:1rem;font-weight:600;color:#2856C8">$${tP2.toLocaleString()}</div>
+            </div>
         </div>
     </div>`;
-    // Orders sorted newest first
-    rs.sort((a,b)=>b.id-a.id).forEach(r=>{
-        const d=new Date(r.id);
-        const dateStr=`${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
-        const buyerLabel=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
-        html+=`<div class="order-card">
-            <div class="order-card-header">
-                <div>
-                    <div class="order-note">${r.note}</div>
-                    <div class="order-date">${dateStr} · ${buyerLabel}</div>
-                </div>
-                <div style="text-align:right;">
-                    <div class="order-profit">+$${r.profit.toLocaleString()}</div>
-                    <div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div>
-                </div>
-            </div>
-            <div class="order-items">${r.items.map(i=>`${i.name} × ${i.qty}${i.unit}`).join(' · ')}</div>
-            <div class="order-actions">
-                <button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button>
-                <button class="action-btn" onclick="deleteOrder(${r.id});loadHistory()">刪除</button>
-            </div>
-        </div>`;
+    rs.sort((a,b)=>getOrderDate(b)-getOrderDate(a)).forEach(r=>{
+        const d=getOrderDate(r);
+        const ds=`${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
+        const bl=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
+        const tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
+        html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(i=>`${i.name} × ${i.qty}${i.unit}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
-    content.innerHTML=html;
-}
-function saveRebate(){
-    const val=parseInt(document.getElementById('rebateInput').value)||0;
-    const rebates=getRebates();
-    if(val>0) rebates[selectedHistoryMonth]=val; else delete rebates[selectedHistoryMonth];
-    saveRebates(rebates);
+    c.innerHTML=html;
 }
 
-// ===== CHART =====
-function getMonthlyData(){
-    const rs=getOrders();
-    const rebates=getRebates();
-    const data={};
-    rs.forEach(r=>{
-        const d=new Date(r.id);
-        const key=`${d.getFullYear()}-${d.getMonth()}`;
-        if(!data[key]) data[key]={retail:0,team:0,rebate:0,totalRev:0,totalCost:0};
-        if(r.type==='retail') data[key].retail+=r.profit; else data[key].team+=r.profit;
-        data[key].totalRev+=r.rev; data[key].totalCost+=r.cost;
-    });
-    // Inject rebates
-    Object.keys(rebates).forEach(k=>{ if(!data[k]) data[k]={retail:0,team:0,rebate:0,totalRev:0,totalCost:0}; data[k].rebate=rebates[k]; });
-    return data;
-}
+// CHART
 function renderChart(){
-    const data=getMonthlyData();
+    const rs=getOrders();
+    const data={};
+    rs.forEach(r=>{const d=getOrderDate(r);const k=`${d.getFullYear()}-${d.getMonth()}`;if(!data[k])data[k]={retail:0,team:0};if(r.type==='retail')data[k].retail+=r.profit;else data[k].team+=r.profit;});
     const keys=Object.keys(data).sort();
-    if(!keys.length){
-        document.getElementById('chartWrap').innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚無數據，請先新增訂單</div>';
-        document.getElementById('chartTable').innerHTML='';
-        return;
-    }
-    const BAR_W=54, GAP=10, PAD_L=54, PAD_R=20, PAD_TOP=50, PAD_BOT=50;
-    const totalW=PAD_L+keys.length*(BAR_W+GAP)+PAD_R;
-    const allMax=Math.max(...keys.map(k=>data[k].retail+data[k].team+data[k].rebate),1);
-    const niceMax=Math.ceil(allMax/100000)*100000||100000;
-    const chartH=260;
-    const yScale=v=>PAD_TOP+(chartH*(1-v/niceMax));
-    // Y axis ticks
-    let ticks='', tickCount=5;
-    for(let i=0;i<=tickCount;i++){
-        const v=niceMax*i/tickCount;
-        const y=yScale(v);
-        ticks+=`<line x1="${PAD_L-6}" y1="${y}" x2="${totalW-PAD_R}" y2="${y}" stroke="#EDE7DE" stroke-width="1"/>`;
-        ticks+=`<text x="${PAD_L-9}" y="${y+4}" text-anchor="end" font-size="9" fill="#B09EA8">${v>=10000?Math.round(v/1000)+'k':v}</text>`;
-    }
-    let bars='',labels='';
+    if(!keys.length){document.getElementById('chartWrap').innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚無數據，請先新增訂單</div>';document.getElementById('chartTable').innerHTML='';return;}
+    const BW=54,G=10,PL=54,PR=20,PT=50,PB=50,CH=260;
+    const aMax=Math.max(...keys.map(k=>data[k].retail+data[k].team),1);
+    const nM=Math.ceil(aMax/100000)*100000||100000;
+    const TW=PL+keys.length*(BW+G)+PR;
+    const ys=v=>PT+(CH*(1-v/nM));
+    let tks='';
+    for(let i=0;i<=5;i++){const v=nM*i/5,y=ys(v);tks+=`<line x1="${PL-6}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="#EDE7DE" stroke-width="1"/><text x="${PL-9}" y="${y+4}" text-anchor="end" font-size="9" fill="#B09EA8">${v>=10000?Math.round(v/1000)+'k':v}</text>`;}
+    let bars='';
     keys.forEach((k,i)=>{
-        const d=data[k];
-        const [yr,mo]=k.split('-');
-        const x=PAD_L+i*(BAR_W+GAP);
-        const total=d.retail+d.team+d.rebate;
-        const h_r=chartH*d.retail/niceMax, h_t=chartH*d.team/niceMax, h_rb=chartH*d.rebate/niceMax;
-        const y_rb=yScale(total), y_t=yScale(d.team+d.retail), y_r=yScale(d.retail);
-        // Rebate bar (top)
-        if(d.rebate>0) bars+=`<rect x="${x}" y="${y_rb}" width="${BAR_W}" height="${h_rb}" fill="#9B82D4" rx="2"/>`;
-        // Team bar (middle)
-        if(d.team>0) bars+=`<rect x="${x}" y="${y_t}" width="${BAR_W}" height="${h_t}" fill="#3B6EDE" rx="2"/>`;
-        // Retail bar (bottom)
-        if(d.retail>0) bars+=`<rect x="${x}" y="${y_r}" width="${BAR_W}" height="${h_r}" fill="#5BC8C0" rx="2"/>`;
-        // Total label on top
-        if(total>0) bars+=`<rect x="${x-2}" y="${y_rb-22}" width="${BAR_W+4}" height="17" rx="4" fill="#FFEC47"/>
-            <text x="${x+BAR_W/2}" y="${y_rb-10}" text-anchor="middle" font-size="9" font-weight="600" fill="#333">${Math.round(total/1000)}k</text>`;
-        // Value labels inside bars
-        if(d.rebate>2000) bars+=`<text x="${x+BAR_W/2}" y="${y_rb+h_rb/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.rebate/1000)}k</text>`;
-        if(d.team>2000) bars+=`<text x="${x+BAR_W/2}" y="${y_t+h_t/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.team/1000)}k</text>`;
-        if(d.retail>2000) bars+=`<text x="${x+BAR_W/2}" y="${y_r+h_r/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.retail/1000)}k</text>`;
-        // X label
-        bars+=`<text x="${x+BAR_W/2}" y="${PAD_TOP+chartH+18}" text-anchor="middle" font-size="9.5" fill="#7A6872">${parseInt(mo)+1}月</text>`;
-        if(i===0||mo==='0') bars+=`<text x="${x+BAR_W/2}" y="${PAD_TOP+chartH+32}" text-anchor="middle" font-size="8" fill="#B09EA8">${yr}</text>`;
-    });
-    const svgH=PAD_TOP+chartH+PAD_BOT;
-    const svg=`<svg width="${totalW}" height="${svgH}" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-        ${ticks}
-        <line x1="${PAD_L}" y1="${PAD_TOP}" x2="${PAD_L}" y2="${PAD_TOP+chartH}" stroke="#EDE7DE" stroke-width="1.5"/>
-        ${bars}
-    </svg>`;
-    document.getElementById('chartWrap').innerHTML=svg;
-    // Table
-    let tableH='';
-    keys.sort((a,b)=>b.localeCompare(a)).forEach(k=>{
         const d=data[k],[yr,mo]=k.split('-');
-        const total=d.retail+d.team+d.rebate;
-        tableH+=`<div class="item-row" style="flex-direction:column;align-items:flex-start;gap:6px;padding:12px 0;">
-            <div style="font-size:.82rem;font-weight:600;color:var(--text-main)">${yr}年${parseInt(mo)+1}月 <span style="font-size:.78rem;color:var(--rose);font-weight:600;margin-left:8px">合計 $${total.toLocaleString()}</span></div>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                <span style="font-size:.75rem;"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售 $${d.retail.toLocaleString()}</span>
-                <span style="font-size:.75rem;"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊 $${d.team.toLocaleString()}</span>
-                <span style="font-size:.75rem;"><span style="display:inline-block;width:8px;height:8px;background:#9B82D4;border-radius:2px;margin-right:4px;vertical-align:middle"></span>返利 $${d.rebate.toLocaleString()}</span>
-            </div>
-        </div>`;
+        const x=PL+i*(BW+G),tot=d.retail+d.team;
+        const hr=CH*d.retail/nM,ht=CH*d.team/nM,yt=ys(tot),yr2=ys(d.retail);
+        if(d.team>0) bars+=`<rect x="${x}" y="${yt}" width="${BW}" height="${ht}" fill="#3B6EDE" rx="2"/>`;
+        if(d.retail>0) bars+=`<rect x="${x}" y="${yr2}" width="${BW}" height="${hr}" fill="#5BC8C0" rx="2"/>`;
+        if(tot>0) bars+=`<rect x="${x-2}" y="${yt-22}" width="${BW+4}" height="17" rx="4" fill="#FFEC47"/><text x="${x+BW/2}" y="${yt-10}" text-anchor="middle" font-size="9" font-weight="600" fill="#333">${tot>=1000?Math.round(tot/1000)+'k':tot}</text>`;
+        if(d.team>2000) bars+=`<text x="${x+BW/2}" y="${yt+ht/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.team/1000)}k</text>`;
+        if(d.retail>2000) bars+=`<text x="${x+BW/2}" y="${yr2+hr/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.retail/1000)}k</text>`;
+        bars+=`<text x="${x+BW/2}" y="${PT+CH+18}" text-anchor="middle" font-size="9.5" fill="#7A6872">${parseInt(mo)+1}月</text>`;
+        if(i===0||mo==='0') bars+=`<text x="${x+BW/2}" y="${PT+CH+32}" text-anchor="middle" font-size="8" fill="#B09EA8">${yr}</text>`;
     });
-    document.getElementById('chartTable').innerHTML=tableH||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
+    document.getElementById('chartWrap').innerHTML=`<svg width="${TW}" height="${PT+CH+PB}" xmlns="http://www.w3.org/2000/svg" style="display:block;">${tks}<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+CH}" stroke="#EDE7DE" stroke-width="1.5"/>${bars}</svg>`;
+    let th='';
+    Object.keys(data).sort((a,b)=>b.localeCompare(a)).forEach(k=>{
+        const d=data[k],[yr,mo]=k.split('-'),tot=d.retail+d.team;
+        th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);"><div style="font-size:.82rem;font-weight:600;margin-bottom:6px">${yr}年${parseInt(mo)+1}月 <span style="color:var(--rose);margin-left:6px">合計 $${tot.toLocaleString()}</span></div><div style="display:flex;gap:14px;flex-wrap:wrap;"><span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售 $${d.retail.toLocaleString()}</span><span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊 $${d.team.toLocaleString()}</span></div></div>`;
+    });
+    document.getElementById('chartTable').innerHTML=th||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
 }
 
-// ===== EDIT MODAL =====
+// EDIT MODAL
 function openEditModal(id){
-    const rs=getOrders();
-    const order=rs.find(r=>r.id===id);
+    const order=getOrders().find(r=>r.id===id);
     if(!order) return;
-    editingOrderId=id;
-    // Build editCart from order items
-    editCart={};
-    order.items.forEach(i=>{ editCart[i.name]=i.qty; });
-    const d=new Date(id);
+    editingOrderId=id;editCart={};
+    order.items.forEach(i=>{editCart[i.name]=i.qty;});
+    const d=getOrderDate(order);
     document.getElementById('editModalTitle').innerText=`編輯訂單 · ${d.getMonth()+1}/${d.getDate()}`;
     renderEditModal(order);
     document.getElementById('editModal').classList.add('open');
 }
 function renderEditModal(order){
-    const sl=order.sellerLevel||'L2', bt=order.buyerType||'retail';
-    const slName=levels.find(l=>l.id===sl)?.name||sl;
-    const btName=buyers.find(b=>b.id===bt)?.name||bt;
-    let itemsHTML='';
-    const allItems=Object.keys(editCart).length>0?Object.keys(editCart):order.items.map(i=>i.name);
-    // Show current items
+    const sl=order.sellerLevel||'L2',bt=order.buyerType||'retail';
+    const slN=levels.find(l=>l.id===sl)?.name||sl,btN=buyers.find(b=>b.id===bt)?.name||bt;
+    let iH='';
     order.items.forEach(i=>{
-        const qty=editCart[i.name]||0;
-        const cp=products[i.name]?products[i.name][sl]:0;
-        const sp=products[i.name]?products[i.name][bt]:0;
-        itemsHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--beige-dark);">
-            <div>
-                <div style="font-size:.85rem;font-weight:500">${i.name}</div>
-                <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">售$${sp.toLocaleString()} 利$${(sp-cp).toLocaleString()}</div>
-            </div>
-            <div class="qty-control">
-                <button class="btn-qty" onclick="changeEditQty('${i.name}',-1)">−</button>
-                <div id="eq_${i.name.replace(/[^a-zA-Z0-9]/g,'_')}" class="qty-input">${qty}</div>
-                <button class="btn-qty" onclick="changeEditQty('${i.name}',1)">+</button>
-            </div>
-        </div>`;
+        const q=editCart[i.name]||0,cp=products[i.name]?products[i.name][sl]:0,sp=products[i.name]?products[i.name][bt]:0;
+        iH+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--beige-dark);"><div><div style="font-size:.85rem;font-weight:500">${i.name}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">售$${sp.toLocaleString()} 利$${(sp-cp).toLocaleString()}</div></div><div class="qty-control"><button class="btn-qty" onclick="changeEditQty('${i.name}',-1)">−</button><div id="eq_${i.name.replace(/[^a-zA-Z0-9]/g,'_')}" class="qty-input">${q}</div><button class="btn-qty" onclick="changeEditQty('${i.name}',1)">+</button></div></div>`;
     });
-    // Recalculate current total
     let rev=0,cost=0;
-    order.items.forEach(i=>{ const q=editCart[i.name]||0; if(products[i.name]){ rev+=products[i.name][bt]*q; cost+=products[i.name][sl]*q; } });
+    order.items.forEach(i=>{const q=editCart[i.name]||0;if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}});
     const extra=order.extraCost||0;
+    const d=getOrderDate(order);
     document.getElementById('editModalContent').innerHTML=`
-        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-            <span style="font-size:.73rem;background:var(--rose-pale);color:var(--rose-deep);padding:4px 10px;border-radius:10px;">${slName}</span>
-            <span style="font-size:.73rem;background:var(--rose-pale);color:var(--rose-deep);padding:4px 10px;border-radius:10px;">${btName}</span>
-        </div>
-        <div class="input-group">
-            <span class="input-label">客戶備註</span>
-            <input type="text" id="editNote" class="custom-input" value="${order.note||''}">
-        </div>
-        <div class="input-group">
-            <span class="input-label">額外成本</span>
-            <input type="number" id="editExtra" class="custom-input cost-input" value="${order.extraCost||0}" oninput="refreshEditTotal()">
-        </div>
-        <div style="margin-bottom:12px;">${itemsHTML}</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;"><span style="font-size:.73rem;background:var(--rose-pale);color:var(--rose-deep);padding:4px 10px;border-radius:10px;">${slN}</span><span style="font-size:.73rem;background:var(--rose-pale);color:var(--rose-deep);padding:4px 10px;border-radius:10px;">${btN}</span></div>
+        <div class="input-group"><span class="input-label">訂單日期</span><input type="datetime-local" id="editDate" class="custom-input" value="${toLocalISO(d)}" style="color:var(--rose-deep);"></div>
+        <div class="input-group"><span class="input-label">客戶備註</span><input type="text" id="editNote" class="custom-input" value="${order.note||''}"></div>
+        <div class="input-group"><span class="input-label">額外成本</span><input type="number" id="editExtra" class="custom-input cost-input" value="${order.extraCost||0}" oninput="refreshEditTotal()"></div>
+        <div style="margin-bottom:12px;">${iH}</div>
         <div id="editTotal" style="background:var(--rose-pale);border-radius:12px;padding:14px;text-align:center;margin-bottom:4px;">
             <div style="font-size:.73rem;color:var(--rose-deep);margin-bottom:4px;">預估淨利</div>
             <div style="font-size:1.6rem;font-weight:600;color:var(--rose)">$${(rev-cost-extra).toLocaleString()}</div>
             <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">售$${rev.toLocaleString()} 成本$${(cost+extra).toLocaleString()}</div>
         </div>
-        <div class="modal-actions">
-            <button class="btn-secondary" onclick="closeEditModal()">取消</button>
-            <button class="btn-danger" onclick="deleteOrder(${order.id});closeEditModal();loadHistory();loadDashboards()">刪除</button>
-            <button class="btn-primary" onclick="saveEditOrder()">儲存</button>
-        </div>
-    `;
+        <div class="modal-actions"><button class="btn-secondary" onclick="closeEditModal()">取消</button><button class="btn-danger" onclick="deleteAndRefresh(${order.id});closeEditModal()">刪除</button><button class="btn-primary" onclick="saveEditOrder()">儲存</button></div>`;
 }
 function changeEditQty(n,d){
     editCart[n]=Math.max(0,(editCart[n]||0)+d);
-    const safeId='eq_'+n.replace(/[^a-zA-Z0-9]/g,'_');
-    const el=document.getElementById(safeId);
-    if(el) el.innerText=editCart[n];
+    const el=document.getElementById('eq_'+n.replace(/[^a-zA-Z0-9]/g,'_'));
+    if(el)el.innerText=editCart[n];
     refreshEditTotal();
 }
 function refreshEditTotal(){
-    const id=editingOrderId;
-    const rs=getOrders();
-    const order=rs.find(r=>r.id===id);
-    if(!order) return;
-    const sl=order.sellerLevel||'L2', bt=order.buyerType||'retail';
+    const order=getOrders().find(r=>r.id===editingOrderId);if(!order)return;
+    const sl=order.sellerLevel||'L2',bt=order.buyerType||'retail';
     let rev=0,cost=0;
-    order.items.forEach(i=>{ const q=editCart[i.name]||0; if(products[i.name]){ rev+=products[i.name][bt]*q; cost+=products[i.name][sl]*q; } });
+    order.items.forEach(i=>{const q=editCart[i.name]||0;if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}});
     const extra=parseInt(document.getElementById('editExtra')?.value)||0;
     const el=document.getElementById('editTotal');
-    if(el) el.innerHTML=`<div style="font-size:.73rem;color:var(--rose-deep);margin-bottom:4px;">預估淨利</div>
-        <div style="font-size:1.6rem;font-weight:600;color:var(--rose)">$${(rev-cost-extra).toLocaleString()}</div>
-        <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">售$${rev.toLocaleString()} 成本$${(cost+extra).toLocaleString()}</div>`;
+    if(el)el.innerHTML=`<div style="font-size:.73rem;color:var(--rose-deep);margin-bottom:4px;">預估淨利</div><div style="font-size:1.6rem;font-weight:600;color:var(--rose)">$${(rev-cost-extra).toLocaleString()}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">售$${rev.toLocaleString()} 成本$${(cost+extra).toLocaleString()}</div>`;
 }
 function saveEditOrder(){
-    const rs=getOrders();
-    const idx=rs.findIndex(r=>r.id===editingOrderId);
-    if(idx<0) return;
-    const order=rs[idx];
-    const sl=order.sellerLevel||'L2', bt=order.buyerType||'retail';
+    const rs=getOrders();const idx=rs.findIndex(r=>r.id===editingOrderId);if(idx<0)return;
+    const order=rs[idx];const sl=order.sellerLevel||'L2',bt=order.buyerType||'retail';
     const extra=parseInt(document.getElementById('editExtra')?.value)||0;
+    const dateVal=document.getElementById('editDate')?.value;
+    const newTs=dateVal?new Date(dateVal).getTime():order.orderDate||order.id;
+    const nd=new Date(newTs);
     let rev=0,cost=0,items=[];
-    order.items.forEach(i=>{
-        const q=editCart[i.name]||0;
-        if(q>0){
-            items.push({...i,qty:q});
-            if(products[i.name]){ rev+=products[i.name][bt]*q; cost+=products[i.name][sl]*q; }
-        }
-    });
-    if(!items.length){ alert('請保留至少一項商品'); return; }
-    rs[idx]={...order, note:document.getElementById('editNote').value||'無備註', extraCost:extra, itemsCost:cost, cost:cost+extra, rev, profit:rev-cost-extra, items};
-    saveOrders(rs);
-    closeEditModal();
-    loadHistory();
-    loadDashboards();
+    order.items.forEach(i=>{const q=editCart[i.name]||0;if(q>0){items.push({...i,qty:q});if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}}});
+    if(!items.length){alert('請保留至少一項商品');return;}
+    rs[idx]={...order,orderDate:newTs,year:nd.getFullYear(),month:nd.getMonth(),note:document.getElementById('editNote').value||'無備註',extraCost:extra,itemsCost:cost,cost:cost+extra,rev,profit:rev-cost-extra,items};
+    saveOrders(rs);closeEditModal();loadHistory();loadDashboards();renderChart();
 }
-function closeEditModal(e){
-    if(e&&e.target!==document.getElementById('editModal')) return;
-    document.getElementById('editModal').classList.remove('open');
-    editingOrderId=null; editCart={};
-}
-
-// ===== DELETE / CLEAR =====
-function deleteOrder(id){
-    const rs=getOrders();
-    saveOrders(rs.filter(r=>r.id!==id));
-}
-function clearData(){
-    if(confirm("確定要清空所有訂單數據嗎？此操作無法復原。")){
-        localStorage.removeItem('dct_v9_ultimate');
-        localStorage.removeItem('dct_rebates');
-        loadDashboards(); renderChart(); loadHistory();
-    }
-}
+function closeEditModal(e){if(e&&e.target!==document.getElementById('editModal'))return;document.getElementById('editModal').classList.remove('open');editingOrderId=null;editCart={};}
+function deleteAndRefresh(id){saveOrders(getOrders().filter(r=>r.id!==id));loadHistory();loadDashboards();renderChart();}
 </script>
 </body>
 </html>
