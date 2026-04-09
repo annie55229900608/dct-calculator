@@ -116,6 +116,31 @@
         .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#2C2226;color:white;padding:12px 22px;border-radius:30px;font-size:.85rem;font-weight:500;letter-spacing:.3px;z-index:900;opacity:0;transition:all .3s ease;pointer-events:none;white-space:nowrap;}
         .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+
+        /* ── 魔術曲線圖 ── */
+        .curve-sub-tabs{display:flex;gap:4px;background:var(--beige);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:14px;}
+        .curve-sub-tab{flex:1;padding:9px 10px;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.74rem;font-weight:500;color:var(--text-muted);background:transparent;transition:all .2s;white-space:nowrap;}
+        .curve-sub-tab.active{background:var(--rose);color:var(--white);box-shadow:0 2px 8px rgba(200,116,138,.3);}
+        .curve-panel{display:none;} .curve-panel.active{display:block;}
+        .chart-wrap-curve{position:relative;height:320px;overflow:hidden;}
+        .curve-table-wrap{overflow-x:auto;margin-top:12px;}
+        .curve-table-wrap table{width:100%;border-collapse:collapse;font-size:.74rem;}
+        .curve-table-wrap th{background:var(--beige);color:var(--text-muted);padding:7px 8px;text-align:right;font-weight:500;border-bottom:2px solid var(--border);white-space:nowrap;}
+        .curve-table-wrap th:first-child{text-align:left;}
+        .curve-table-wrap td{padding:6px 8px;border-bottom:1px solid var(--beige-dark);text-align:right;font-size:.73rem;}
+        .curve-table-wrap td:first-child{text-align:left;font-weight:600;color:var(--rose-deep);}
+        .curve-table-wrap tr:last-child td{font-weight:700;color:var(--rose);border-top:1px solid var(--border);}
+        .delta-pos{color:#3A9E97;font-size:.7rem;} .delta-neg{color:#e05050;font-size:.7rem;}
+        .cell-input-curve{width:100%;min-width:60px;background:transparent;border:1px solid transparent;border-radius:4px;padding:3px 5px;color:var(--text-main);font-size:.73rem;text-align:right;outline:none;transition:all .15s;}
+        .cell-input-curve:hover{border-color:var(--border);background:var(--rose-pale);}
+        .cell-input-curve:focus{border-color:var(--rose);background:var(--white);}
+        .curve-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+        .curve-legend-item{display:flex;align-items:center;gap:5px;font-size:.73rem;color:var(--text-sub);}
+        .curve-legend-box{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+        .curve-stat{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px;min-width:100px;text-align:center;}
+        .curve-stat .cs-label{font-size:.67rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;}
+        .curve-stat .cs-val{font-size:1.05rem;font-weight:600;color:var(--rose);}
+        .curve-stat .cs-sub{font-size:.7rem;margin-top:2px;}
         /* Top bar wrapper */
         #topBar{position:fixed;top:0;left:0;right:0;z-index:200;}
         /* Welcome screen */
@@ -146,6 +171,8 @@
         .btn-secondary{flex:0 0 auto;padding:14px 18px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:12px;font-size:.9rem;cursor:pointer;font-family:inherit;}
         .btn-danger{flex:0 0 auto;padding:14px 16px;background:transparent;color:#c55;border:1px solid #fcc;border-radius:12px;font-size:.9rem;cursor:pointer;font-family:inherit;}
     </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 </head>
 <body>
 <div class="toast" id="toast"></div>
@@ -169,9 +196,10 @@
 <div class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('tab-new',this)">開單</div>
     <div class="nav-tab" onclick="switchTab('tab-daily',this)">今日</div>
-    <div class="nav-tab" onclick="switchTab('tab-chart',this)">圖表</div>
     <div class="nav-tab" onclick="switchTab('tab-monthly',this)">月報</div>
     <div class="nav-tab" onclick="switchTab('tab-history',this)">歷史</div>
+    <div class="nav-tab" onclick="switchTab('tab-chart',this)">淨利圖</div>
+    <div class="nav-tab" onclick="switchTab('tab-curve',this)">魔術曲線圖</div>
     <div class="nav-tab" onclick="switchTab('tab-settings',this)">設定</div>
 </div>
 </div><!-- /topBar -->
@@ -269,8 +297,21 @@
             <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>第二口袋 團隊</div>
         </div>
         <div class="chart-wrap" id="chartWrap"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin:14px 0 10px;padding-top:14px;border-top:1px solid var(--border);">
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-sub);">月份明細</span>
+            <div style="position:relative;flex:1;">
+                <select id="chartYearFilter" class="month-select" style="font-size:.82rem;padding:8px 28px 8px 10px;" onchange="renderChartTableFiltered()">
+                    <option value="">全部年份</option>
+                </select>
+                <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span>
+            </div>
+        </div>
+        <div id="chartTable"></div>
     </div>
-    <div class="card"><div class="card-header">各月詳細數字</div><div id="chartTable"></div></div>
+    <div class="card">
+        <div class="card-header">年度業績統計</div>
+        <div id="chartYearTotals"><div style="text-align:center;padding:12px;font-size:.8rem;color:var(--text-muted)">尚無數據</div></div>
+    </div>
     <div class="card">
         <div class="card-header">手動輸入歷史業績</div>
         <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:12px;line-height:1.6;">補登過去未記錄的月份業績，輸入後圖表與歷史同步更新。</div>
@@ -278,8 +319,7 @@
             <span class="input-label">年份 / 月份</span>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                 <div style="position:relative;">
-                    <select id="manualYear" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;">
-                    </select>
+                    <select id="manualYear" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;"></select>
                     <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span>
                 </div>
                 <div style="position:relative;">
@@ -294,19 +334,12 @@
             </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-            <div class="input-group" style="margin-bottom:0;">
-                <span class="input-label" style="color:#3A9E97;">第一口袋 零售淨利</span>
-                <input type="number" id="manualRetail" class="custom-input" placeholder="0" style="border-left:3px solid #5BC8C0;">
-            </div>
-            <div class="input-group" style="margin-bottom:0;">
-                <span class="input-label" style="color:#2856C8;">第二口袋 團隊淨利</span>
-                <input type="number" id="manualTeam" class="custom-input" placeholder="0" style="border-left:3px solid #3B6EDE;">
-            </div>
+            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#3A9E97;">第一口袋 零售淨利</span><input type="number" id="manualRetail" class="custom-input" placeholder="0" style="border-left:3px solid #5BC8C0;"></div>
+            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#2856C8;">第二口袋 團隊淨利</span><input type="number" id="manualTeam" class="custom-input" placeholder="0" style="border-left:3px solid #3B6EDE;"></div>
         </div>
         <button class="save-btn" style="margin-top:0;" onclick="saveManualEntry()">儲存這個月份</button>
     </div>
 </div>
-
 <!-- 月報 -->
 <div id="tab-monthly" class="container">
     <div class="goal-card">
@@ -350,9 +383,73 @@
                 <option value="二級輔導">二級輔導</option>
             </select>
         </div>
-        <div class="input-group" style="margin-bottom:0"><span class="input-label">上家 / 推薦人</span><input type="text" id="settingUpline" class="custom-input" placeholder="輸入上家姓名" oninput="saveProfile()"></div>
+        <div class="input-group"><span class="input-label">上家 / 推薦人</span><input type="text" id="settingUpline" class="custom-input" placeholder="輸入上家姓名" oninput="saveProfile()"></div>
     </div>
 </div>
+
+<!-- 曲線圖 -->
+<div id="tab-curve" class="container">
+    <!-- 圖表 -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="curve-stats2"></div>
+    <div class="card">
+        <div id="curveProfileBadge" style="display:none;margin-bottom:10px;padding:8px 12px;background:var(--rose-pale);border-radius:10px;border:1px solid var(--rose-light);align-items:center;gap:8px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--rose);flex-shrink:0;"></div>
+            <span id="curveProfileText" style="font-size:.8rem;color:var(--rose-deep);font-weight:500;"></span>
+        </div>
+        <div class="card-header" id="curve-chart2-title">魔術曲線圖</div>
+        <div style="font-size:.73rem;color:var(--text-muted);margin-bottom:10px;" id="curve-chart2-sub">TikTok + IG 月度粉絲堆疊長條圖</div>
+        <div class="curve-legend">
+            <div class="curve-legend-item"><div class="curve-legend-box" style="background:#5BC8C0"></div>TikTok</div>
+            <div class="curve-legend-item"><div class="curve-legend-box" style="background:#D4607A"></div>IG</div>
+        </div>
+        <div class="chart-wrap-curve"><canvas id="curve-chart2"></canvas></div>
+    </div>
+
+    <!-- 新增月份 -->
+    <div class="card">
+        <div class="card-header">新增月份資料</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div class="input-group" style="margin-bottom:0;">
+                <span class="input-label">年份</span>
+                <div style="position:relative;"><select id="curve-year" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;"></select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+                <span class="input-label">月份</span>
+                <div style="position:relative;"><select id="curve-month" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;">
+                    <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+                    <option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option>
+                    <option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                </select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#5BC8C0;">TikTok 粉絲數</span><input type="number" id="cv-tiktok" class="custom-input" placeholder="0" style="border-left:3px solid #5BC8C0;"></div>
+            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:var(--rose);">IG 粉絲數</span><input type="number" id="cv-ig" class="custom-input" placeholder="0" style="border-left:3px solid var(--rose);"></div>
+        </div>
+        <button class="save-btn" onclick="addCurveMonth()">＋ 新增這個月</button>
+    </div>
+
+    <!-- 編輯表格 -->
+    <div class="card">
+        <div class="card-header">月份資料</div>
+        <div id="curve-edit-table"></div>
+    </div>
+
+    <!-- 各月詳細數字 -->
+    <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:.78rem;font-weight:600;color:var(--text-sub);text-transform:uppercase;letter-spacing:1.2px;">月份明細</span>
+            <div style="position:relative;">
+                <select id="curveYearFilter" class="month-select" style="font-size:.78rem;padding:6px 26px 6px 10px;" onchange="renderCurveTableFiltered()">
+                    <option value="">全部年份</option>
+                </select>
+                <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.75rem;">▾</span>
+            </div>
+        </div>
+        <div id="curve-table2"></div>
+    </div>
+</div>
+
 
 <!-- Edit Modal -->
 <div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
@@ -364,6 +461,7 @@
 </div>
 
 <script>
+if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
 const products={
     "益生菌 買三送一":{cat:"活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
     "葉黃素凍 買三送一":{cat:"活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
@@ -455,7 +553,7 @@ window.onload=()=>{
     localStorage.setItem('dct_last_quote',idx);
     document.getElementById('dailyQuote').innerText=quotes[idx];
     document.getElementById('orderDate').value=toLocalISO(new Date());
-    loadProfileUI(); initOrderUI(); loadDashboards(); initManualYearSelect();
+    loadProfileUI(); initOrderUI(); loadDashboards(); initManualYearSelect(); initCurveBasic();
     fixLayout();
     setTimeout(fixLayout, 300);
 };
@@ -536,6 +634,7 @@ function switchTab(id,el){
     if(id==='tab-daily'||id==='tab-monthly') loadDashboards();
     if(id==='tab-history') loadHistory();
     if(id==='tab-chart'){ renderChart(); initManualYearSelect(); }
+    if(id==='tab-curve'){ initCurve(); }
 }
 function switchCat(cat,el){currentCat=cat;document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderProducts();}
 function updateGoal(v){localStorage.setItem('dct_goal',v);loadDashboards();}
@@ -711,6 +810,81 @@ function deleteManualEntry(key){
 function renderManualList(){}
 
 
+
+function getMonthlyData(){
+    const rs=getOrders();
+    const data={};
+    rs.forEach(r=>{
+        const d=getOrderDate(r);
+        const k=`${d.getFullYear()}-${d.getMonth()}`;
+        if(!data[k]) data[k]={retail:0,team:0};
+        if(r.type==='retail') data[k].retail+=r.rev; else data[k].team+=r.rev;
+    });
+    const manualD=getManualData();
+    Object.keys(manualD).forEach(k=>{
+        if(!data[k]) data[k]={retail:0,team:0};
+        data[k].retail+=manualD[k].retail||0;
+        data[k].team+=manualD[k].team||0;
+    });
+    return data;
+}
+
+function updateChartYearFilter(){
+    const sel=document.getElementById('chartYearFilter'); if(!sel) return;
+    const data=getMonthlyData();
+    const years=[...new Set(Object.keys(data).map(k=>k.split('-')[0]))].sort((a,b)=>b-a);
+    const cur=sel.value;
+    sel.innerHTML='<option value="">全部年份</option>'+years.map(y=>`<option value="${y}"${y===cur?'selected':''}>${y}年</option>`).join('');
+}
+function renderChartTableFiltered(){
+    const sel=document.getElementById('chartYearFilter');
+    const yr=sel?sel.value:'';
+    const data=getMonthlyData();
+    const manualD=getManualData();
+    let th='';
+    Object.keys(data).filter(k=>!yr||k.startsWith(yr)).sort((a,b)=>b.localeCompare(a)).forEach(k=>{
+        const d=data[k],[y,mo]=k.split('-'),tot=d.retail+d.team;
+        const mk='edit_'+k.replace('-','_'),hasManual=!!manualD[k];
+        th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-size:.82rem;font-weight:600">${y}年${parseInt(mo)+1}月 <span style="color:var(--rose);margin-left:4px">$${tot.toLocaleString()}</span>${hasManual?'<span style="font-size:.65rem;background:var(--rose-pale);color:var(--rose-deep);padding:2px 6px;border-radius:5px;margin-left:5px">含手動</span>':''}</span>
+                <button onclick="toggleChartEdit('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button>
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
+                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售 $${d.retail.toLocaleString()}</span>
+                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊 $${d.team.toLocaleString()}</span>
+            </div>
+            <div id="${mk}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
+                <div style="font-size:.72rem;color:var(--rose-deep);margin-bottom:8px;font-weight:600;">修改手動輸入數字</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                    <div><div style="font-size:.68rem;color:#3A9E97;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">零售淨利</div><input type="number" id="${mk}_retail" class="custom-input" value="${(manualD[k]?.retail||0)}" style="border-left:3px solid #5BC8C0;padding:9px 10px;"></div>
+                    <div><div style="font-size:.68rem;color:#2856C8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">團隊淨利</div><input type="number" id="${mk}_team" class="custom-input" value="${(manualD[k]?.team||0)}" style="border-left:3px solid #3B6EDE;padding:9px 10px;"></div>
+                </div>
+                <div style="display:flex;gap:8px;"><button onclick="saveChartEdit('${k}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button><button onclick="toggleChartEdit('${k}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button></div>
+            </div>
+        </div>`;
+    });
+    updateChartYearFilter();
+    document.getElementById('chartTable').innerHTML=th||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
+}
+
+function updateCurveYearFilter(){
+    const sel=document.getElementById('curveYearFilter'); if(!sel) return;
+    const years=[...new Set(getCurveSortedKeys().map(k=>k.split('-')[0]))].sort((a,b)=>b-a);
+    const cur=sel.value;
+    sel.innerHTML='<option value="">全部年份</option>'+years.map(y=>`<option value="${y}"${y===cur?'selected':''}>${y}年</option>`).join('');
+}
+function renderCurveTableFiltered(){
+    const sel=document.getElementById('curveYearFilter');
+    const yr=sel?sel.value:'';
+    const keys=getCurveSortedKeys().filter(k=>!yr||k.startsWith(yr));
+    const tiktok=keys.map(k=>curveDB[k].tiktok||0);
+    const ig=keys.map(k=>curveDB[k].ig||0);
+    buildCurveDetailTable('curve-table2',keys,['TikTok','IG'],[tiktok,ig],['#5BC8C0','#D4607A']);
+    updateCurveYearFilter();
+}
+
+
 function toggleChartEdit(key){
     const id='edit_'+key.replace('-','_');
     const el=document.getElementById(id);
@@ -762,52 +936,21 @@ function renderChart(){
         if(d.team>2000&&d.retail>0) bars+=`<text x="${x+BW/2}" y="${yt+ht/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.team/1000)}k</text>`;
         if(d.retail>2000&&d.team>0) bars+=`<text x="${x+BW/2}" y="${yr2+hr/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.retail/1000)}k</text>`;
         bars+=`<text x="${x+BW/2}" y="${PT+CH+18}" text-anchor="middle" font-size="9.5" fill="#7A6872">${parseInt(mo)+1}月</text>`;
-        if(i===0||mo==='0') bars+=`<text x="${x+BW/2}" y="${PT+CH+32}" text-anchor="middle" font-size="8" fill="#B09EA8">${yr}</text>`;
+        bars+=`<text x="${x+BW/2}" y="${PT+CH+30}" text-anchor="middle" font-size="8" fill="#B09EA8">${yr}</text>`;
     });
     // Show profile on chart
     const prof=getProfile();
     const badge=document.getElementById('chartProfileBadge');
     const profTxt=document.getElementById('chartProfileText');
-    if(prof.name||prof.level){
-        const parts=[prof.name,prof.level].filter(Boolean);
-        profTxt.innerText=parts.join(' · ');
-        badge.style.display='flex';
-    } else { badge.style.display='none'; }
+    if(badge&&profTxt){
+        if(prof.name||prof.level){
+            profTxt.innerText=[prof.name,prof.level].filter(Boolean).join(' · ');
+            badge.style.display='flex';
+        } else { badge.style.display='none'; }
+    }
     document.getElementById('chartWrap').innerHTML=`<svg width="${TW}" height="${PT+CH+PB}" xmlns="http://www.w3.org/2000/svg" style="display:block;">${tks}<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+CH}" stroke="#EDE7DE" stroke-width="1.5"/>${bars}</svg>`;
-    let th='';
-    Object.keys(data).sort((a,b)=>b.localeCompare(a)).forEach(k=>{
-        const d=data[k],[yr,mo]=k.split('-'),tot=d.retail+d.team; // revenue
-        const mk='edit_'+k.replace('-','_');
-        const hasManual=!!manualD[k];
-        th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                <span style="font-size:.82rem;font-weight:600">${yr}年${parseInt(mo)+1}月 <span style="color:var(--rose);margin-left:4px">$${tot.toLocaleString()}</span>${hasManual?'<span style="font-size:.65rem;background:var(--rose-pale);color:var(--rose-deep);padding:2px 6px;border-radius:5px;margin-left:5px">含手動</span>':''}</span>
-                <button onclick="toggleChartEdit('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button>
-            </div>
-            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
-                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售 $${d.retail.toLocaleString()}</span>
-                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊 $${d.team.toLocaleString()}</span>
-            </div>
-            <div id="${mk}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
-                <div style="font-size:.72rem;color:var(--rose-deep);margin-bottom:8px;font-weight:600;">修改手動輸入數字</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-                    <div>
-                        <div style="font-size:.68rem;color:#3A9E97;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">零售淨利</div>
-                        <input type="number" id="${mk}_retail" class="custom-input" value="${(manualD[k]?.retail||0)}" style="border-left:3px solid #5BC8C0;padding:9px 10px;">
-                    </div>
-                    <div>
-                        <div style="font-size:.68rem;color:#2856C8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">團隊淨利</div>
-                        <input type="number" id="${mk}_team" class="custom-input" value="${(manualD[k]?.team||0)}" style="border-left:3px solid #3B6EDE;padding:9px 10px;">
-                    </div>
-                </div>
-                <div style="display:flex;gap:8px;">
-                    <button onclick="saveChartEdit('${k}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button>
-                    <button onclick="toggleChartEdit('${k}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button>
-                </div>
-            </div>
-        </div>`;
-    });
-    document.getElementById('chartTable').innerHTML=th||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
+
+    updateChartYearFilter(); renderChartTableFiltered();
 }
 
 // EDIT MODAL
@@ -951,6 +1094,371 @@ function onSearchInput(){
 }
 
 function deleteAndRefresh(id){saveOrders(getOrders().filter(r=>r.id!==id));loadHistory();loadDashboards();renderChart();showToast('已刪除訂單','#7A6872');}
+
+// roundRect polyfill for older Safari
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        this.beginPath();
+        this.moveTo(x+r,y); this.lineTo(x+w-r,y);
+        this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r);
+        this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h);
+        this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r);
+        this.quadraticCurveTo(x,y,x+r,y); this.closePath();
+    };
+}
+
+// ══════════════════════════════════════════
+//  魔術曲線圖 JS
+// ══════════════════════════════════════════
+const CURVE_STORAGE = 'dct_monthly_data_v1';
+const CURVE_CONFIG  = 'dct_curve_config_v1';
+let curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
+let curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
+let curveCharts = {};
+
+function saveCurveDB(){ localStorage.setItem(CURVE_STORAGE, JSON.stringify(curveDB)); }
+function saveCurveConfig(){ updateCurveTitles(); }
+
+function updateCurveTitles(){
+    const p = getProfile();
+    const name   = p.name||'';
+    const level  = p.level ? ' ｜ ' + p.level : '';
+    const upline = p.upline ? ' ｜ 上家：' + p.upline : '';
+    const years = '';
+    const t1 = document.getElementById('curve-chart1-title');
+    const t2 = document.getElementById('curve-chart2-title');
+    const s1 = document.getElementById('curve-chart1-sub');
+    const s2 = document.getElementById('curve-chart2-sub');
+    if(t1) t1.textContent = [years, name, '淨利'].filter(Boolean).join(' ') || '淨利曲線圖';
+    if(t2) t2.textContent = [years, name, '粉絲'].filter(Boolean).join(' ') || '粉絲曲線圖';
+    if(s1) s1.textContent = '三口袋月度淨利' + level + upline;
+    if(s2) s2.textContent = 'TikTok + IG 月度粉絲' + level + upline;
+    // Profile badge
+    const cb=document.getElementById('curveProfileBadge');
+    const ct=document.getElementById('curveProfileText');
+    if(cb&&ct){
+        const parts=[name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
+        if(parts.length){ ct.innerText=parts.join(' · '); cb.style.display='flex'; }
+        else cb.style.display='none';
+    }
+}
+
+function getCurveSortedKeys(){ return Object.keys(curveDB).sort(); }
+
+function initCurveBasic(){
+    const yr=document.getElementById('curve-year');
+    if(yr && !yr.options.length){
+        const cy=new Date().getFullYear();
+        for(let y=2022;y<=cy+2;y++){
+            const o=document.createElement('option');
+            o.value=y; o.textContent=y+'年';
+            if(y===cy) o.selected=true;
+            yr.appendChild(o);
+        }
+        document.getElementById('curve-month').value=new Date().getMonth()+1;
+    }
+    renderCurveTable();
+}
+function initCurve(){
+    const yr = document.getElementById('curve-year');
+    if(yr && !yr.options.length){
+        const cy = new Date().getFullYear();
+        for(let y=2022;y<=cy+2;y++){
+            const o=document.createElement('option');
+            o.value=y; o.textContent=y+'年';
+            if(y===cy) o.selected=true;
+            yr.appendChild(o);
+        }
+        document.getElementById('curve-month').value = new Date().getMonth()+1;
+    }
+    updateCurveTitles();
+    renderCurveTable();
+    renderCurveCharts();
+}
+
+function switchCurve(panelId, el){
+    document.querySelectorAll('.curve-sub-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.curve-panel').forEach(p=>p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+    renderCurveCharts();
+}
+
+function addCurveMonth(){
+    const y = document.getElementById('curve-year').value;
+    const m = document.getElementById('curve-month').value;
+    const key = y + '-' + String(m).padStart(2,'0');
+    if(curveDB[key]){ showToast('此月份已存在，請直接在表格修改'); return; }
+    curveDB[key] = {
+        tiktok: parseInt(document.getElementById('cv-tiktok').value)||0,
+        ig:     parseInt(document.getElementById('cv-ig').value)||0,
+    };
+    saveCurveDB();
+    ['cv-tiktok','cv-ig'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    renderCurveTable();
+    renderCurveCharts();
+    showToast('✓ 已新增 ' + y + '年' + parseInt(m) + '月');
+}
+
+function renderCurveTable(){
+    const wrap=document.getElementById('curve-edit-table');
+    if(!wrap) return;
+    const eyf=document.getElementById('curveEditYearFilter');
+    const eyr=eyf?eyf.value:'';
+    const allKeys=getCurveSortedKeys().slice().reverse();
+    // Update year options in edit filter
+    if(eyf){
+        const yrs=[...new Set(allKeys.map(k=>k.split('-')[0]))].sort((a,b)=>b-a);
+        const curV=eyf.value;
+        eyf.innerHTML='<option value="">全部年份</option>'+yrs.map(y=>`<option value="${y}"${y===curV?'selected':''}>${y}年</option>`).join('');
+    }
+    const keys=eyr?allKeys.filter(k=>k.startsWith(eyr)):allKeys;
+    if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚未新增任何資料</div>'; return; }
+    let html='';
+    keys.forEach(key=>{
+        const d=curveDB[key],[y,m]=key.split('-');
+        const eid='cedit_'+key.replace('-','_');
+        html+=`<div style="padding:10px 0;border-bottom:1px solid var(--beige-dark);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <span style="font-size:.85rem;font-weight:600;color:var(--rose-deep)">${y}年${parseInt(m)}月</span>
+                    <span style="font-size:.75rem;color:#5BC8C0;margin-left:8px">TikTok ${(d.tiktok||0).toLocaleString()}</span>
+                    <span style="font-size:.75rem;color:var(--rose);margin-left:6px">IG ${(d.ig||0).toLocaleString()}</span>
+                </div>
+                <div style="display:flex;gap:6px;">
+                    <button class="action-btn edit" onclick="toggleCurveEdit('${key}')">✏ 編輯</button>
+                    <button class="action-btn" onclick="deleteCurveRow('${key}')">刪除</button>
+                </div>
+            </div>
+            <div id="${eid}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                    <div><div style="font-size:.68rem;color:#5BC8C0;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">TikTok</div><input type="number" id="${eid}_tiktok" class="custom-input" value="${d.tiktok||0}" style="border-left:3px solid #5BC8C0;padding:9px 10px;"></div>
+                    <div><div style="font-size:.68rem;color:var(--rose);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">IG</div><input type="number" id="${eid}_ig" class="custom-input" value="${d.ig||0}" style="border-left:3px solid var(--rose);padding:9px 10px;"></div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button onclick="saveCurveEdit('${key}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button>
+                    <button onclick="toggleCurveEdit('${key}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button>
+                </div>
+            </div>
+        </div>`;
+    });
+    wrap.innerHTML=html;
+}
+
+function toggleCurveEdit(key){
+    const id='cedit_'+key.replace('-','_');
+    const el=document.getElementById(id);
+    if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
+function saveCurveEdit(key){
+    const id='cedit_'+key.replace('-','_');
+    const tiktok=parseInt(document.getElementById(id+'_tiktok')?.value)||0;
+    const ig=parseInt(document.getElementById(id+'_ig')?.value)||0;
+    if(!curveDB[key]) return;
+    curveDB[key]={tiktok,ig};
+    saveCurveDB();
+    renderCurveTable();
+    renderCurveCharts();
+    showToast('✓ 已儲存');
+}
+
+function updateCurveCell(key,field,val){
+    if(!curveDB[key]) return;
+    curveDB[key][field]=parseInt(val)||0;
+    saveCurveDB();
+    renderCurveCharts();
+    showToast('✓ 已儲存');
+}
+function deleteCurveRow(key){
+    const[y,m]=key.split('-');
+    if(!confirm(y+'年'+parseInt(m)+'月 確定刪除？')) return;
+    delete curveDB[key];
+    saveCurveDB();
+    renderCurveTable();
+    renderCurveCharts();
+    showToast('已刪除');
+}
+
+function fmtCK(n){
+    if(n>=1000000) return (n/1000000).toFixed(1)+'M';
+    if(n>=10000) return (n/10000).toFixed(0)+'w';
+    if(n>=1000) return (n/1000).toFixed(1)+'k';
+    return String(n);
+}
+
+function clearCurveChart(id){
+    if(curveCharts[id]){ curveCharts[id].destroy(); delete curveCharts[id]; }
+}
+
+function buildCurveChart(id, labels, datasets, deltaArr){
+    clearCurveChart(id);
+    const el=document.getElementById(id);
+    if(!el||!el.offsetParent&&el.offsetWidth===0&&el.offsetHeight===0) return;
+
+    // Disable built-in datalabels
+    datasets.forEach(ds=>{ ds.datalabels={display:false}; });
+
+    const customPlugin = {
+        id: 'curveLabels_'+id,
+        afterDraw(chart){
+            const ctx=chart.ctx;
+            const nDS=chart.data.datasets.length;
+            // Segment labels
+            chart.data.datasets.forEach((ds,di)=>{
+                const meta=chart.getDatasetMeta(di);
+                meta.data.forEach((bar,bi)=>{
+                    const v=ds.data[bi]; if(!v) return;
+                    const segH=Math.abs(bar.base-bar.y); if(segH<16) return;
+                    const cx=bar.x, cy=(bar.y+bar.base)/2;
+                    const lbl=fmtCK(v);
+                    ctx.font='bold 9px "Noto Sans TC",sans-serif';
+                    const tw=ctx.measureText(lbl).width;
+                    const pad=3,rh=13,rw=tw+pad*2;
+                    ctx.fillStyle='rgba(0,0,0,.42)';
+                    ctx.beginPath(); ctx.roundRect(cx-rw/2,cy-rh/2,rw,rh,2); ctx.fill();
+                    ctx.fillStyle='#FFE566'; ctx.textAlign='center'; ctx.textBaseline='middle';
+                    ctx.fillText(lbl,cx,cy);
+                });
+            });
+            // Totals above bars
+            const topMeta=chart.getDatasetMeta(nDS-1);
+            topMeta.data.forEach((bar,bi)=>{
+                const tot=datasets.reduce((s,ds)=>s+(ds.data[bi]||0),0); if(!tot) return;
+                const cx=bar.x; let topY=bar.y-5;
+                if(deltaArr){
+                    const d=deltaArr[bi];
+                    if(d!==null&&d!==undefined){
+                        const dl=(d>=0?'+':'')+fmtCK(d);
+                        ctx.font='bold 9px "Noto Sans TC",sans-serif';
+                        ctx.fillStyle=d>=0?'#3A9E97':'#e05050';
+                        ctx.textAlign='center'; ctx.textBaseline='bottom';
+                        ctx.fillText(dl,cx,topY-1); topY-=12;
+                    }
+                }
+                const tl=fmtCK(tot);
+                ctx.font='bold 10px "Noto Sans TC",sans-serif';
+                const tw=ctx.measureText(tl).width;
+                const pad=4,rh=14,rw=tw+pad*2;
+                ctx.fillStyle='rgba(44,34,38,.72)';
+                ctx.beginPath(); ctx.roundRect(cx-rw/2,topY-rh,rw,rh,3); ctx.fill();
+                ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+                ctx.fillText(tl,cx,topY-1);
+            });
+        }
+    };
+
+    const ctx2=el.getContext('2d');
+    curveCharts[id]=new Chart(ctx2,{
+        type:'bar',
+        data:{labels,datasets},
+        options:{
+            plugins:{legend:{display:false},datalabels:{display:false},
+                tooltip:{backgroundColor:'#fff8f4',titleColor:'#2C2226',bodyColor:'#7A6872',borderColor:'#E8DDE3',borderWidth:1,padding:10,
+                    callbacks:{label:c=>' '+c.dataset.label+': '+Number(c.parsed.y).toLocaleString('zh-TW')}}
+            },
+            scales:{
+                x:{stacked:true,ticks:{color:'#B09EA8',font:{size:10}},grid:{display:false}},
+                y:{stacked:true,ticks:{color:'#B09EA8',font:{size:10},callback:v=>fmtCK(v)},grid:{color:'rgba(232,221,227,.6)'}}
+            },
+            layout:{padding:{top:deltaArr?52:36}},
+            responsive:true,maintainAspectRatio:false,animation:{duration:500}
+        },
+        plugins:[ChartDataLabels, customPlugin]
+    });
+}
+
+function buildCurveDetailTable(wrapId, keys, colNames, colData, colors){
+    const wrap=document.getElementById(wrapId); if(!wrap) return;
+    if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:16px;font-size:.8rem;color:var(--text-muted)">尚無資料</div>'; return; }
+    let html='<div class="curve-table-wrap"><table><thead><tr><th>月份</th>';
+    colNames.forEach((n,i)=>html+=`<th><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[i]};margin-right:3px;vertical-align:middle"></span>${n}</th>`);
+    html+='<th>合計</th>';
+    colNames.forEach((n,i)=>html+=`<th>△${n}</th>`);
+    html+='<th>△合計</th></tr></thead><tbody>';
+    let grand=colNames.map(()=>0);
+    keys.forEach((key,ri)=>{
+        const vals=colData.map(a=>a[ri]);
+        const tot=vals.reduce((a,b)=>a+b,0);
+        grand=grand.map((g,i)=>g+vals[i]);
+        const prev=ri>0?colData.map(a=>a[ri-1]):null;
+        const prevTot=prev?prev.reduce((a,b)=>a+b,0):null;
+        const[y,m]=key.split('-');
+        html+=`<tr><td>${y}/${parseInt(m)}</td>`;
+        vals.forEach(v=>html+=`<td>${Number(v).toLocaleString('zh-TW')}</td>`);
+        html+=`<td><strong>${Number(tot).toLocaleString('zh-TW')}</strong></td>`;
+        if(prev){
+            vals.forEach((v,i)=>{ const d=v-prev[i]; html+=`<td class="${d>0?'delta-pos':d<0?'delta-neg':''}">${d>0?'+':''}${Number(d).toLocaleString('zh-TW')}</td>`; });
+            const dt=tot-prevTot;
+            html+=`<td class="${dt>0?'delta-pos':dt<0?'delta-neg':''}">${dt>0?'+':''}${Number(dt).toLocaleString('zh-TW')}</td>`;
+        } else { colNames.forEach(()=>html+='<td>–</td>'); html+='<td>–</td>'; }
+        html+='</tr>';
+    });
+    html+='</tbody></table></div>';
+    wrap.innerHTML=html;
+}
+
+function renderCurveCharts(){
+    const keys=getCurveSortedKeys();
+    if(!keys.length){
+        clearCurveChart('curve-chart2');
+        ['curve-table2','curve-stats2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=''; });
+        return;
+    }
+    const labels=keys.map((k,i)=>{
+        const[y,m]=k.split('-');
+        const prevY=i>0?keys[i-1].split('-')[0]:null;
+        return prevY!==y ? y+'·'+parseInt(m)+'月' : parseInt(m)+'月';
+    });
+    const tiktok=keys.map(k=>curveDB[k].tiktok||0);
+    const ig=keys.map(k=>curveDB[k].ig||0);
+
+    const totF=tiktok.map((t,i)=>t+ig[i]);
+    const dF=totF.map((v,i)=>i===0?null:v-totF[i-1]);
+    buildCurveChart('curve-chart2',labels,[
+        {label:'TikTok',data:tiktok,backgroundColor:'#5BC8C0',borderWidth:0},
+        {label:'IG',data:ig,backgroundColor:'#D4607A',borderWidth:0},
+    ],dF);
+    buildCurveDetailTable('curve-table2',keys,['TikTok','IG'],[tiktok,ig],['#5BC8C0','#D4607A']);
+    updateCurveYearFilter();
+
+    // Stats
+    const fmtN=n=>Number(n).toLocaleString('zh-TW');
+    const s2=document.getElementById('curve-stats2');
+    if(s2){
+        // Yearly increase stats
+        const latestYear=keys.length?keys.at(-1).split('-')[0]:null;
+        const prevYear=latestYear?String(parseInt(latestYear)-1):null;
+        const lastPrevKey=prevYear?keys.filter(k=>k.startsWith(prevYear)).at(-1):null;
+        const prevTikTok=lastPrevKey?curveDB[lastPrevKey].tiktok||0:0;
+        const prevIG=lastPrevKey?curveDB[lastPrevKey].ig||0:0;
+        const curTikTok=tiktok.at(-1)||0;
+        const curIG=ig.at(-1)||0;
+        const tikInc=curTikTok-prevTikTok;
+        const igInc=curIG-prevIG;
+        const totInc=tikInc+igInc;
+        const dStr=d=>{ const s=(d>0?'+':'')+fmtN(d); return `<div class="cs-sub ${d>0?'delta-pos':d<0?'delta-neg':''}">${s}</div>`; };
+        s2.innerHTML=[
+            {l:'年度粉絲總增加',v:fmtN(totInc),d:totInc},
+            {l:'TikTok 增加',v:fmtN(tikInc),d:tikInc},
+            {l:'IG 增加',v:fmtN(igInc),d:igInc},
+        ].map(x=>{
+            const sign=x.d>0?'+':'';
+            const cls=x.d>0?'delta-pos':x.d<0?'delta-neg':'';
+            return `<div class="curve-stat"><div class="cs-label">${x.l}</div><div class="cs-val" style="color:${x.d>0?'#3A9E97':x.d<0?'#e05050':'var(--rose)'}">${sign}${fmtN(x.d)}</div></div>`;
+        }).join('');
+    }
+    // Profile badge
+    const p2=getProfile();
+    const cb=document.getElementById('curveProfileBadge');
+    const ct=document.getElementById('curveProfileText');
+    if(cb&&ct){
+        const parts2=[p2.name,p2.level,p2.upline?'上家：'+p2.upline:''].filter(Boolean);
+        if(parts2.length){ ct.innerText=parts2.join(' · '); cb.style.display='flex'; }
+        else cb.style.display='none';
+    }
+    updateCurveTitles();
+}
+
 </script>
 </body>
 </html>
