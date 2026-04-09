@@ -527,6 +527,8 @@
 
 
 
+
+
 function saveOnboarding(){
     var n=(document.getElementById('ob_name')||{value:''}).value.trim();
     var l=(document.getElementById('ob_level')||{value:''}).value;
@@ -714,9 +716,21 @@ function updateProfileDisplay(p){
     // profile pill removed
 }
 
+function getAllowedBuyers(){
+    var allowed={
+        'L3_ret':['retail','vip','discount','intern'],
+        'L3_sup':['retail','vip','discount','intern','L3_ret'],
+        'L2':['retail','vip','discount','intern','L3_ret','L3_sup'],
+        'intern':['retail','vip','discount']
+    };
+    return allowed[currentSeller]||buyers.map(function(b){return b.id;});
+}
 function initOrderUI(){
     const ss=document.getElementById('sellerSelect'); if(ss) ss.value=currentSeller;
-    document.getElementById('buyerSelector').innerHTML=buyers.map(b=>`<div class="buyer-btn ${b.id===currentBuyer?'active':''}" onclick="currentBuyer='${b.id}';initOrderUI();updateCalc();">${b.name}</div>`).join('');
+    var allowed=getAllowedBuyers();
+    var filtered=buyers.filter(function(b){return allowed.indexOf(b.id)!==-1;});
+    if(filtered.length&&filtered.indexOf(filtered.find(function(b){return b.id===currentBuyer;}))===-1){currentBuyer=filtered[0].id;}
+    document.getElementById('buyerSelector').innerHTML=filtered.map(function(b){return '<div class="buyer-btn '+(b.id===currentBuyer?'active':'')+'" onclick="currentBuyer=\''+b.id+'\';initOrderUI();updateCalc();">'+b.name+'</div>';}).join('');
     renderProducts();
     document.getElementById('mGoalInput').value=localStorage.getItem('dct_goal')||0;
 }
@@ -1799,12 +1813,7 @@ function saveReviews(d){localStorage.setItem(REVIEW_KEY_MONEY,JSON.stringify(d))
 
 
 function updateReviewTitle(){
-    var y=(document.getElementById('reviewYear')||{}).value||'';
-    var m=(document.getElementById('reviewMonth')||{}).value||'0';
-    var title=document.getElementById('reviewMonthTitle');
-    if(!title) return;
-    if(!y){title.innerText='請選擇月份查看復盤 ✦';title.style.fontSize='1.1rem';title.style.color='var(--text-muted)';title.style.fontWeight='500';}
-    else{title.innerText=y+'年'+(parseInt(m)+1)+'月 復盤';title.style.fontSize='1.4rem';title.style.color='var(--rose)';title.style.fontWeight='700';}
+    // title hidden - no month display
 }
 function initReview(){
     const sel=document.getElementById('reviewYear');
@@ -1832,7 +1841,7 @@ function loadReviewData(){
     const [y,m]=key.split('-');
     // Update title
     const title=document.getElementById('reviewMonthTitle');
-    if(title) title.innerText=y+'年'+( parseInt(m)+1)+'月 復盤';
+    // title hidden
     // Auto-fill from orders
     const rs=getOrders();
     let mR=0,mT=0,mN=0;
@@ -2070,6 +2079,8 @@ function skipDMOnboarding(){
 
 
 
+
+
 </script>
 <!-- ════════ 復盤 ════════ -->
 <div id="tab-review" class="container">
@@ -2077,7 +2088,7 @@ function skipDMOnboarding(){
     <div style="background:var(--white);border-radius:16px;border:1px solid var(--border);padding:20px;margin-bottom:14px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--rose-light);">
         <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.12),transparent 70%);pointer-events:none;"></div>
         <div style="font-size:.7rem;letter-spacing:3px;color:var(--rose-deep);opacity:.7;margin-bottom:6px;">MONTHLY REVIEW</div>
-        <div id="reviewMonthTitle" style="font-size:1.1rem;font-weight:500;color:var(--text-muted);letter-spacing:.5px;">請選擇月份查看復盤 ✦</div>
+        <div id="reviewMonthTitle" style="display:none;"></div>
         <div style="font-size:.78rem;color:var(--rose-deep);opacity:.6;margin-top:8px;line-height:1.7;">每個月的覆盤＆檢核都會讓我們更清楚自己的成長進步<br>儘快填完傳給上家唷！</div>
         <div style="font-size:.72rem;color:var(--rose);opacity:.8;margin-top:8px;font-style:italic;">「每個月完成覆盤者，通常是成長最快的」</div>
     </div>
