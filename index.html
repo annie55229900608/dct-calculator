@@ -78,9 +78,9 @@
         .series-bar{height:6px;background:var(--beige-dark);border-radius:3px;overflow:hidden;}
         .series-fill{height:100%;border-radius:3px;transition:width .8s ease;}
         .dual-bar{height:6px;background:var(--beige-dark);border-radius:3px;overflow:hidden;display:flex;}
-        .dual-bar-r{height:100%;background:var(--rose);} .dual-bar-t{height:100%;background:var(--rose-deep);}
+        .dual-bar-r{height:100%;background:#5BC8C0;} .dual-bar-t{height:100%;background:#3B6EDE;}
         .dual-label{display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:6px;color:var(--text-sub);}
-        .dual-label b{color:var(--rose);}
+        .dual-label b{color:#5BC8C0;}
         .last-month-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
         .blue-box{background:#F0F6FF;border:1px solid #D5E5FF;border-radius:14px;padding:13px;text-align:center;}
         .blue-box .stat-label{color:#7A9AC0;} .blue-box .stat-value{color:#3A78C9;}
@@ -204,7 +204,11 @@
 <!-- 圖表 -->
 <div id="tab-chart" class="container">
     <div class="card">
-        <div class="card-header">業績兩口袋條狀圖</div>
+        <div class="card-header">業績兩口袋（營業額）條狀圖</div>
+        <div id="chartProfileBadge" style="margin-bottom:10px;padding:8px 12px;background:var(--rose-pale);border-radius:10px;border:1px solid var(--rose-light);display:none;align-items:center;gap:8px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--rose);flex-shrink:0;"></div>
+            <span id="chartProfileText" style="font-size:.8rem;color:var(--rose-deep);font-weight:500;"></span>
+        </div>
         <div class="chart-legend">
             <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>第一口袋 零售</div>
             <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>第二口袋 團隊</div>
@@ -236,7 +240,7 @@
     <div class="card"><div class="card-header">系列業績佔比</div><div id="seriesChart"></div></div>
     <div class="card">
         <div class="card-header">零售 vs 團隊</div>
-        <div class="dual-label"><span>零售 <b id="mRetailP">0%</b></span><span style="color:var(--rose-deep)">團隊 <b id="mTeamP" style="color:var(--rose-deep)">0%</b></span></div>
+        <div class="dual-label"><span style="color:#3A9E97">零售 <b id="mRetailP" style="color:#3A9E97">0%</b></span><span style="color:#2856C8">團隊 <b id="mTeamP" style="color:#2856C8">0%</b></span></div>
         <div class="dual-bar"><div id="mRetailBar" class="dual-bar-r" style="width:0%"></div><div id="mTeamBar" class="dual-bar-t" style="width:0%"></div></div>
     </div>
     <div class="card"><div class="card-header">本月熱銷排行</div><div id="mItemStats"></div></div>
@@ -492,7 +496,7 @@ function renderHistoryMonth(){
 function renderChart(){
     const rs=getOrders();
     const data={};
-    rs.forEach(r=>{const d=getOrderDate(r);const k=`${d.getFullYear()}-${d.getMonth()}`;if(!data[k])data[k]={retail:0,team:0};if(r.type==='retail')data[k].retail+=r.profit;else data[k].team+=r.profit;});
+    rs.forEach(r=>{const d=getOrderDate(r);const k=`${d.getFullYear()}-${d.getMonth()}`;if(!data[k])data[k]={retail:0,team:0};if(r.type==='retail')data[k].retail+=r.rev;else data[k].team+=r.rev;});
     const keys=Object.keys(data).sort();
     if(!keys.length){document.getElementById('chartWrap').innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚無數據，請先新增訂單</div>';document.getElementById('chartTable').innerHTML='';return;}
     const BW=54,G=10,PL=54,PR=20,PT=50,PB=50,CH=260;
@@ -509,17 +513,26 @@ function renderChart(){
         const hr=CH*d.retail/nM,ht=CH*d.team/nM,yt=ys(tot),yr2=ys(d.retail);
         if(d.team>0) bars+=`<rect x="${x}" y="${yt}" width="${BW}" height="${ht}" fill="#3B6EDE" rx="2"/>`;
         if(d.retail>0) bars+=`<rect x="${x}" y="${yr2}" width="${BW}" height="${hr}" fill="#5BC8C0" rx="2"/>`;
-        if(tot>0) bars+=`<rect x="${x-2}" y="${yt-22}" width="${BW+4}" height="17" rx="4" fill="#FFEC47"/><text x="${x+BW/2}" y="${yt-10}" text-anchor="middle" font-size="9" font-weight="600" fill="#333">${tot>=1000?Math.round(tot/1000)+'k':tot}</text>`;
-        if(d.team>2000) bars+=`<text x="${x+BW/2}" y="${yt+ht/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.team/1000)}k</text>`;
-        if(d.retail>2000) bars+=`<text x="${x+BW/2}" y="${yr2+hr/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.retail/1000)}k</text>`;
+        if(tot>0) bars+=`<text x="${x+BW/2}" y="${yt-8}" text-anchor="middle" font-size="11" font-weight="600" fill="#2C2226">${tot>=1000?(tot/1000).toFixed(1).replace(/.0$/,'')+'k':tot}</text>`;
+        if(d.team>2000&&d.retail>0) bars+=`<text x="${x+BW/2}" y="${yt+ht/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.team/1000)}k</text>`;
+        if(d.retail>2000&&d.team>0) bars+=`<text x="${x+BW/2}" y="${yr2+hr/2+4}" text-anchor="middle" font-size="8" fill="white">${Math.round(d.retail/1000)}k</text>`;
         bars+=`<text x="${x+BW/2}" y="${PT+CH+18}" text-anchor="middle" font-size="9.5" fill="#7A6872">${parseInt(mo)+1}月</text>`;
         if(i===0||mo==='0') bars+=`<text x="${x+BW/2}" y="${PT+CH+32}" text-anchor="middle" font-size="8" fill="#B09EA8">${yr}</text>`;
     });
+    // Show profile on chart
+    const prof=getProfile();
+    const badge=document.getElementById('chartProfileBadge');
+    const profTxt=document.getElementById('chartProfileText');
+    if(prof.name||prof.level){
+        const parts=[prof.name,prof.level].filter(Boolean);
+        profTxt.innerText=parts.join(' · ');
+        badge.style.display='flex';
+    } else { badge.style.display='none'; }
     document.getElementById('chartWrap').innerHTML=`<svg width="${TW}" height="${PT+CH+PB}" xmlns="http://www.w3.org/2000/svg" style="display:block;">${tks}<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+CH}" stroke="#EDE7DE" stroke-width="1.5"/>${bars}</svg>`;
     let th='';
     Object.keys(data).sort((a,b)=>b.localeCompare(a)).forEach(k=>{
-        const d=data[k],[yr,mo]=k.split('-'),tot=d.retail+d.team;
-        th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);"><div style="font-size:.82rem;font-weight:600;margin-bottom:6px">${yr}年${parseInt(mo)+1}月 <span style="color:var(--rose);margin-left:6px">合計 $${tot.toLocaleString()}</span></div><div style="display:flex;gap:14px;flex-wrap:wrap;"><span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售 $${d.retail.toLocaleString()}</span><span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊 $${d.team.toLocaleString()}</span></div></div>`;
+        const d=data[k],[yr,mo]=k.split('-'),tot=d.retail+d.team; // revenue
+        th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);"><div style="font-size:.82rem;font-weight:600;margin-bottom:6px">${yr}年${parseInt(mo)+1}月 <span style="color:var(--rose);margin-left:6px">總營業額 $${tot.toLocaleString()}</span></div><div style="display:flex;gap:14px;flex-wrap:wrap;"><span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售 $${d.retail.toLocaleString()}</span><span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊 $${d.team.toLocaleString()}</span></div></div>`;
     });
     document.getElementById('chartTable').innerHTML=th||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
 }
