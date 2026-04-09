@@ -22,7 +22,7 @@
         header{background:var(--white);padding:16px 20px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;text-align:center;}
         .header-inner{display:flex;align-items:center;justify-content:center;gap:10px;}
         .header-dot{width:8px;height:8px;border-radius:50%;background:var(--rose);}
-        .header-title{font-size:1.65rem;font-weight:700;color:var(--text-main);letter-spacing:2px;}
+        .header-title{font-size:1.75rem;font-weight:700;color:var(--text-main);letter-spacing:1px;font-family:'Dancing Script',cursive;}
         .quote-bar{background:linear-gradient(135deg,#FFF0F3,#FFF8F5);padding:8px 20px;font-size:.75rem;color:var(--rose-deep);text-align:center;letter-spacing:.6px;font-style:italic;border-bottom:1px solid var(--rose-light);min-height:34px;display:flex;align-items:center;justify-content:center;}
 
         /* ── Nav tabs: pill style ── */
@@ -327,12 +327,12 @@
         .welcome-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#FFD6E4 0%,#FFAEC8 30%,#FF85A8 60%,#E8647A 100%);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;transition:opacity .7s ease;}
         .welcome-overlay::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.35) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(255,180,200,.4) 0%,transparent 50%);pointer-events:none;}
         .welcome-overlay.fade-out{opacity:0;pointer-events:none;}
-        .welcome-logo{font-size:3rem;font-weight:700;color:white;letter-spacing:4px;margin-bottom:4px;text-shadow:0 2px 20px rgba(180,40,80,.3);}
-        .welcome-emoji-row{font-size:1.4rem;letter-spacing:6px;margin-bottom:20px;opacity:.9;}
-        .welcome-dots{display:flex;gap:8px;margin-bottom:24px;}
+        .welcome-logo{font-size:2.4rem;font-weight:700;color:white;letter-spacing:2px;margin-bottom:4px;text-shadow:0 2px 20px rgba(180,40,80,.3);font-family:'Dancing Script',cursive;}
+        .welcome-emoji-row{font-size:1.2rem;letter-spacing:5px;margin-bottom:16px;opacity:.9;}
+        .welcome-dots{display:flex;gap:8px;margin-bottom:18px;}
         .welcome-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.8);}
-        .welcome-greeting{font-size:1.35rem;font-weight:600;color:white;margin-bottom:10px;text-align:center;letter-spacing:.5px;text-shadow:0 1px 8px rgba(180,40,80,.25);}
-        .welcome-sub{font-size:.9rem;color:rgba(255,255,255,.88);text-align:center;line-height:1.85;margin-bottom:36px;letter-spacing:.3px;}
+        .welcome-greeting{font-size:1.05rem;font-weight:600;color:white;margin-bottom:8px;text-align:center;letter-spacing:.3px;text-shadow:0 1px 8px rgba(180,40,80,.25);}
+        .welcome-sub{font-size:.8rem;color:rgba(255,255,255,.85);text-align:center;line-height:1.8;margin-bottom:30px;letter-spacing:.2px;}
         .welcome-btn{padding:15px 44px;background:white;color:var(--rose-deep);border:none;border-radius:50px;font-size:.98rem;font-weight:700;letter-spacing:.8px;cursor:pointer;font-family:inherit;box-shadow:0 6px 24px rgba(180,40,80,.25);transition:transform .15s;}
         .welcome-btn:active{transform:scale(.97);}
         /* Header profile pill */
@@ -369,7 +369,7 @@
 </div>
 <div id="topBar">
 <header>
-    <div class="header-inner"><div class="header-dot"></div><span class="header-title">DCT Money</span><div class="header-dot"></div></div>
+    <div class="header-inner"><span style="font-size:.95rem;">🌸</span><span class="header-title">DCT Money</span><span style="font-size:.95rem;">🌸</span></div>
     <div class="header-profile-pill" id="headerProfile">
         <div class="pill-dot">🌸</div>
         <div class="pill-text" id="headerProfileText"></div>
