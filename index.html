@@ -270,7 +270,7 @@
 <div id="tab-new" class="container active">
     <div class="card"><div class="card-header">🏷️ 我的等級</div>
         <div style="position:relative;">
-            <select id="sellerSelect" class="month-select" onchange="currentSeller=this.value;initOrderUI();" style="border-color:var(--rose-light);">
+            <select id="sellerSelect" class="month-select" onchange="currentSeller=this.value;initOrderUI();syncLevelToSettings(this.value);" style="border-color:var(--rose-light);">
                 <option value="L2">二級輔導</option>
                 <option value="L3_sup">三級輔導</option>
                 <option value="L3_ret">三級零售</option>
@@ -524,6 +524,24 @@
 </div>
 
 <script>
+
+function syncLevelToSettings(sellerVal){
+    var rlMap={'L2':'二級輔導','L3_sup':'三級輔導','L3_ret':'三級零售','intern':'實習'};
+    var levelName=rlMap[sellerVal];
+    if(!levelName) return;
+    var sl=document.getElementById('settingLevel');
+    if(sl) sl.value=levelName;
+    // Also save to profile
+    var p=getProfile();
+    if(p.level!==levelName){
+        p.level=levelName;
+        saveProfileData(p);
+        updateProfileDisplay(p);
+        updateAllBadges();
+    }
+    showToast('等級已同步：'+levelName,'var(--rose)');
+}
+
 
 
 
@@ -2075,6 +2093,7 @@ function saveDMOnboarding(){
 function skipDMOnboarding(){
     document.getElementById('dmOnboarding').style.display='none';
 }
+
 
 
 
