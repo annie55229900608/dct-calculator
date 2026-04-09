@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>DCT Money 復盤系統</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600&family=Dancing+Script:wght@600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&display=swap" rel="stylesheet">
     <style>
@@ -198,6 +198,7 @@
 <header style="position:relative;">
     <div class="header-inner"><span style="font-size:.95rem;">🌸</span><span class="header-title">DCT Money <span style="font-size:.75em;font-weight:400;font-family:'Noto Sans TC',sans-serif;font-style:normal;letter-spacing:.5px;opacity:.75;">復盤系統</span></span><span style="font-size:.95rem;">🌸</span></div>
     <button onclick="switchTab('tab-guide', document.getElementById('guideNavTab'))" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,#FFF5C0,#FFE580);border:none;border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;box-shadow:0 2px 10px rgba(200,160,0,.2);display:flex;align-items:center;justify-content:center;">💡</button>
+    <button onclick="switchTab('tab-settings',null)" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">⚙️</button>
 </header>
 <div class="quote-bar" id="dailyQuote">載入中…</div>
 <div style="background:linear-gradient(135deg,#FFF5F7,#FFF0F5);padding:7px 16px;text-align:center;font-size:1rem;letter-spacing:8px;border-bottom:1px solid var(--rose-light);">🌸 ⭐ 🍀 ✨ 🌙 💕 🌸</div>
@@ -208,8 +209,7 @@
     <div class="nav-tab" onclick="switchTab('tab-history',this)">📋 歷史</div>
     <div class="nav-tab" onclick="switchTab('tab-chart',this)">💰 淨利圖</div>
     <div class="nav-tab" onclick="switchTab('tab-curve',this)">✨ 曲線圖</div>
-    <div class="nav-tab" onclick="switchTab('tab-settings',this)">🌸 設定</div>
-    <div class="nav-tab" id="guideNavTab" onclick="switchTab('tab-guide',this)">📖 指南</div>
+    <div class="nav-tab" onclick="switchTab('tab-review',this)">📝 復盤</div>
 </div>
 </div><!-- /topBar -->
 
@@ -403,7 +403,11 @@
 <!-- 曲線圖 -->
 <div id="tab-curve" class="container">
     <!-- 圖表 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="curve-stats2"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="curve-stats2">
+    <div class="curve-stat"><div class="cs-label">年度粉絲增加</div><div class="cs-val" id="curve-stat-total" style="color:var(--text-muted)">0</div></div>
+    <div class="curve-stat"><div class="cs-label">TikTok 增加</div><div class="cs-val" id="curve-stat-tiktok" style="color:#5BC8C0">0</div></div>
+    <div class="curve-stat"><div class="cs-label">IG 增加</div><div class="cs-val" id="curve-stat-ig" style="color:#D4607A">0</div></div>
+</div>
     <div class="card">
         <div class="card-header" style="flex-wrap:wrap;gap:4px;"><span id="curve-chart2-title">魔術曲線圖</span><span id="curve-chart2-sub" style="font-size:.72rem;font-weight:400;color:var(--text-muted);letter-spacing:.3px;text-transform:none;">（TikTok + IG 月度粉絲堆疊長條圖）</span></div>
         <div id="curveProfileBadge" style="display:none;margin-bottom:10px;padding:8px 12px;background:var(--rose-pale);border-radius:10px;border:1px solid var(--rose-light);align-items:center;gap:8px;">
@@ -467,6 +471,8 @@
 </div>
 
 <script>
+window.onerror=function(){return true;};
+
 if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
 const products={
     "益生菌 買三送一":{cat:"活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
@@ -524,13 +530,7 @@ function fixLayout(){
 window.addEventListener('resize',fixLayout);
 
 
-// Prevent iOS pinch zoom
-document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
-document.addEventListener('gesturechange', function(e){ e.preventDefault(); });
-document.addEventListener('gestureend', function(e){ e.preventDefault(); });
-document.addEventListener('touchmove', function(e){
-    if(e.touches.length > 1) e.preventDefault();
-}, {passive:false});
+// Pinch zoom allowed (max-scale only)
 
 function showToast(msg, color){
     const t=document.getElementById('toast');
@@ -556,7 +556,7 @@ window.onload=()=>{
     if(p.name){ sub.innerHTML=`${p.level?p.level+'<br>':''}每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡`; }
     // Auto dismiss after 2s if profile set
     setTimeout(dismissWelcome, 2000);
-    const lastQ=parseInt(localStorage.getItem('dct_last_quote')??'-1');
+    const lastQ=parseInt(localStorage.getItem('dct_last_quote')||'-1');
     let idx; do{idx=Math.floor(Math.random()*quotes.length);}while(idx===lastQ&&quotes.length>1);
     localStorage.setItem('dct_last_quote',idx);
     document.getElementById('dailyQuote').innerText=quotes[idx];
@@ -632,16 +632,18 @@ function saveOrder(){
 }
 
 function switchTab(id,el){
-    document.querySelectorAll('.container').forEach(c=>c.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-    document.getElementById(id).classList.add('active');el.classList.add('active');
+    Array.prototype.forEach.call(document.querySelectorAll('.container'),function(x){x.classList.remove('active');});
+    Array.prototype.forEach.call(document.querySelectorAll('.nav-tab'),function(t){t.classList.remove('active');});
+    document.getElementById(id).classList.add('active');if(el&&el.classList)el.classList.add('active');
     window.scrollTo({top:0,behavior:'smooth'});
     if(id==='tab-daily'||id==='tab-monthly') loadDashboards();
     if(id==='tab-history') loadHistory();
     if(id==='tab-chart'){ renderChart(); initManualYearSelect(); }
     if(id==='tab-curve'){ initCurve(); }
+    if(id==='tab-review') initReview();
+    if(id==='tab-settings') loadProfileUI();
 }
-function switchCat(cat,el){currentCat=cat;document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderProducts();}
+function switchCat(cat,el){currentCat=cat;Array.prototype.forEach.call(document.querySelectorAll('.cat-tab'),function(t){t.classList.remove('active');});el.classList.add('active');renderProducts();}
 function updateGoal(v){localStorage.setItem('dct_goal',v);loadDashboards();}
 
 function loadDashboards(){
@@ -869,7 +871,7 @@ function renderChartTableFiltered(){
                     <div><div style="font-size:.68rem;color:#3A9E97;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">零售淨利</div><input type="number" id="${mk}_retail" class="custom-input" value="${(manualD[k]?.retail||0)}" style="border-left:3px solid #5BC8C0;padding:9px 10px;"></div>
                     <div><div style="font-size:.68rem;color:#2856C8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">團隊淨利</div><input type="number" id="${mk}_team" class="custom-input" value="${(manualD[k]?.team||0)}" style="border-left:3px solid #3B6EDE;padding:9px 10px;"></div>
                 </div>
-                <div style="display:flex;gap:8px;"><button onclick="saveChartEdit('${k}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button><button onclick="toggleChartEdit('${k}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button></div>
+                <div style="display:flex;gap:8px;"><button onclick="saveChartEdit('${k}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button><button onclick="toggleChartEdit('${k}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button><button onclick="deleteChartEntry('${k}')" style="padding:10px 12px;background:transparent;color:#c55;border:1px solid #fcc;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">刪除</button></div>
             </div>
         </div>`;
     });
@@ -911,6 +913,7 @@ function renderCurveTableFiltered(){
                 <div style="display:flex;gap:8px;">
                     <button onclick="saveCurveEdit2('${k}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button>
                     <button onclick="toggleCurveEdit2('${k}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button>
+                    <button onclick="deleteCurveEntry('${k}')" style="padding:10px 12px;background:transparent;color:#c55;border:1px solid #fcc;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">刪除</button>
                 </div>
             </div>
         </div>`;
@@ -922,10 +925,11 @@ function toggleCurveEdit2(key){
     const el=document.getElementById('cedit2_'+key.replace('-','_'));
     if(el) el.style.display=el.style.display==='none'?'block':'none';
 }
+function deleteCurveEntry(key){delete curveDB[key];saveCurveDB();renderCurveCharts();renderCurveTableFiltered();showToast("已刪除","#7A6872");}
 function saveCurveEdit2(key){
     const eid='cedit2_'+key.replace('-','_');
-    const tiktok=parseInt(document.getElementById(eid+'_tiktok')?.value)||0;
-    const ig=parseInt(document.getElementById(eid+'_ig')?.value)||0;
+    const tiktok=parseInt((document.getElementById(eid+'_tiktok')||{}).value)||0;
+    const ig=parseInt((document.getElementById(eid+'_ig')||{}).value)||0;
     if(!curveDB[key]) return;
     curveDB[key]={tiktok,ig};
     saveCurveDB();
@@ -942,10 +946,11 @@ function toggleChartEdit(key){
     el.style.display=el.style.display==='none'?'block':'none';
 }
 
+function deleteChartEntry(key){var d=getManualData();delete d[key];saveManualDataStore(d);renderChart();loadHistory();showToast("已刪除","#7A6872");renderChartTableFiltered();}
 function saveChartEdit(key){
     const id='edit_'+key.replace('-','_');
-    const retail=parseInt(document.getElementById(id+'_retail')?.value)||0;
-    const team=parseInt(document.getElementById(id+'_team')?.value)||0;
+    const retail=parseInt((document.getElementById(id+'_retail')||{}).value)||0;
+    const team=parseInt((document.getElementById(id+'_team')||{}).value)||0;
     const d=getManualData();
     if(retail===0&&team===0) delete d[key]; else d[key]={retail,team};
     saveManualDataStore(d);
@@ -1111,15 +1116,15 @@ function refreshEditTotal(){
     const sl=order.sellerLevel||'L2',bt=order.buyerType||'retail';
     let rev=0,cost=0;
     order.items.forEach(i=>{const q=editCart[i.name]||0;if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}});
-    const extra=parseInt(document.getElementById('editExtra')?.value)||0;
+    const extra=parseInt((document.getElementById('editExtra')||{}).value)||0;
     const el=document.getElementById('editTotal');
     if(el)el.innerHTML=`<div style="font-size:.73rem;color:var(--rose-deep);margin-bottom:4px;">預估淨利</div><div style="font-size:1.6rem;font-weight:600;color:var(--rose)">$${(rev-cost-extra).toLocaleString()}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">售$${rev.toLocaleString()} 成本$${(cost+extra).toLocaleString()}</div>`;
 }
 function saveEditOrder(){
     const rs=getOrders();const idx=rs.findIndex(r=>r.id===editingOrderId);if(idx<0)return;
     const order=rs[idx];const sl=order.sellerLevel||'L3_sup',bt=editBuyerType||order.buyerType||'retail';
-    const extra=parseInt(document.getElementById('editExtra')?.value)||0;
-    const dateVal=document.getElementById('editDate')?.value;
+    const extra=parseInt((document.getElementById('editExtra')||{}).value)||0;
+    const dateVal=(document.getElementById('editDate')||{}).value;
     const newTs=dateVal?new Date(dateVal).getTime():order.orderDate||order.id;
     const nd=new Date(newTs);
     let rev=0,cost=0,items=[];
@@ -1326,8 +1331,8 @@ function toggleCurveEdit(key){
 }
 function saveCurveEdit(key){
     const id='cedit_'+key.replace('-','_');
-    const tiktok=parseInt(document.getElementById(id+'_tiktok')?.value)||0;
-    const ig=parseInt(document.getElementById(id+'_ig')?.value)||0;
+    const tiktok=parseInt((document.getElementById(id+'_tiktok')||{}).value)||0;
+    const ig=parseInt((document.getElementById(id+'_ig')||{}).value)||0;
     if(!curveDB[key]) return;
     curveDB[key]={tiktok,ig};
     saveCurveDB();
@@ -1506,8 +1511,14 @@ function buildCurveSVG(keys, tiktok, ig, dF){
         const x=PL+i*(BW+G);
         const htk=CH*tk/nM, hig=CH*ig2/nM;
         const ytot=ys(tot), ytk=ys(tk);
-        if(ig2>0) bars+=`<rect x="${x}" y="${ytot}" width="${BW}" height="${hig}" fill="#D4607A" rx="2"/>`;
-        if(tk>0)  bars+=`<rect x="${x}" y="${ytk}"  width="${BW}" height="${htk}" fill="#5BC8C0" rx="2"/>`;
+        if(ig2>0){
+            bars+=`<rect x="${x}" y="${ytot}" width="${BW}" height="${hig}" fill="#D4607A" rx="2"/>`;
+            if(hig>14){const igL=ig2>=10000?Math.round(ig2/1000)+'k':ig2>=1000?(ig2/1000).toFixed(1)+'k':ig2;bars+=`<text x="${x+BW/2}" y="${ytot+hig/2+4}" text-anchor="middle" font-size="8" font-weight="700" fill="rgba(255,255,255,.9)">${igL}</text>`;}
+        }
+        if(tk>0){
+            bars+=`<rect x="${x}" y="${ytk}"  width="${BW}" height="${htk}" fill="#5BC8C0" rx="2"/>`;
+            if(htk>14){const tkL=tk>=10000?Math.round(tk/1000)+'k':tk>=1000?(tk/1000).toFixed(1)+'k':tk;bars+=`<text x="${x+BW/2}" y="${ytk+htk/2+4}" text-anchor="middle" font-size="8" font-weight="700" fill="rgba(255,255,255,.9)">${tkL}</text>`;}
+        }
         // delta label
         if(dF&&dF[i]!==null&&dF[i]!==undefined){
             const d=dF[i];
@@ -1555,30 +1566,31 @@ function renderCurveCharts(){
 
     // Stats
     const fmtN=n=>Number(n).toLocaleString('zh-TW');
-    const s2=document.getElementById('curve-stats2');
-    if(s2){
-        // Yearly increase stats
-        const latestYear=keys.length?keys.at(-1).split('-')[0]:null;
+    // Update always-visible stat boxes
+    (function(){
+        const latestKey=keys.length?keys[keys.length-1]:null;
+        const latestYear=latestKey?latestKey.split('-')[0]:null;
         const prevYear=latestYear?String(parseInt(latestYear)-1):null;
-        const lastPrevKey=prevYear?keys.filter(k=>k.startsWith(prevYear)).at(-1):null;
+        const prevKeys=prevYear?keys.filter(function(k){return k.startsWith(prevYear);}):[];
+        const lastPrevKey=prevKeys.length?prevKeys[prevKeys.length-1]:null;
         const prevTikTok=lastPrevKey?curveDB[lastPrevKey].tiktok||0:0;
         const prevIG=lastPrevKey?curveDB[lastPrevKey].ig||0:0;
-        const curTikTok=tiktok.at(-1)||0;
-        const curIG=ig.at(-1)||0;
+        const curTikTok=latestKey?curveDB[latestKey].tiktok||0:0;
+        const curIG=latestKey?curveDB[latestKey].ig||0:0;
         const tikInc=curTikTok-prevTikTok;
         const igInc=curIG-prevIG;
         const totInc=tikInc+igInc;
-        const dStr=d=>{ const s=(d>0?'+':'')+fmtN(d); return `<div class="cs-sub ${d>0?'delta-pos':d<0?'delta-neg':''}">${s}</div>`; };
-        s2.innerHTML=[
-            {l:'年度粉絲總增加',v:fmtN(totInc),d:totInc},
-            {l:'TikTok 增加',v:fmtN(tikInc),d:tikInc},
-            {l:'IG 增加',v:fmtN(igInc),d:igInc},
-        ].map(x=>{
-            const sign=x.d>0?'+':'';
-            const cls=x.d>0?'delta-pos':x.d<0?'delta-neg':'';
-            return `<div class="curve-stat"><div class="cs-label">${x.l}</div><div class="cs-val" style="color:${x.d>0?'#3A9E97':x.d<0?'#e05050':'var(--rose)'}">${sign}${fmtN(x.d)}</div></div>`;
-        }).join('');
-    }
+        function setStatEl(id, val, color){
+            var el=document.getElementById(id);
+            if(!el) return;
+            var sign=val>0?'+':'';
+            el.innerText=(sign+fmtN(val));
+            el.style.color=color||(val>0?'#3A9E97':val<0?'#e05050':'var(--text-muted)');
+        }
+        setStatEl('curve-stat-total', totInc);
+        setStatEl('curve-stat-tiktok', tikInc, tikInc>0?'#3A9E97':tikInc<0?'#e05050':'#5BC8C0');
+        setStatEl('curve-stat-ig', igInc, igInc>0?'#3A9E97':igInc<0?'#e05050':'#D4607A');
+    })();
     // Profile badge
     const p2=getProfile();
     const cb=document.getElementById('curveProfileBadge');
@@ -1651,7 +1663,371 @@ function importAllData(e){
     e.target.value = '';
 }
 
+
+// ══ 復盤 ══
+const REVIEW_KEY_MONEY='dct_money_review_v1';
+
+function getReviews(){return JSON.parse(localStorage.getItem(REVIEW_KEY_MONEY)||'{}');}
+
+function saveReviews(d){localStorage.setItem(REVIEW_KEY_MONEY,JSON.stringify(d));}
+
+
+function initReview(){
+    const sel=document.getElementById('reviewYear');
+    if(sel&&!sel.options.length){
+        sel.style.display='';
+        const cy=new Date().getFullYear();
+        for(let y=cy;y>=cy-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y+'年';sel.appendChild(o);}
+    }
+    const cm=document.getElementById('reviewMonth');
+    if(cm) cm.value=new Date().getMonth();
+    loadReviewData();
+}
+
+
+function getReviewKey(){
+    const y=(document.getElementById('reviewYear')||{}).value||new Date().getFullYear();
+    const m=(document.getElementById('reviewMonth')||{}).value||new Date().getMonth();
+    return y+'-'+m;
+}
+
+
+function loadReviewData(){
+    const key=getReviewKey();
+    const [y,m]=key.split('-');
+    // Update title
+    const title=document.getElementById('reviewMonthTitle');
+    if(title) title.innerText=y+'年'+( parseInt(m)+1)+'月 復盤';
+    // Auto-fill from orders
+    const rs=getOrders();
+    let mR=0,mT=0,mN=0;
+    rs.forEach(function(r){
+        var d=new Date(r.orderDate||r.id);
+        if(String(d.getFullYear())===String(y)&&String(d.getMonth())===String(m)){
+            if(r.type==='retail') mR+=r.profit;
+            else if(r.type==='team') mT+=r.profit;
+            mN+=(r.nurture||0);
+        }
+    });
+    // Auto-fill from curve
+    var cKey=y+'-'+String(parseInt(m)+1).padStart(2,'0');
+    var cData=curveDB[cKey]||{};
+    // Load saved review
+    const saved=getReviews()[key]||{};
+    // Fields
+    const fields=['rv_target','rv_score','rv_score_reason','rv_compare','rv_breakthrough','rv_improve',
+        'rv_next_profit','rv_next_recruit','rv_next_reels','rv_next_todo','rv_next_avoid','rv_next_challenge',
+        'rv_self_note','rv_question','rv_new_member','rv_direct','rv_indirect','rv_reels','rv_story','rv_fans_growth',
+        'rv_pro_order','rv_pro_sell','rv_pro_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
+    fields.forEach(function(f){
+        var el=document.getElementById(f);
+        if(el) el.value=saved[f]!==undefined?saved[f]:'';
+    });
+    // Auto-fill profits if not saved
+    var retEl=document.getElementById('rv_retail');
+    if(retEl) retEl.value=saved.rv_retail!==undefined?saved.rv_retail:mR||'';
+    var teamEl=document.getElementById('rv_team');
+    if(teamEl) teamEl.value=saved.rv_team!==undefined?saved.rv_team:mT||'';
+    var nurEl=document.getElementById('rv_nurture');
+    if(nurEl) nurEl.value=saved.rv_nurture!==undefined?saved.rv_nurture:mN||'';
+    // Auto-fill TikTok/IG if not saved
+    var tikEl=document.getElementById('rv_tiktok');
+    if(tikEl&&!saved.rv_tiktok&&cData.tiktok) tikEl.value=cData.tiktok;
+    var igEl=document.getElementById('rv_ig');
+    if(igEl&&!saved.rv_ig&&cData.ig) igEl.value=cData.ig;
+    updateReviewTotal();
+    // Show auto note
+    const note=document.getElementById('reviewAutoNote');
+    if(note&&(mR||mT||mN)){
+        note.style.display='block';
+        note.innerHTML='✦ 已自動帶入本月業績：零售 $'+mR.toLocaleString()+' · 團隊 $'+mT.toLocaleString()+' · 培育 $'+mN.toLocaleString();
+    }
+    renderPastReviews();
+}
+
+
+function updateReviewTotal(){
+    var r=parseInt((document.getElementById('rv_retail')||{}).value)||0;
+    var t=parseInt((document.getElementById('rv_team')||{}).value)||0;
+    var n=parseInt((document.getElementById('rv_nurture')||{}).value)||0;
+    var el=document.getElementById('rv_total_display');
+    if(el) el.innerText='$'+(r+t+n).toLocaleString();
+}
+
+// Update total when profit fields change
+['rv_retail','rv_team','rv_nurture'].forEach(function(id){
+    document.addEventListener('input',function(e){if(e.target&&e.target.id===id) updateReviewTotal();});
+});
+
+
+function saveReview(){
+    const key=getReviewKey();
+    const fields=['rv_target','rv_retail','rv_team','rv_nurture','rv_score','rv_score_reason',
+        'rv_compare','rv_breakthrough','rv_improve','rv_next_profit','rv_next_recruit','rv_next_reels',
+        'rv_next_todo','rv_next_avoid','rv_next_challenge','rv_self_note','rv_question',
+        'rv_new_member','rv_direct','rv_indirect','rv_reels','rv_story','rv_fans_growth',
+        'rv_pro_order','rv_pro_sell','rv_pro_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
+    const data={};
+    fields.forEach(function(f){var el=document.getElementById(f);if(el) data[f]=el.value;});
+    const all=getReviews();
+    all[key]=data;
+    saveReviews(all);
+    showToast('✓ 復盤已儲存！');
+    renderPastReviews();
+}
+
+
+function copyReview(){
+    const key=getReviewKey();
+    const [y,m]=key.split('-');
+    const mn=parseInt(m)+1;
+    var get=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
+    var lines=[
+        '@All 想成長者完成月復盤',
+        '上家會跟你說目前你的狀況可以怎麼調整',
+        '',
+        '🪐益生菌',
+        '叫貨 '+get('rv_pro_order')+'組',
+        '銷售 '+get('rv_pro_sell')+'組',
+        '剩餘 '+get('rv_pro_left')+'組',
+        '',
+        '🪐果凍',
+        '叫貨 '+get('rv_jelly_order')+'組',
+        '銷售 '+get('rv_jelly_sell')+'組',
+        '剩餘 '+get('rv_jelly_left')+'組',
+        '',
+        '🔹本月淨利：$'+(
+            (parseInt(get('rv_retail'))||0)+(parseInt(get('rv_team'))||0)+(parseInt(get('rv_nurture'))||0)
+        ).toLocaleString(),
+        '　零售淨利：$'+(get('rv_retail')||0),
+        '　團隊淨利：$'+(get('rv_team')||0),
+        '　培育獎金：$'+(get('rv_nurture')||0),
+        '',
+        '🔹目標淨利：$'+get('rv_target'),
+        '🔹本月給自己打幾分：'+get('rv_score')+'分',
+        get('rv_score_reason')?'　原因：'+get('rv_score_reason'):'',
+        '',
+        '🔹目前直屬人數：'+get('rv_direct')+'人　間系：'+get('rv_indirect')+'人',
+        get('rv_new_member')?'🔹此次新增加盟：'+get('rv_new_member'):'',
+        '',
+        '📱粉絲數',
+        '　TikTok：'+get('rv_tiktok'),
+        '　IG：'+get('rv_ig'),
+        '　本月粉絲成長：+'+get('rv_fans_growth'),
+        '　本月 Reels：'+get('rv_reels')+'則',
+        '',
+        get('rv_compare')?'🔹對比上月發現：'+get('rv_compare'):'',
+        '',
+        '🔥本月反思',
+        get('rv_breakthrough')?'✦ 最大突破：'+get('rv_breakthrough'):'',
+        get('rv_improve')?'✦ 可以更好：'+get('rv_improve'):'',
+        '',
+        '🔥下月目標',
+        '✦ 淨利目標：$'+get('rv_next_profit'),
+        get('rv_next_recruit')?'✦ 目標招商：'+get('rv_next_recruit')+'人':'',
+        get('rv_next_reels')?'✦ 目標 Reels：'+get('rv_next_reels')+'則':'',
+        get('rv_next_todo')?'✦ 要做到的事：'+get('rv_next_todo'):'',
+        get('rv_next_avoid')?'✦ 要避免的事：'+get('rv_next_avoid'):'',
+        get('rv_next_challenge')?'✦ 挑戰目標：'+get('rv_next_challenge'):'',
+        '',
+        get('rv_self_note')?'🌸給自己的話：'+get('rv_self_note'):'',
+        get('rv_question')?'❓我的問題：'+get('rv_question'):'',
+        '',
+        '🌸請更新魔術曲線圖、淨利圖、月報表',
+        '🌸以上內容截圖傳給上家'
+    ].filter(function(l){return l!==undefined;}).join('\n');
+    if(navigator.clipboard){
+        navigator.clipboard.writeText(lines).then(function(){showToast('✓ 已複製！貼上傳給上家吧 💕');});
+    } else {
+        var ta=document.createElement('textarea');
+        ta.value=lines;ta.style.position='fixed';ta.style.opacity='0';
+        document.body.appendChild(ta);ta.select();document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('✓ 已複製！貼上傳給上家吧 💕');
+    }
+}
+
+
+function renderPastReviews(){
+    const all=getReviews();
+    const keys=Object.keys(all).sort(function(a,b){return b.localeCompare(a);});
+    const el=document.getElementById('rv_past_container');
+    if(!el)return;
+    if(!keys.length){el.innerHTML='';return;}
+    var html='<div class="card"><div class="card-header">過去的復盤</div>';
+    keys.forEach(function(k){
+        const [y,m]=k.split('-');
+        const d=all[k];
+        const tot=(parseInt(d.rv_retail)||0)+(parseInt(d.rv_team)||0)+(parseInt(d.rv_nurture)||0);
+        html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--panel-dark);">'
+            +'<span style="font-size:.85rem;font-weight:600;">'+y+'年'+(parseInt(m)+1)+'月</span>'
+            +'<div style="display:flex;gap:8px;align-items:center;">'
+            +(tot?'<span style="font-size:.82rem;color:var(--gold-deep);font-weight:700;">$'+tot.toLocaleString()+'</span>':'')
+            +'<button data-k="'+k+'" onclick="jumpToReview(this.dataset.k)" style="background:var(--gold-pale);color:var(--gold-deep);border:1px solid var(--gold-light);border-radius:6px;padding:4px 10px;font-size:.72rem;cursor:pointer;font-family:inherit;">查看</button>'
+            +'</div></div>';
+    });
+    html+='</div>';
+    el.innerHTML=html;
+}
+
+
+function jumpToReview(key){
+    const [y,m]=key.split('-');
+    const ySel=document.getElementById('reviewYear');
+    const mSel=document.getElementById('reviewMonth');
+    if(ySel) ySel.value=y;
+    if(mSel) mSel.value=m;
+    loadReviewData();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+['rv_retail','rv_team','rv_nurture'].forEach(function(id){
+    document.addEventListener('input',function(e){if(e.target&&e.target.id===id) updateReviewTotal();});
+});
+
 </script>
+<!-- ════════ 復盤 ════════ -->
+<div id="tab-review" class="container">
+
+    <div style="background:var(--white);border-radius:16px;border:1px solid var(--border);padding:20px;margin-bottom:14px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--rose-light);">
+        <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.12),transparent 70%);pointer-events:none;"></div>
+        <div style="font-size:.7rem;letter-spacing:3px;color:var(--rose-deep);opacity:.7;margin-bottom:6px;">MONTHLY REVIEW</div>
+        <div id="reviewMonthTitle" style="font-size:1.4rem;font-weight:700;color:var(--rose);">— 月復盤</div>
+        <div style="font-size:.78rem;color:var(--rose-deep);opacity:.6;margin-top:8px;line-height:1.7;">每個月的覆盤＆檢核都會讓我們更清楚自己的成長進步<br>儘快填完傳給上家唷！</div>
+        <div style="font-size:.72rem;color:var(--rose);opacity:.8;margin-top:8px;font-style:italic;">「每個月完成覆盤者，通常是成長最快的」</div>
+    </div>
+
+    <!-- Month picker -->
+    <div class="card" style="margin-bottom:12px;">
+        <div class="card-header">選擇復盤月份</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <div style="position:relative;flex:1;"><select id="reviewYear" class="month-select" style="display:none;font-size:.8rem;padding:9px 28px 9px 10px;"></select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
+            <div style="position:relative;flex:1;"><select id="reviewMonth" class="month-select" style="font-size:.8rem;padding:9px 28px 9px 10px;">
+                <option value="0">1月</option><option value="1">2月</option><option value="2">3月</option><option value="3">4月</option><option value="4">5月</option><option value="5">6月</option><option value="6">7月</option><option value="7">8月</option><option value="8">9月</option><option value="9">10月</option><option value="10">11月</option><option value="11">12月</option>
+            </select><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;">▾</span></div>
+        </div>
+        <div id="reviewAutoNote" style="font-size:.72rem;color:var(--rose-deep);margin-top:8px;padding:8px 10px;background:var(--rose-pale);border-radius:8px;display:none;"></div>
+    </div>
+
+    <!-- 活動庫存 -->
+    <div class="card">
+        <div class="card-header">🪐 活動庫存</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px;">益生菌 / 果凍各填叫貨、銷售、剩餘</div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">🪐 益生菌</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_pro_order" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_pro_sell" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_pro_left" class="custom-input" placeholder="0組"></div>
+        </div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">🪐 果凍</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_jelly_order" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_jelly_sell" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_jelly_left" class="custom-input" placeholder="0組"></div>
+        </div>
+    </div>
+
+    <!-- 業績數字 (auto-fill) -->
+    <div class="card">
+        <div class="card-header">🔹 業績數字</div>
+        <div style="font-size:.72rem;color:var(--rose-deep);background:var(--rose-pale);padding:8px 10px;border-radius:8px;margin-bottom:12px;">✦ 以下數字已從 App 自動帶入，可手動修正</div>
+        <div class="input-group"><span class="input-label">原設定目標淨利</span><input type="number" id="rv_target" class="custom-input" placeholder="$"></div>
+        <div class="input-group"><span class="input-label">🟡 零售淨利</span><input type="number" id="rv_retail" class="custom-input" style="border-left:3px solid #C9A84C;" placeholder="$"></div>
+        <div class="input-group"><span class="input-label">🔵 團隊淨利（無加盟商填0）</span><input type="number" id="rv_team" class="custom-input" style="border-left:3px solid #5A7EC7;" placeholder="$"></div>
+        <div class="input-group"><span class="input-label">🟢 培育獎金</span><input type="number" id="rv_nurture" class="custom-input" style="border-left:3px solid #4BAE73;" placeholder="$"></div>
+        <div style="background:var(--beige);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;">
+            <div style="font-size:.7rem;color:var(--rose-deep);opacity:.7;margin-bottom:4px;">本月總淨利</div>
+            <div id="rv_total_display" style="font-size:1.6rem;font-weight:700;color:var(--rose);">$0</div>
+        </div>
+        <div class="input-group"><span class="input-label">本月給自己打幾分？（1-10）</span><input type="number" id="rv_score" class="custom-input" placeholder="幾分" min="1" max="10"></div>
+        <div class="input-group" style="margin-bottom:0"><span class="input-label">為什麼？</span><textarea id="rv_score_reason" class="custom-input" placeholder="說說你的理由…" rows="2" style="resize:none;"></textarea></div>
+    </div>
+
+    <!-- 社群粉絲 -->
+    <div class="card">
+        <div class="card-header">📱 社群粉絲</div>
+        <div style="font-size:.72rem;color:var(--rose-deep);background:var(--rose-pale);padding:8px 10px;border-radius:8px;margin-bottom:12px;">✦ 填入本月底各平台最新粉絲數</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div class="input-group" style="margin-bottom:0"><span class="input-label" style="color:#5BC8C0;">TikTok 粉絲數</span><input type="number" id="rv_tiktok" class="custom-input" style="border-left:3px solid #5BC8C0;" placeholder="0"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label" style="color:#D4607A;">IG 粉絲數</span><input type="number" id="rv_ig" class="custom-input" style="border-left:3px solid #D4607A;" placeholder="0"></div>
+        </div>
+        <div class="input-group"><span class="input-label">本月粉絲總成長數（各平台加總）</span><input type="number" id="rv_fans_growth" class="custom-input" placeholder="＋？"></div>
+        <div class="input-group"><span class="input-label">本月發布 Reels 數量</span><input type="number" id="rv_reels" class="custom-input" placeholder="幾則"></div>
+        <div class="input-group" style="margin-bottom:0"><span class="input-label">目標每天限動篇數</span><input type="number" id="rv_story" class="custom-input" placeholder="篇"></div>
+    </div>
+
+    <!-- 團隊 -->
+    <div class="card">
+        <div class="card-header">👥 團隊狀況</div>
+        <div class="input-group"><span class="input-label">此次活動新增加盟人數（填級別）</span><textarea id="rv_new_member" class="custom-input" placeholder="例：三級零售1人、實習2人" rows="2" style="resize:none;"></textarea></div>
+        <div class="input-group"><span class="input-label">目前直屬人數</span><input type="number" id="rv_direct" class="custom-input" placeholder="？人"></div>
+        <div class="input-group" style="margin-bottom:0"><span class="input-label">目前間系人數</span><input type="number" id="rv_indirect" class="custom-input" placeholder="？人"></div>
+    </div>
+
+    <!-- 反思 -->
+    <div class="card">
+        <div class="card-header">🔥 本月反思</div>
+        <div class="input-group"><span class="input-label">對比上月復盤，發現了什麼？</span><textarea id="rv_compare" class="custom-input" placeholder="和上個月比較，有什麼變化或發現？" rows="3" style="resize:none;"></textarea></div>
+        <div class="input-group"><span class="input-label">本月最大突破是？</span><textarea id="rv_breakthrough" class="custom-input" placeholder="說說你這個月最驕傲的事…" rows="2" style="resize:none;"></textarea></div>
+        <div class="input-group"><span class="input-label">哪裡可以做得更好？</span><textarea id="rv_improve" class="custom-input" placeholder="誠實面對自己，哪些地方需要調整？" rows="2" style="resize:none;"></textarea></div>
+    </div>
+
+    <!-- 下月目標 -->
+    <div class="card">
+        <div class="card-header">🔥 下月目標</div>
+        <div class="input-group"><span class="input-label">下個月淨利目標</span><input type="number" id="rv_next_profit" class="custom-input" placeholder="$"></div>
+        <div class="input-group"><span class="input-label">目標招商人數</span><input type="number" id="rv_next_recruit" class="custom-input" placeholder="？人"></div>
+        <div class="input-group"><span class="input-label">目標 Reels 則數</span><input type="number" id="rv_next_reels" class="custom-input" placeholder="幾則"></div>
+        <div class="input-group"><span class="input-label">下月要做到哪些事？</span><textarea id="rv_next_todo" class="custom-input" placeholder="列出最重要的 3 件事…" rows="3" style="resize:none;"></textarea></div>
+        <div class="input-group"><span class="input-label">下月要避免什麼事？</span><textarea id="rv_next_avoid" class="custom-input" placeholder="哪些壞習慣要戒掉？" rows="2" style="resize:none;"></textarea></div>
+        <div class="input-group"><span class="input-label">下個月要挑戰的目標？</span><textarea id="rv_next_challenge" class="custom-input" placeholder="更大的夢想是什麼？" rows="2" style="resize:none;"></textarea></div>
+    </div>
+
+    <!-- 給自己 + 問題 -->
+    <div class="card">
+        <div class="card-header">🌸 給自己</div>
+        <div class="input-group"><span class="input-label">給自己的話</span><textarea id="rv_self_note" class="custom-input" placeholder="親愛的自己，這個月…" rows="3" style="resize:none;"></textarea></div>
+        <div class="input-group" style="margin-bottom:0"><span class="input-label">提出一個問題（一定要問！）</span><textarea id="rv_question" class="custom-input" placeholder="有什麼想問上家的？" rows="2" style="resize:none;"></textarea></div>
+    </div>
+
+    <!-- Reminder -->
+    <div style="background:linear-gradient(135deg,#F0F9F0,#E8F5EC);border:1px solid #9DCFAC;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;">
+        <div style="font-size:.85rem;font-weight:700;color:#2E7D4A;margin-bottom:6px;">🌸 記得更新以下資料</div>
+        <div style="font-size:.78rem;color:#2E7D4A;line-height:2;">
+            魔術曲線圖 &nbsp;·&nbsp; 淨利圖 &nbsp;·&nbsp; 月報表<br>
+            <span style="opacity:.8;">截圖以上內容傳給上家 💕</span>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <button class="save-btn" onclick="saveReview()" style="margin-bottom:10px;">💾 儲存這個月的復盤</button>
+    <button onclick="copyReview()" style="width:100%;padding:15px;background:var(--beige);color:var(--rose-deep);border:1px solid var(--rose-light);border-radius:14px;font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;letter-spacing:1px;margin-bottom:10px;">📋 複製復盤內容傳給上家</button>
+    <div id="rv_past_container" style="margin-top:6px;"></div>
+</div>
+
 <div id="tab-guide" class="container">
 
     <div style="text-align:center;padding:8px 0 18px;">
