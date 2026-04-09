@@ -380,12 +380,11 @@
     <!-- 圖表 -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="curve-stats2"></div>
     <div class="card">
-        <div class="card-header" id="curve-chart2-title">魔術曲線圖</div>
+        <div class="card-header" style="flex-wrap:wrap;gap:4px;"><span id="curve-chart2-title">魔術曲線圖</span><span id="curve-chart2-sub" style="font-size:.72rem;font-weight:400;color:var(--text-muted);letter-spacing:.3px;text-transform:none;">（TikTok + IG 月度粉絲堆疊長條圖）</span></div>
         <div id="curveProfileBadge" style="display:none;margin-bottom:10px;padding:8px 12px;background:var(--rose-pale);border-radius:10px;border:1px solid var(--rose-light);align-items:center;gap:8px;">
             <div style="width:7px;height:7px;border-radius:50%;background:var(--rose);flex-shrink:0;"></div>
             <span id="curveProfileText" style="font-size:.8rem;color:var(--rose-deep);font-weight:500;"></span>
         </div>
-        <div style="font-size:.73rem;color:var(--text-muted);margin-bottom:10px;" id="curve-chart2-sub">TikTok + IG 月度粉絲堆疊長條圖</div>
         <div class="curve-legend">
             <div class="curve-legend-item"><div class="curve-legend-box" style="background:#5BC8C0"></div>TikTok</div>
             <div class="curve-legend-item"><div class="curve-legend-box" style="background:#D4607A"></div>IG</div>
@@ -1185,7 +1184,7 @@ function updateCurveTitles(){
     if(t1) t1.textContent = '淨利曲線圖';
     if(t2) t2.textContent = '魔術曲線圖';
     if(s1) s1.textContent = '三口袋月度淨利' + level + upline;
-    if(s2) s2.textContent = 'TikTok + IG 月度粉絲堆疊長條圖';
+    // subtitle is now inline with title
 }
 
 function getCurveSortedKeys(){ return Object.keys(curveDB).sort(); }
