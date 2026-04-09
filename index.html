@@ -286,6 +286,10 @@
 
 <!-- 圖表 -->
 <div id="tab-chart" class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">今年營業額</div><div class="cs-val" id="chartStatRev">$0</div></div>
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">今年淨利</div><div class="cs-val" id="chartStatProfit">$0</div></div>
+    </div>
     <div class="card">
         <div class="card-header">業績兩口袋（營業額）條狀圖</div>
         <div id="chartProfileBadge" style="margin-bottom:10px;padding:8px 12px;background:var(--rose-pale);border-radius:10px;border:1px solid var(--rose-light);display:none;align-items:center;gap:8px;">
@@ -297,40 +301,16 @@
             <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>第二口袋 團隊</div>
         </div>
         <div class="chart-wrap" id="chartWrap"></div>
-        <div style="display:flex;align-items:center;gap:8px;margin:14px 0 10px;padding-top:14px;border-top:1px solid var(--border);">
-            <span style="font-size:.75rem;font-weight:600;color:var(--text-sub);">月份明細</span>
-            <div style="position:relative;flex:1;">
-                <select id="chartYearFilter" class="month-select" style="font-size:.82rem;padding:8px 28px 8px 10px;" onchange="renderChartTableFiltered()">
-                    <option value="">全部年份</option>
-                </select>
-                <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span>
-            </div>
-        </div>
-        <div id="chartTable"></div>
-    </div>
-    <div class="card">
-        <div class="card-header">年度業績統計</div>
-        <div id="chartYearTotals"><div style="text-align:center;padding:12px;font-size:.8rem;color:var(--text-muted)">尚無數據</div></div>
     </div>
     <div class="card">
         <div class="card-header">手動輸入歷史業績</div>
         <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:12px;line-height:1.6;">補登過去未記錄的月份業績，輸入後圖表與歷史同步更新。</div>
-        <div class="input-group">
-            <span class="input-label">年份 / 月份</span>
+        <div class="input-group"><span class="input-label">年份 / 月份</span>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                <div style="position:relative;">
-                    <select id="manualYear" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;"></select>
-                    <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span>
-                </div>
-                <div style="position:relative;">
-                    <select id="manualMonth" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;">
-                        <option value="0">1月</option><option value="1">2月</option><option value="2">3月</option>
-                        <option value="3">4月</option><option value="4">5月</option><option value="5">6月</option>
-                        <option value="6">7月</option><option value="7">8月</option><option value="8">9月</option>
-                        <option value="9">10月</option><option value="10">11月</option><option value="11">12月</option>
-                    </select>
-                    <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span>
-                </div>
+                <div style="position:relative;"><select id="manualYear" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;"></select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
+                <div style="position:relative;"><select id="manualMonth" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;">
+                    <option value="0">1月</option><option value="1">2月</option><option value="2">3月</option><option value="3">4月</option><option value="4">5月</option><option value="5">6月</option><option value="6">7月</option><option value="7">8月</option><option value="8">9月</option><option value="9">10月</option><option value="10">11月</option><option value="11">12月</option>
+                </select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
             </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
@@ -338,6 +318,13 @@
             <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#2856C8;">第二口袋 團隊淨利</span><input type="number" id="manualTeam" class="custom-input" placeholder="0" style="border-left:3px solid #3B6EDE;"></div>
         </div>
         <button class="save-btn" style="margin-top:0;" onclick="saveManualEntry()">儲存這個月份</button>
+    </div>
+    <div class="card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <span style="font-size:.75rem;font-weight:600;color:var(--text-sub);">月份明細</span>
+            <div style="position:relative;flex:1;"><select id="chartYearFilter" class="month-select" style="font-size:.82rem;padding:8px 28px 8px 10px;" onchange="renderChartTableFiltered()"><option value="">全部年份</option></select><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
+        </div>
+        <div id="chartTable"></div>
     </div>
 </div>
 <!-- 月報 -->
@@ -951,6 +938,18 @@ function renderChart(){
     document.getElementById('chartWrap').innerHTML=`<svg width="${TW}" height="${PT+CH+PB}" xmlns="http://www.w3.org/2000/svg" style="display:block;">${tks}<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+CH}" stroke="#EDE7DE" stroke-width="1.5"/>${bars}</svg>`;
 
     updateChartYearFilter(); renderChartTableFiltered();
+    // Update yearly stat boxes
+    const curY=new Date().getFullYear().toString();
+    const rs2=getOrders();
+    let yRev=0,yProfit=0;
+    rs2.forEach(r=>{ const d=getOrderDate(r); if(d.getFullYear().toString()===curY){ yRev+=r.rev; yProfit+=r.profit; } });
+    // Also add manual entries for current year
+    const md2=getManualData();
+    Object.keys(md2).forEach(k=>{ if(k.startsWith(curY)){ yRev+=(md2[k].retail||0)+(md2[k].team||0); } });
+    const srEl=document.getElementById('chartStatRev');
+    const spEl=document.getElementById('chartStatProfit');
+    if(srEl) srEl.innerText='$'+yRev.toLocaleString();
+    if(spEl){ spEl.innerText='$'+yProfit.toLocaleString(); spEl.style.color=yProfit>=0?'var(--rose)':'#e05050'; }
 }
 
 // EDIT MODAL
