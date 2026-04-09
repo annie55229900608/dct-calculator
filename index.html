@@ -385,7 +385,7 @@
             <span id="curveProfileText" style="font-size:.8rem;color:var(--rose-deep);font-weight:500;"></span>
         </div>
         <div class="card-header" id="curve-chart2-title">魔術曲線圖</div>
-        <div style="font-size:.73rem;color:var(--text-muted);margin-bottom:10px;" id="curve-chart2-sub">TikTok + IG 月度粉絲堆疊長條圖</div>
+        <div style="font-size:.8rem;color:var(--rose-deep);font-weight:500;margin-bottom:10px;" id="curve-chart2-sub">TikTok + IG 月度粉絲堆疊長條圖</div>
         <div class="curve-legend">
             <div class="curve-legend-item"><div class="curve-legend-box" style="background:#5BC8C0"></div>TikTok</div>
             <div class="curve-legend-item"><div class="curve-legend-box" style="background:#D4607A"></div>IG</div>
@@ -417,16 +417,10 @@
         <button class="save-btn" onclick="addCurveMonth()">＋ 新增這個月</button>
     </div>
 
-    <!-- 編輯表格 -->
+    <!-- 月份資料（合併） -->
     <div class="card">
-        <div class="card-header">月份資料</div>
-        <div id="curve-edit-table"></div>
-    </div>
-
-    <!-- 各月詳細數字 -->
-    <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <span style="font-size:.78rem;font-weight:600;color:var(--text-sub);text-transform:uppercase;letter-spacing:1.2px;">月份明細</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="card-header" style="margin-bottom:0;">月份資料</div>
             <div style="position:relative;">
                 <select id="curveYearFilter" class="month-select" style="font-size:.78rem;padding:6px 26px 6px 10px;" onchange="renderCurveTableFiltered()">
                     <option value="">全部年份</option>
@@ -541,7 +535,7 @@ window.onload=()=>{
     localStorage.setItem('dct_last_quote',idx);
     document.getElementById('dailyQuote').innerText=quotes[idx];
     document.getElementById('orderDate').value=toLocalISO(new Date());
-    loadProfileUI(); initOrderUI(); loadDashboards(); initManualYearSelect(); initCurveBasic();
+    loadProfileUI(); initOrderUI(); loadDashboards(); initManualYearSelect(); initCurveBasic(); updateAllBadges();
     fixLayout();
     setTimeout(fixLayout, 300);
 };
@@ -551,13 +545,14 @@ function loadProfileUI(){
     document.getElementById('settingName').value=p.name||'';
     document.getElementById('settingLevel').value=p.level||'';
     document.getElementById('settingUpline').value=p.upline||'';
+    updateAllBadges();
     updateProfileDisplay(p);
 }
 const levelMap={'二級輔導':'L2','三級輔導':'L3_sup','三級零售':'L3_ret','實習':'intern','一級輔導':'L2','執行':'L2','銀牌執行':'L2','金牌執行':'L2'};
 function saveProfile(){
     const p={name:document.getElementById('settingName').value,level:document.getElementById('settingLevel').value,upline:document.getElementById('settingUpline').value};
     saveProfileData(p);updateProfileDisplay(p);
-    updateCurveTitles(); renderChart();
+    updateCurveTitles(); updateAllBadges();
     // Sync level to 開單 seller selector
     if(p.level && levelMap[p.level]){
         currentSeller=levelMap[p.level];
@@ -972,12 +967,7 @@ function renderChart(){
     const prof=getProfile();
     const badge=document.getElementById('chartProfileBadge');
     const profTxt=document.getElementById('chartProfileText');
-    if(badge&&profTxt){
-        if(prof.name||prof.level){
-            profTxt.innerText=[prof.name,prof.level].filter(Boolean).join(' · ');
-            badge.style.display='flex';
-        } else { badge.style.display='none'; }
-    }
+    updateAllBadges();
     document.getElementById('chartWrap').innerHTML=`<svg width="${TW}" height="${PT+CH+PB}" xmlns="http://www.w3.org/2000/svg" style="display:block;">${tks}<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+CH}" stroke="#EDE7DE" stroke-width="1.5"/>${bars}</svg>`;
 
     updateChartYearFilter(); renderChartTableFiltered();
@@ -1160,6 +1150,26 @@ let curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 let curveCharts = {};
 
 function saveCurveDB(){ localStorage.setItem(CURVE_STORAGE, JSON.stringify(curveDB)); }
+
+function updateAllBadges(){
+    const p=getProfile();
+    // 淨利圖 badge
+    const badge=document.getElementById('chartProfileBadge');
+    const profTxt=document.getElementById('chartProfileText');
+    if(badge&&profTxt){
+        const parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
+        if(parts.length){ profTxt.innerText=parts.join(' · '); badge.style.display='flex'; }
+        else badge.style.display='none';
+    }
+    // 魔術曲線圖 badge
+    const cb=document.getElementById('curveProfileBadge');
+    const ct=document.getElementById('curveProfileText');
+    if(cb&&ct){
+        const parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
+        if(parts.length){ ct.innerText=parts.join(' · '); cb.style.display='flex'; }
+        else cb.style.display='none';
+    }
+}
 function saveCurveConfig(){ updateCurveTitles(); }
 
 function updateCurveTitles(){
@@ -1172,18 +1182,12 @@ function updateCurveTitles(){
     const t2 = document.getElementById('curve-chart2-title');
     const s1 = document.getElementById('curve-chart1-sub');
     const s2 = document.getElementById('curve-chart2-sub');
-    if(t1) t1.textContent = [years, name, '淨利'].filter(Boolean).join(' ') || '淨利曲線圖';
-    if(t2) t2.textContent = [years, name, '粉絲'].filter(Boolean).join(' ') || '粉絲曲線圖';
+    if(t1) t1.textContent = '淨利曲線圖';
+    if(t2) t2.textContent = '魔術曲線圖';
     if(s1) s1.textContent = '三口袋月度淨利' + level + upline;
-    if(s2) s2.textContent = 'TikTok + IG 月度粉絲' + level + upline;
-    // Profile badge
-    const cb=document.getElementById('curveProfileBadge');
-    const ct=document.getElementById('curveProfileText');
-    if(cb&&ct){
-        const parts=[name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
-        if(parts.length){ ct.innerText=parts.join(' · '); cb.style.display='flex'; }
-        else cb.style.display='none';
-    }
+    // subtitle = profile info on second line
+    const profileParts=[name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
+    if(s2) s2.textContent = profileParts.length ? profileParts.join(' · ') : 'TikTok + IG 月度粉絲堆疊長條圖';
 }
 
 function getCurveSortedKeys(){ return Object.keys(curveDB).sort(); }
@@ -1215,7 +1219,7 @@ function initCurve(){
         document.getElementById('curve-month').value = new Date().getMonth()+1;
     }
     updateCurveTitles();
-    renderCurveTable();
+    renderCurveTableFiltered();
     renderCurveCharts();
 }
 
@@ -1238,7 +1242,7 @@ function addCurveMonth(){
     };
     saveCurveDB();
     ['cv-tiktok','cv-ig'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-    renderCurveTable();
+    renderCurveTableFiltered();
     renderCurveCharts();
     showToast('✓ 已新增 ' + y + '年' + parseInt(m) + '月');
 }
@@ -1300,7 +1304,7 @@ function saveCurveEdit(key){
     if(!curveDB[key]) return;
     curveDB[key]={tiktok,ig};
     saveCurveDB();
-    renderCurveTable();
+    renderCurveTableFiltered();
     renderCurveCharts();
     showToast('✓ 已儲存');
 }
@@ -1317,7 +1321,7 @@ function deleteCurveRow(key){
     if(!confirm(y+'年'+parseInt(m)+'月 確定刪除？')) return;
     delete curveDB[key];
     saveCurveDB();
-    renderCurveTable();
+    renderCurveTableFiltered();
     renderCurveCharts();
     showToast('已刪除');
 }
