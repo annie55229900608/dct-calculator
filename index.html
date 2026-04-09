@@ -20,7 +20,7 @@
         .header-title{font-size:1.65rem;font-weight:600;font-style:italic;color:var(--text-main);letter-spacing:.5px;font-family:'Cormorant Garamond',Georgia,serif;display:inline-flex;align-items:baseline;gap:6px;}
 
         .quote-bar{background:var(--rose-pale);padding:9px 20px;font-size:.76rem;color:var(--rose-deep);text-align:center;letter-spacing:.8px;font-style:italic;border-bottom:1px solid var(--rose-light);min-height:36px;display:flex;align-items:center;justify-content:center;}
-        .nav-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:55px;z-index:199;overflow-x:auto;}
+        .nav-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:55px;z-index:199;overflow-x:auto;overflow-y:hidden;touch-action:pan-x;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;}
         .nav-tabs::-webkit-scrollbar{display:none;}
         .nav-tab{flex:0 0 auto;padding:11px 14px;font-size:.75rem;font-weight:500;color:var(--text-muted);cursor:pointer;letter-spacing:.5px;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
         .nav-tab.active{color:var(--rose);border-bottom-color:var(--rose);}
@@ -552,7 +552,8 @@ window.onload=()=>{
     const p=getProfile();
     const greet=document.getElementById('welcomeGreeting');
     const sub=document.getElementById('welcomeSub');
-    if(p.name){ greet.innerText=p.name; sub.innerHTML=`${p.level?p.level+'<br>':''}每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡`; }
+    // Always show DCT Money in welcome logo
+    if(p.name){ sub.innerHTML=`${p.level?p.level+'<br>':''}每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡`; }
     // Auto dismiss after 2s if profile set
     setTimeout(dismissWelcome, 2000);
     const lastQ=parseInt(localStorage.getItem('dct_last_quote')??'-1');
@@ -649,17 +650,21 @@ function loadDashboards(){
     const lastM=curM===0?11:curM-1,lastY=curM===0?curY-1:curY;
     let dP=0,dR=0,dC=0,dI={},dL='',mR=0,mP=0,mC=0,mRR=0,mTR=0,mI={},lR=0,lP=0,lC=0;
     let ser={"活動":0,"纖體":0,"美肌":0,"保健":0};
+    let todayOrders=[];
     rs.forEach(r=>{
         const rd=getOrderDate(r);
         if(rd.toDateString()===todayStr){
             dP+=r.profit;dR+=r.rev;dC+=r.cost;
             r.items.forEach(i=>dI[i.name]={q:(dI[i.name]?.q||0)+i.qty,u:i.unit});
-            const bl=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
-            const back=r.orderDate&&new Date(r.orderDate).toDateString()!==new Date(r.id).toDateString();
-            dL+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}${back?'<span class="date-badge">補登</span>':''}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">${bl} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="order-profit">+$${r.profit.toLocaleString()}</div></div><div class="order-items">${r.items.map(i=>`${i.name}×${i.qty}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
+            todayOrders.push({r,rd});
         }
         if(rd.getMonth()===curM&&rd.getFullYear()===curY){mR+=r.rev;mP+=r.profit;mC+=r.cost;if(r.type==='retail')mRR+=r.rev;else mTR+=r.rev;r.items.forEach(i=>{mI[i.name]={q:(mI[i.name]?.q||0)+i.qty,u:i.unit};ser[i.cat]+=r.rev;});}
         if(rd.getMonth()===lastM&&rd.getFullYear()===lastY){lR+=r.rev;lP+=r.profit;lC+=r.cost;}
+    });
+    todayOrders.sort((a,b)=>b.rd-a.rd).forEach(({r,rd})=>{
+        const bl=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
+        const back=r.orderDate&&new Date(r.orderDate).toDateString()!==new Date(r.id).toDateString();
+        dL+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}${back?'<span class="date-badge">補登</span>':''}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">${bl} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="order-profit">+$${r.profit.toLocaleString()}</div></div><div class="order-items">${r.items.map(i=>`${i.name}×${i.qty}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
     document.getElementById('dTotalProfit').innerText=`$${dP.toLocaleString()}`;
     document.getElementById('dTotalRev').innerText=`$${dR.toLocaleString()}`;
