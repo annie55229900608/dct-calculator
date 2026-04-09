@@ -182,16 +182,69 @@
 <div class="toast" id="toast"></div>
 <!-- Welcome -->
 <div class="welcome-overlay" id="welcomeOverlay">
-    <div class="welcome-welcome-text">WELCOME</div>
-    <div class="welcome-logo" id="welcomeGreeting">DCT Money</div>
-    <div class="welcome-divider"></div>
-    <div class="welcome-emoji-row">🌸 ✨ 💕 ✨ 🌸</div>
+    <!-- neon glow orbs -->
+    <div style="position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,100,180,.25) 0%,transparent 70%);pointer-events:none;animation:wm-pulse 2s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:-40px;left:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,50,150,.2) 0%,transparent 70%);pointer-events:none;animation:wm-pulse 2s ease-in-out .6s infinite;"></div>
+
+    <div class="welcome-welcome-text" style="letter-spacing:6px;text-shadow:0 0 20px rgba(255,80,160,.4);">WELCOME</div>
+    <div class="welcome-logo" id="welcomeGreeting" style="text-shadow:0 0 40px rgba(255,60,150,.5),0 2px 20px rgba(160,0,80,.3);">DCT Money</div>
+    <div class="welcome-divider" style="background:linear-gradient(90deg,transparent,rgba(255,80,160,.6),transparent);"></div>
+    <div class="welcome-emoji-row" style="animation:wm-float 2s ease-in-out infinite;">🌸 ✨ 💕 ✨ 🌸</div>
     <div class="welcome-greeting">復盤系統</div>
-    <div class="welcome-sub" id="welcomeSub">每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡</div>
-    <div class="welcome-dots"><div class="welcome-dot"></div><div class="welcome-dot"></div><div class="welcome-dot"></div></div>
-    <div class="welcome-loading">正在準備你的空間⋯</div>
-    <button class="welcome-btn" onclick="dismissWelcome()">✦ 開始今天 ✦</button>
-    <div class="welcome-credit">DCT Money 復盤系統</div>
+    <div class="welcome-sub" id="welcomeSub" style="text-shadow:0 0 10px rgba(255,100,160,.15);">每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡</div>
+
+    <!-- Progress bar -->
+    <div style="width:200px;margin:16px 0 8px;">
+        <div style="height:3px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden;box-shadow:0 0 8px rgba(255,80,160,.3);">
+            <div id="wm-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#FF80C0,#FF3399,#FF80C0);border-radius:2px;transition:width .1s linear;box-shadow:0 0 12px rgba(255,0,120,.6),0 0 4px rgba(255,150,200,.8);"></div>
+        </div>
+    </div>
+    <div id="wm-progress-text" style="font-size:.7rem;color:rgba(90,21,48,.5);letter-spacing:2px;margin-bottom:24px;">正在準備你的空間…</div>
+
+    <button class="welcome-btn" id="wm-enter-btn" onclick="dismissWelcome()" style="opacity:0;transition:opacity .4s ease;box-shadow:0 0 20px rgba(255,80,160,.3),0 4px 15px rgba(200,50,120,.2);">✦ 開始今天 ✦</button>
+    <div class="welcome-credit" style="text-shadow:0 0 8px rgba(255,80,160,.2);">DCT Money 復盤系統</div>
+</div>
+<style>
+@keyframes wm-pulse{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.1);}}
+@keyframes wm-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+@keyframes wm-glow{0%,100%{text-shadow:0 0 40px rgba(255,60,150,.5),0 2px 20px rgba(160,0,80,.3);}50%{text-shadow:0 0 60px rgba(255,60,150,.8),0 2px 30px rgba(200,0,100,.5);}}
+</style>
+
+<!-- ════ Onboarding ════ -->
+<div id="obScreen" style="display:none;position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#FFE8F4,#FFD0E8,#FFC0DC);overflow-y:auto;padding:50px 24px 60px;">
+    <div style="max-width:400px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:32px;">
+            <div style="font-size:2.2rem;font-style:italic;font-family:'Cormorant Garamond',serif;color:#5A1530;text-shadow:0 2px 20px rgba(200,80,130,.3);margin-bottom:8px;">DCT Money</div>
+            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(200,80,130,.4),transparent);margin:12px auto;width:80px;"></div>
+            <div style="font-size:.9rem;font-weight:500;color:rgba(90,21,48,.85);margin-bottom:6px;">歡迎加入！✨</div>
+            <div style="font-size:.78rem;color:rgba(90,21,48,.6);line-height:1.7;">先設定你的資料，圖表會顯示你的名字<br>這些之後都可以在設定裡修改</div>
+        </div>
+        <div style="background:rgba(255,255,255,.6);backdrop-filter:blur(10px);border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,.8);">
+            <div class="input-group">
+                <span class="input-label">姓名 / 暱稱</span>
+                <input type="text" id="ob_name" class="custom-input" placeholder="輸入你的名字 🌸">
+            </div>
+            <div class="input-group">
+                <span class="input-label">等級</span>
+                <div style="position:relative;">
+                    <select id="ob_level" class="custom-input" style="appearance:none;-webkit-appearance:none;">
+                        <option value="">請選擇等級</option>
+                        <option value="實習">實習</option>
+                        <option value="三級零售">三級零售</option>
+                        <option value="三級輔導">三級輔導</option>
+                        <option value="二級輔導">二級輔導</option>
+                    </select>
+                    <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;">▾</span>
+                </div>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+                <span class="input-label">上家 / 推薦人</span>
+                <input type="text" id="ob_upline" class="custom-input" placeholder="輸入上家姓名">
+            </div>
+        </div>
+        <button onclick="saveOnboarding()" style="width:100%;margin-top:18px;padding:17px;background:var(--rose);color:white;border:none;border-radius:14px;font-weight:600;font-size:.95rem;letter-spacing:1px;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(200,116,138,.35);">✦ 開始使用</button>
+        <button onclick="skipOnboarding()" style="width:100%;margin-top:10px;padding:12px;background:transparent;color:rgba(90,21,48,.5);border:none;font-size:.78rem;cursor:pointer;font-family:inherit;">略過，稍後再填</button>
+    </div>
 </div>
 
 <div id="topBar">
@@ -471,6 +524,31 @@
 </div>
 
 <script>
+
+
+
+function saveOnboarding(){
+    var n=(document.getElementById('ob_name')||{value:''}).value.trim();
+    var l=(document.getElementById('ob_level')||{value:''}).value;
+    var u=(document.getElementById('ob_upline')||{value:''}).value.trim();
+    if(!n){showToast('⚠ 請先輸入你的名字','#C8748A');return;}
+    var p={name:n,level:l||'',upline:u||''};
+    saveProfileData(p);
+    var sn=document.getElementById('settingName');if(sn)sn.value=n;
+    var sl=document.getElementById('settingLevel');if(sl)sl.value=l||'';
+    var su=document.getElementById('settingUpline');if(su)su.value=u||'';
+    updateProfileDisplay(p);updateAllBadges();
+    if(l&&levelMap[l]){currentSeller=levelMap[l];var ss=document.getElementById('sellerSelect');if(ss)ss.value=currentSeller;renderProducts();updateCalc();}
+    var ob=document.getElementById('obScreen');if(ob)ob.style.display='none';
+    showToast('✓ 歡迎你，'+n+' 🌸','var(--rose)');
+}
+function skipOnboarding(){
+    var ob=document.getElementById('obScreen');
+    if(ob)ob.style.display='none';
+}
+
+
+
 window.onerror=function(){return true;};
 
 if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
@@ -541,10 +619,52 @@ function showToast(msg, color){
     t._timer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 function dismissWelcome(){
-    const o=document.getElementById('welcomeOverlay');
+    var o=document.getElementById('welcomeOverlay');
+    if(!o) return;
     o.classList.add('fade-out');
-    setTimeout(()=>{o.style.display='none';},500);
-    window.scrollTo({top:0,behavior:'instant'});
+    setTimeout(function(){
+        if(o.parentNode)o.parentNode.removeChild(o);
+        if(!getProfile().name){
+            var ob=document.getElementById('dmOnboarding');
+            if(ob) ob.style.display='block';
+        }
+    },500);
+    window.scrollTo(0,0);
+}
+function showOnboardingIfNeeded(){
+    if(!getProfile().name){
+        setTimeout(function(){
+            var ob=document.getElementById('obScreen');
+            if(ob)ob.style.display='block';
+        },200);
+    }
+}
+function startWelcomeProgress(){
+    var bar=document.getElementById('wm-progress-bar');
+    var txt=document.getElementById('wm-progress-text');
+    var btn=document.getElementById('wm-enter-btn');
+    if(!bar) return;
+    var steps=[
+        {p:15,t:'載入產品資料…'},
+        {p:35,t:'讀取訂單記錄…'},
+        {p:55,t:'計算業績數字…'},
+        {p:75,t:'準備圖表資料…'},
+        {p:92,t:'即將完成…'},
+        {p:100,t:'✨ 準備好了！'}
+    ];
+    var i=0;
+    function nextStep(){
+        if(i>=steps.length){
+            if(btn) btn.style.opacity='1';
+            setTimeout(dismissWelcome, 600);
+            return;
+        }
+        var s=steps[i++];
+        if(bar) bar.style.width=s.p+'%';
+        if(txt) txt.innerText=s.t;
+        setTimeout(nextStep, i===steps.length?400:280+(Math.random()*120));
+    }
+    setTimeout(nextStep, 200);
 }
 
 window.onload=()=>{
@@ -555,15 +675,16 @@ window.onload=()=>{
     // Always show DCT Money in welcome logo
     if(p.name){ sub.innerHTML=`${p.level?p.level+'<br>':''}每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡`; }
     // Auto dismiss after 2s if profile set
-    setTimeout(dismissWelcome, 2000);
+    startWelcomeProgress();
     const lastQ=parseInt(localStorage.getItem('dct_last_quote')||'-1');
     let idx; do{idx=Math.floor(Math.random()*quotes.length);}while(idx===lastQ&&quotes.length>1);
     localStorage.setItem('dct_last_quote',idx);
     document.getElementById('dailyQuote').innerText=quotes[idx];
     document.getElementById('orderDate').value=toLocalISO(new Date());
-    loadProfileUI(); initOrderUI(); loadDashboards(); initManualYearSelect(); initCurveBasic(); updateAllBadges();
+    loadProfileUI(); initOrderUI(); loadDashboards(); initManualYearSelect(); initCurveBasic(); updateAllBadges(); setTimeout(function(){renderCurveCharts();},100);
     fixLayout();
     setTimeout(fixLayout, 300);
+    if(!getProfile().name){setTimeout(showOnboardingIfNeeded,2800);}
 };
 
 function loadProfileUI(){
@@ -1546,8 +1667,13 @@ function buildCurveSVG(keys, tiktok, ig, dF){
 function renderCurveCharts(){
     const keys=getCurveSortedKeys();
     if(!keys.length){
-        clearCurveChart('curve-chart2');
-        ['curve-table2','curve-stats2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=''; });
+        // Still update stats to show 0
+        ['curve-stat-total','curve-stat-tiktok','curve-stat-ig'].forEach(function(id){
+            var el=document.getElementById(id);
+            if(el){el.innerText='0';el.style.color='var(--text-muted)';}
+        });
+        var w=document.getElementById('curve-table2');
+        if(w) w.innerHTML='<div style="text-align:center;padding:16px;font-size:.8rem;color:var(--text-muted)">尚無資料，請先新增月份</div>';
         return;
     }
     const labels=keys.map((k,i)=>{
@@ -1672,6 +1798,14 @@ function getReviews(){return JSON.parse(localStorage.getItem(REVIEW_KEY_MONEY)||
 function saveReviews(d){localStorage.setItem(REVIEW_KEY_MONEY,JSON.stringify(d));}
 
 
+function updateReviewTitle(){
+    var y=(document.getElementById('reviewYear')||{}).value||'';
+    var m=(document.getElementById('reviewMonth')||{}).value||'0';
+    var title=document.getElementById('reviewMonthTitle');
+    if(!title) return;
+    if(!y){title.innerText='請選擇月份查看復盤 ✦';title.style.fontSize='1.1rem';title.style.color='var(--text-muted)';title.style.fontWeight='500';}
+    else{title.innerText=y+'年'+(parseInt(m)+1)+'月 復盤';title.style.fontSize='1.4rem';title.style.color='var(--rose)';title.style.fontWeight='700';}
+}
 function initReview(){
     const sel=document.getElementById('reviewYear');
     if(sel&&!sel.options.length){
@@ -1681,7 +1815,8 @@ function initReview(){
     }
     const cm=document.getElementById('reviewMonth');
     if(cm) cm.value=new Date().getMonth();
-    loadReviewData();
+    updateReviewTitle();
+    renderPastReviews();
 }
 
 
@@ -1908,6 +2043,33 @@ function jumpToReview(key){
     document.addEventListener('input',function(e){if(e.target&&e.target.id===id) updateReviewTotal();});
 });
 
+
+
+
+function saveDMOnboarding(){
+    var n=document.getElementById('ob_money_name').value.trim();
+    var l=document.getElementById('ob_money_level').value;
+    var u=document.getElementById('ob_money_upline').value.trim();
+    if(!n){showToast('⚠ 請先輸入你的名字','#C8748A');return;}
+    var p={name:n,level:l||'',upline:u||''};
+    saveProfileData(p);
+    var sn=document.getElementById('settingName');if(sn)sn.value=n;
+    var sl=document.getElementById('settingLevel');if(sl)sl.value=l||'';
+    var su=document.getElementById('settingUpline');if(su)su.value=u||'';
+    updateProfileDisplay(p);updateAllBadges();
+    // Sync level to seller
+    var lm={'二級輔導':'L2','三級輔導':'L3_sup','三級零售':'L3_ret','實習':'intern'};
+    if(l&&lm[l]){currentSeller=lm[l];var ss=document.getElementById('sellerSelect');if(ss)ss.value=currentSeller;renderProducts();updateCalc();}
+    document.getElementById('dmOnboarding').style.display='none';
+    showToast('✓ 歡迎妳，'+n+' 🌸','var(--rose)');
+}
+function skipDMOnboarding(){
+    document.getElementById('dmOnboarding').style.display='none';
+}
+
+
+
+
 </script>
 <!-- ════════ 復盤 ════════ -->
 <div id="tab-review" class="container">
@@ -1915,7 +2077,7 @@ function jumpToReview(key){
     <div style="background:var(--white);border-radius:16px;border:1px solid var(--border);padding:20px;margin-bottom:14px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--rose-light);">
         <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.12),transparent 70%);pointer-events:none;"></div>
         <div style="font-size:.7rem;letter-spacing:3px;color:var(--rose-deep);opacity:.7;margin-bottom:6px;">MONTHLY REVIEW</div>
-        <div id="reviewMonthTitle" style="font-size:1.4rem;font-weight:700;color:var(--rose);">— 月復盤</div>
+        <div id="reviewMonthTitle" style="font-size:1.1rem;font-weight:500;color:var(--text-muted);letter-spacing:.5px;">請選擇月份查看復盤 ✦</div>
         <div style="font-size:.78rem;color:var(--rose-deep);opacity:.6;margin-top:8px;line-height:1.7;">每個月的覆盤＆檢核都會讓我們更清楚自己的成長進步<br>儘快填完傳給上家唷！</div>
         <div style="font-size:.72rem;color:var(--rose);opacity:.8;margin-top:8px;font-style:italic;">「每個月完成覆盤者，通常是成長最快的」</div>
     </div>
