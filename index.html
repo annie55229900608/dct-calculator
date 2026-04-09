@@ -372,6 +372,20 @@
             </select>
         </div>
         <div class="input-group"><span class="input-label">上家 / 推薦人</span><input type="text" id="settingUpline" class="custom-input" placeholder="輸入上家姓名" oninput="saveProfile()"></div>
+    <div class="card" style="margin-top:12px;">
+        <div class="card-header">資料備份與還原</div>
+        <div style="font-size:.8rem;color:var(--text-sub);margin-bottom:14px;line-height:1.7;">
+            定期匯出備份，避免更換裝置或清除瀏覽器時資料遺失。<br>
+            <span style="color:var(--rose-deep);font-weight:500;">建議每個月備份一次！</span>
+        </div>
+        <button class="save-btn" onclick="exportAllData()" style="background:var(--rose);margin-bottom:10px;">
+            📥 匯出備份（JSON）
+        </button>
+        <label style="display:block;width:100%;padding:14px;background:var(--beige);color:var(--text-sub);border:1px dashed var(--border);border-radius:14px;font-size:.9rem;font-weight:500;text-align:center;cursor:pointer;font-family:inherit;">
+            📤 匯入還原備份
+            <input type="file" accept=".json" onchange="importAllData(event)" style="display:none;">
+        </label>
+        <div style="font-size:.71rem;color:var(--text-muted);margin-top:8px;text-align:center;">匯入後會合併現有資料，不會覆蓋</div>
     </div>
 </div>
 
@@ -519,6 +533,7 @@ function dismissWelcome(){
     const o=document.getElementById('welcomeOverlay');
     o.classList.add('fade-out');
     setTimeout(()=>{o.style.display='none';},500);
+    window.scrollTo({top:0,behavior:'instant'});
 }
 
 window.onload=()=>{
@@ -613,7 +628,7 @@ function switchTab(id,el){
     document.querySelectorAll('.container').forEach(c=>c.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
     document.getElementById(id).classList.add('active');el.classList.add('active');
-    if(id==='tab-new') window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0,behavior:'smooth'});
     if(id==='tab-daily'||id==='tab-monthly') loadDashboards();
     if(id==='tab-history') loadHistory();
     if(id==='tab-chart'){ renderChart(); initManualYearSelect(); }
@@ -1501,6 +1516,66 @@ function renderCurveCharts(){
         else cb.style.display='none';
     }
     updateCurveTitles();
+}
+
+// ── 備份匯出 / 匯入 ──
+function exportAllData(){
+    const payload = {
+        exportDate: new Date().toISOString().slice(0,10),
+        orders:      JSON.parse(localStorage.getItem('dct_v9_ultimate')   || '[]'),
+        manualMonths:JSON.parse(localStorage.getItem('dct_manual_months') || '{}'),
+        curveData:   JSON.parse(localStorage.getItem('dct_monthly_data_v1')|| '{}'),
+        profile:     JSON.parse(localStorage.getItem('dct_profile')       || '{}'),
+        goal:        localStorage.getItem('dct_goal') || '0',
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'DCT_Money_備份_' + payload.exportDate + '.json';
+    a.click();
+    showToast('✓ 備份已匯出！請存至安全的地方');
+}
+
+function importAllData(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        try {
+            const data = JSON.parse(ev.target.result);
+            // Merge orders
+            if(Array.isArray(data.orders)){
+                const existing = JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]');
+                const merged = [...existing];
+                data.orders.forEach(o => { if(!merged.find(e=>e.id===o.id)) merged.push(o); });
+                saveOrders(merged);
+            }
+            // Merge manual months
+            if(data.manualMonths){
+                const ex = getManualData();
+                saveManualDataStore({...data.manualMonths, ...ex});
+            }
+            // Merge curve data
+            if(data.curveData){
+                const ex = JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}');
+                localStorage.setItem('dct_monthly_data_v1', JSON.stringify({...data.curveData,...ex}));
+                curveDB = JSON.parse(localStorage.getItem('dct_monthly_data_v1'));
+            }
+            // Restore profile (only if not already set)
+            if(data.profile && !getProfile().name){
+                saveProfileData(data.profile);
+                loadProfileUI();
+            }
+            // Restore goal
+            if(data.goal) localStorage.setItem('dct_goal', data.goal);
+            loadDashboards(); renderChart(); renderCurveCharts(); renderCurveTableFiltered();
+            showToast('✓ 還原成功！資料已合併匯入');
+        } catch(err) {
+            showToast('⚠ 檔案格式錯誤，請確認是正確的備份檔');
+        }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
 }
 
 </script>
