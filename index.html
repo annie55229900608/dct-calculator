@@ -372,6 +372,7 @@
             </select>
         </div>
         <div class="input-group"><span class="input-label">上家 / 推薦人</span><input type="text" id="settingUpline" class="custom-input" placeholder="輸入上家姓名" oninput="saveProfile()"></div>
+    </div>
     <div class="card" style="margin-top:12px;">
         <div class="card-header">資料備份與還原</div>
         <div style="font-size:.8rem;color:var(--text-sub);margin-bottom:14px;line-height:1.7;">
@@ -1232,7 +1233,7 @@ function initCurve(){
     }
     updateCurveTitles();
     renderCurveTableFiltered();
-    renderCurveCharts();
+    setTimeout(renderCurveCharts, 50);
 }
 
 function switchCurve(panelId, el){
@@ -1352,7 +1353,7 @@ function clearCurveChart(id){
 function buildCurveChart(id, labels, datasets, deltaArr){
     clearCurveChart(id);
     const el=document.getElementById(id);
-    if(!el||!el.offsetParent&&el.offsetWidth===0&&el.offsetHeight===0) return;
+    if(!el) return;
 
     // Disable built-in datalabels
     datasets.forEach(ds=>{ ds.datalabels={display:false}; });
