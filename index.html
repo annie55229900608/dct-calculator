@@ -349,9 +349,9 @@
 <!-- 圖表 -->
 <div id="tab-chart" class="container">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div class="curve-stat" style="text-align:center;"><div class="cs-label">今年總淨利</div><div class="cs-val" id="chartStatProfit">$0</div></div>
-        <div class="curve-stat" style="text-align:center;"><div class="cs-label">零售淨利</div><div class="cs-val" id="chartStatRetail">$0</div></div>
-        <div class="curve-stat" style="text-align:center;"><div class="cs-label">團隊淨利</div><div class="cs-val" id="chartStatTeam">$0</div></div>
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">年度總淨利</div><div class="cs-val" id="chartStatProfit">$0</div></div>
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">年度零售淨利</div><div class="cs-val" id="chartStatRetail">$0</div></div>
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">年度團隊淨利</div><div class="cs-val" id="chartStatTeam">$0</div></div>
     </div>
     <div class="card">
         <div class="card-header">業績兩口袋（營業額）條狀圖</div>
@@ -458,8 +458,8 @@
     <!-- 圖表 -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="curve-stats2">
     <div class="curve-stat"><div class="cs-label">年度粉絲增加</div><div class="cs-val" id="curve-stat-total" style="color:var(--text-muted)">0</div></div>
-    <div class="curve-stat"><div class="cs-label">TikTok 增加</div><div class="cs-val" id="curve-stat-tiktok" style="color:#5BC8C0">0</div></div>
-    <div class="curve-stat"><div class="cs-label">IG 增加</div><div class="cs-val" id="curve-stat-ig" style="color:#D4607A">0</div></div>
+    <div class="curve-stat"><div class="cs-label">年度TikTok漲粉</div><div class="cs-val" id="curve-stat-tiktok" style="color:#5BC8C0">0</div></div>
+    <div class="curve-stat"><div class="cs-label">年度IG漲粉</div><div class="cs-val" id="curve-stat-ig" style="color:#D4607A">0</div></div>
 </div>
     <div class="card">
         <div class="card-header" style="flex-wrap:wrap;gap:4px;"><span id="curve-chart2-title">魔術曲線圖</span><span id="curve-chart2-sub" style="font-size:.72rem;font-weight:400;color:var(--text-muted);letter-spacing:.3px;text-transform:none;">（TikTok + IG 月度粉絲堆疊長條圖）</span></div>
@@ -524,6 +524,11 @@
 </div>
 
 <script>
+
+
+
+
+
 
 function syncLevelToSettings(sellerVal){
     var rlMap={'L2':'二級輔導','L3_sup':'三級輔導','L3_ret':'三級零售','intern':'實習'};
@@ -1726,18 +1731,18 @@ function renderCurveCharts(){
     const fmtN=n=>Number(n).toLocaleString('zh-TW');
     // Update always-visible stat boxes
     (function(){
-        const latestKey=keys.length?keys[keys.length-1]:null;
-        const latestYear=latestKey?latestKey.split('-')[0]:null;
-        const prevYear=latestYear?String(parseInt(latestYear)-1):null;
-        const prevKeys=prevYear?keys.filter(function(k){return k.startsWith(prevYear);}):[];
-        const lastPrevKey=prevKeys.length?prevKeys[prevKeys.length-1]:null;
-        const prevTikTok=lastPrevKey?curveDB[lastPrevKey].tiktok||0:0;
-        const prevIG=lastPrevKey?curveDB[lastPrevKey].ig||0:0;
-        const curTikTok=latestKey?curveDB[latestKey].tiktok||0:0;
-        const curIG=latestKey?curveDB[latestKey].ig||0:0;
-        const tikInc=curTikTok-prevTikTok;
-        const igInc=curIG-prevIG;
-        const totInc=tikInc+igInc;
+        // Use current year's first entry as Jan 1 baseline
+        var curYear=new Date().getFullYear().toString();
+        var curYearKeys=keys.filter(function(k){return k.split('-')[0]===curYear;});
+        var firstCurKey=curYearKeys.length?curYearKeys[0]:null;
+        var lastCurKey=curYearKeys.length?curYearKeys[curYearKeys.length-1]:null;
+        var tikBase=firstCurKey?curveDB[firstCurKey].tiktok||0:0;
+        var igBase=firstCurKey?curveDB[firstCurKey].ig||0:0;
+        var tikCur=lastCurKey?curveDB[lastCurKey].tiktok||0:0;
+        var igCur=lastCurKey?curveDB[lastCurKey].ig||0:0;
+        var tikInc=tikCur-tikBase;
+        var igInc=igCur-igBase;
+        var totInc=tikInc+igInc;
         function setStatEl(id, val, color){
             var el=document.getElementById(id);
             if(!el) return;
@@ -2011,35 +2016,64 @@ function copyReview(){
 
 
 function renderPastReviews(){
-    const all=getReviews();
-    const keys=Object.keys(all).sort(function(a,b){return b.localeCompare(a);});
-    const el=document.getElementById('rv_past_container');
-    if(!el)return;
+    var all=getReviews();
+    var keys=Object.keys(all).sort(function(a,b){return b.localeCompare(a);});
+    var el=document.getElementById('rv_past_container');
+    if(!el) return;
     if(!keys.length){el.innerHTML='';return;}
-    var html='<div class="card"><div class="card-header">過去的復盤</div>';
+    var wrap=document.createElement('div');
+    wrap.className='card';
+    wrap.innerHTML='<div class="card-header">過去的復盤</div>';
     keys.forEach(function(k){
-        const [y,m]=k.split('-');
-        const d=all[k];
-        const tot=(parseInt(d.rv_retail)||0)+(parseInt(d.rv_team)||0)+(parseInt(d.rv_nurture)||0);
-        html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--panel-dark);">'
-            +'<span style="font-size:.85rem;font-weight:600;">'+y+'年'+(parseInt(m)+1)+'月</span>'
-            +'<div style="display:flex;gap:8px;align-items:center;">'
-            +(tot?'<span style="font-size:.82rem;color:var(--gold-deep);font-weight:700;">$'+tot.toLocaleString()+'</span>':'')
-            +'<button data-k="'+k+'" onclick="jumpToReview(this.dataset.k)" style="background:var(--gold-pale);color:var(--gold-deep);border:1px solid var(--gold-light);border-radius:6px;padding:4px 10px;font-size:.72rem;cursor:pointer;font-family:inherit;">查看</button>'
-            +'</div></div>';
+        var parts=k.split('-');
+        var y=parts[0], m=parts[1];
+        var d=all[k];
+        var tot=(parseInt(d.rv_retail)||0)+(parseInt(d.rv_team)||0)+(parseInt(d.rv_score)||0?0:0);
+        tot=(parseInt(d.rv_retail)||0)+(parseInt(d.rv_team)||0);
+        var row=document.createElement('div');
+        row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);';
+        var label=document.createElement('span');
+        label.style.cssText='font-size:.85rem;font-weight:600;color:var(--text-main);';
+        label.innerText=y+'年'+(parseInt(m)+1)+'月';
+        var btns=document.createElement('div');
+        btns.style.cssText='display:flex;gap:8px;align-items:center;';
+        if(tot){
+            var amt=document.createElement('span');
+            amt.style.cssText='font-size:.82rem;color:var(--rose-deep);font-weight:700;';
+            amt.innerText='$'+tot.toLocaleString();
+            btns.appendChild(amt);
+        }
+        var viewBtn=document.createElement('button');
+        viewBtn.style.cssText='background:var(--rose-pale);color:var(--rose-deep);border:1px solid var(--rose-light);border-radius:6px;padding:4px 10px;font-size:.72rem;cursor:pointer;font-family:inherit;';
+        viewBtn.innerText='查看/改';
+        (function(key){viewBtn.addEventListener('click',function(){jumpToReview(key);});})(k);
+        var delBtn=document.createElement('button');
+        delBtn.style.cssText='background:transparent;color:#c55;border:1px solid #fcc;border-radius:6px;padding:4px 9px;font-size:.72rem;cursor:pointer;font-family:inherit;';
+        delBtn.innerText='刪';
+        (function(key){delBtn.addEventListener('click',function(){deleteReviewEntry(key);});})(k);
+        btns.appendChild(viewBtn);
+        btns.appendChild(delBtn);
+        row.appendChild(label);
+        row.appendChild(btns);
+        wrap.appendChild(row);
     });
-    html+='</div>';
-    el.innerHTML=html;
+    el.innerHTML='';
+    el.appendChild(wrap);
 }
 
 
+function deleteReviewEntry(key){
+    var all=getReviews();delete all[key];saveReviews(all);renderPastReviews();showToast('已刪除','#7A6872');
+}
 function jumpToReview(key){
-    const [y,m]=key.split('-');
-    const ySel=document.getElementById('reviewYear');
-    const mSel=document.getElementById('reviewMonth');
-    if(ySel) ySel.value=y;
+    var parts=key.split('-');
+    var y=parts[0], m=parts[1];
+    var ySel=document.getElementById('reviewYear');
+    var mSel=document.getElementById('reviewMonth');
+    if(ySel){ySel.style.display='';ySel.value=y;}
     if(mSel) mSel.value=m;
     loadReviewData();
+    window.scrollTo(0,0);
 }
 
 
@@ -2093,6 +2127,11 @@ function saveDMOnboarding(){
 function skipDMOnboarding(){
     document.getElementById('dmOnboarding').style.display='none';
 }
+
+
+
+
+
 
 
 
@@ -2331,6 +2370,30 @@ function skipDMOnboarding(){
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-header">📝 復盤 ── 月底必做的儀式</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">每個月填一次復盤，清楚看到自己的成長，讓上家了解你的狀況並給出建議。</div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>🪐 <strong>活動庫存</strong> — 益生菌/果凍的叫貨、銷售、剩餘數量</div>
+            <div>🔹 <strong>業績數字</strong> — 自動帶入本月三口袋，可手動調整</div>
+            <div>📱 <strong>社群粉絲</strong> — TikTok / IG 月底數字</div>
+            <div>👥 <strong>團隊狀況</strong> — 直屬人數、新加盟情況</div>
+            <div>🔥 <strong>反思 ＆ 下月目標</strong> — 誠實覆盤、設定下月目標</div>
+            <div>📋 <strong>一鍵複製</strong> — 整理成格式傳給上家，底部「過去的復盤」可查看/修改/刪除</div>
+        </div>
+        <div style="background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:var(--rose-deep);">💡 每月完成覆盤者，通常是成長最快的！每月都要填喔 🌸</div>
+    </div>
+    <div class="card">
+        <div class="card-header">⚙️ 設定（左上角）＆ 💡 指南（右上角）</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">Header 左上角 ⚙️ 進入設定，右上角 💡 開啟這份指南，不佔分頁空間。</div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>👤 <strong>姓名/等級/上家</strong> — 填完後自動顯示在兩張圖表上方</div>
+            <div>⚡ <strong>等級雙向同步</strong> — 設定改等級 ↔ 開單改等級，兩邊互相更新</div>
+            <div>📥 <strong>每月匯出備份</strong> — 下載 JSON 存至 iCloud / Google Drive</div>
+            <div>📤 <strong>換裝置時匯入</strong> — 匯入備份檔完整還原所有數據</div>
+        </div>
+        <div style="background:#FFF8EE;border:1px solid #FAE5B8;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:#B08840;">⚠️ <strong>重要：</strong>清除瀏覽器快取會刪除全部資料！請每月備份一次！</div>
+    </div>
     <div style="text-align:center;padding:20px 0;font-size:.8rem;color:var(--text-muted);line-height:1.9;">
         有任何問題隨時詢問上家 💕<br>
         <span style="color:var(--rose-deep);font-weight:500;">妳可以的！加油 🌸</span>
