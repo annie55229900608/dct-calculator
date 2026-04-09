@@ -286,9 +286,10 @@
 
 <!-- 圖表 -->
 <div id="tab-chart" class="container">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-        <div class="curve-stat" style="text-align:center;"><div class="cs-label">今年營業額</div><div class="cs-val" id="chartStatRev">$0</div></div>
-        <div class="curve-stat" style="text-align:center;"><div class="cs-label">今年淨利</div><div class="cs-val" id="chartStatProfit">$0</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">今年總淨利</div><div class="cs-val" id="chartStatProfit">$0</div></div>
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">零售淨利</div><div class="cs-val" id="chartStatRetail">$0</div></div>
+        <div class="curve-stat" style="text-align:center;"><div class="cs-label">團隊淨利</div><div class="cs-val" id="chartStatTeam">$0</div></div>
     </div>
     <div class="card">
         <div class="card-header">業績兩口袋（營業額）條狀圖</div>
@@ -556,6 +557,7 @@ const levelMap={'二級輔導':'L2','三級輔導':'L3_sup','三級零售':'L3_r
 function saveProfile(){
     const p={name:document.getElementById('settingName').value,level:document.getElementById('settingLevel').value,upline:document.getElementById('settingUpline').value};
     saveProfileData(p);updateProfileDisplay(p);
+    updateCurveTitles(); renderChart();
     // Sync level to 開單 seller selector
     if(p.level && levelMap[p.level]){
         currentSeller=levelMap[p.level];
@@ -864,11 +866,52 @@ function updateCurveYearFilter(){
 function renderCurveTableFiltered(){
     const sel=document.getElementById('curveYearFilter');
     const yr=sel?sel.value:'';
-    const keys=getCurveSortedKeys().filter(k=>!yr||k.startsWith(yr));
-    const tiktok=keys.map(k=>curveDB[k].tiktok||0);
-    const ig=keys.map(k=>curveDB[k].ig||0);
-    buildCurveDetailTable('curve-table2',keys,['TikTok','IG'],[tiktok,ig],['#5BC8C0','#D4607A']);
+    const keys=getCurveSortedKeys().filter(k=>!yr||k.startsWith(yr)).slice().reverse();
+    const wrap=document.getElementById('curve-table2');
+    if(!wrap) return;
+    if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:16px;font-size:.8rem;color:var(--text-muted)">尚無資料</div>'; updateCurveYearFilter(); return; }
+    let html='';
+    keys.forEach(k=>{
+        const d=curveDB[k],[y,m]=k.split('-');
+        const eid='cedit2_'+k.replace('-','_');
+        html+=`<div style="padding:10px 0;border-bottom:1px solid var(--beige-dark);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span style="font-size:.83rem;font-weight:600;color:var(--rose-deep)">${y}年${parseInt(m)}月</span>
+                <button onclick="toggleCurveEdit2('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button>
+            </div>
+            <div style="display:flex;gap:14px;">
+                <span style="font-size:.75rem"><span style="display:inline-block;width:7px;height:7px;background:#5BC8C0;border-radius:50%;margin-right:3px;vertical-align:middle"></span>TikTok ${(d.tiktok||0).toLocaleString()}</span>
+                <span style="font-size:.75rem"><span style="display:inline-block;width:7px;height:7px;background:#D4607A;border-radius:50%;margin-right:3px;vertical-align:middle"></span>IG ${(d.ig||0).toLocaleString()}</span>
+            </div>
+            <div id="${eid}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                    <div><div style="font-size:.68rem;color:#5BC8C0;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">TikTok</div><input type="number" id="${eid}_tiktok" class="custom-input" value="${d.tiktok||0}" style="border-left:3px solid #5BC8C0;padding:9px 10px;"></div>
+                    <div><div style="font-size:.68rem;color:#D4607A;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">IG</div><input type="number" id="${eid}_ig" class="custom-input" value="${d.ig||0}" style="border-left:3px solid #D4607A;padding:9px 10px;"></div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button onclick="saveCurveEdit2('${k}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button>
+                    <button onclick="toggleCurveEdit2('${k}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button>
+                </div>
+            </div>
+        </div>`;
+    });
+    wrap.innerHTML=html;
     updateCurveYearFilter();
+}
+function toggleCurveEdit2(key){
+    const el=document.getElementById('cedit2_'+key.replace('-','_'));
+    if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
+function saveCurveEdit2(key){
+    const eid='cedit2_'+key.replace('-','_');
+    const tiktok=parseInt(document.getElementById(eid+'_tiktok')?.value)||0;
+    const ig=parseInt(document.getElementById(eid+'_ig')?.value)||0;
+    if(!curveDB[key]) return;
+    curveDB[key]={tiktok,ig};
+    saveCurveDB();
+    renderCurveCharts();
+    renderCurveTableFiltered();
+    showToast('✓ 已儲存');
 }
 
 
@@ -941,15 +984,16 @@ function renderChart(){
     // Update yearly stat boxes
     const curY=new Date().getFullYear().toString();
     const rs2=getOrders();
-    let yRev=0,yProfit=0;
-    rs2.forEach(r=>{ const d=getOrderDate(r); if(d.getFullYear().toString()===curY){ yRev+=r.rev; yProfit+=r.profit; } });
-    // Also add manual entries for current year
+    let yProfit=0,yRetail=0,yTeam=0;
+    rs2.forEach(r=>{ const d=getOrderDate(r); if(d.getFullYear().toString()===curY){ yProfit+=r.profit; if(r.type==='retail') yRetail+=r.profit; else yTeam+=r.profit; } });
     const md2=getManualData();
-    Object.keys(md2).forEach(k=>{ if(k.startsWith(curY)){ yRev+=(md2[k].retail||0)+(md2[k].team||0); } });
-    const srEl=document.getElementById('chartStatRev');
+    Object.keys(md2).forEach(k=>{ if(k.startsWith(curY)){ yRetail+=md2[k].retail||0; yTeam+=md2[k].team||0; yProfit+=(md2[k].retail||0)+(md2[k].team||0); } });
     const spEl=document.getElementById('chartStatProfit');
-    if(srEl) srEl.innerText='$'+yRev.toLocaleString();
+    const srEl=document.getElementById('chartStatRetail');
+    const stEl=document.getElementById('chartStatTeam');
     if(spEl){ spEl.innerText='$'+yProfit.toLocaleString(); spEl.style.color=yProfit>=0?'var(--rose)':'#e05050'; }
+    if(srEl) srEl.innerText='$'+yRetail.toLocaleString();
+    if(stEl) stEl.innerText='$'+yTeam.toLocaleString();
 }
 
 // EDIT MODAL
