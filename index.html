@@ -385,6 +385,7 @@
     <div class="nav-tab" onclick="switchTab('tab-chart',this)">💰 淨利圖</div>
     <div class="nav-tab" onclick="switchTab('tab-curve',this)">✨ 曲線圖</div>
     <div class="nav-tab" onclick="switchTab('tab-settings',this)">🌸 設定</div>
+    <div class="nav-tab" onclick="switchTab('tab-guide',this)">📖 指南</div>
 </div>
 </div><!-- /topBar -->
 
@@ -1826,5 +1827,124 @@ function importAllData(e){
 }
 
 </script>
+<!-- 使用指南 -->
+<div id="tab-guide" class="container">
+
+    <div style="text-align:center;padding:8px 0 18px;">
+        <div style="font-size:1.6rem;font-family:'Dancing Script',cursive;color:var(--rose-deep);font-weight:700;">使用指南 📖</div>
+        <div style="font-size:.8rem;color:var(--text-muted);margin-top:4px;letter-spacing:.3px;">了解每個功能，讓業績數字說話 ✨</div>
+    </div>
+
+    <!-- 開單 -->
+    <div class="card">
+        <div class="card-header">🛒 開單 ── 每筆成交都要記錄</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">
+            這是最重要的頁面！每次成交後立即開單，系統會自動計算你的<strong style="color:var(--rose-deep);">淨利、成本、營業額</strong>。
+        </div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>① <strong>選我的等級</strong> — 對應你在 DCT 的身份</div>
+            <div>② <strong>選銷售對象</strong> — 零售/VIP/兩盒優惠 → 第一口袋；實習/三級/輔導 → 第二口袋</div>
+            <div>③ <strong>選產品加入購物車</strong> — 可多品混搭</div>
+            <div>④ <strong>填備註</strong> — 客戶名稱或 IG 帳號，方便日後搜尋</div>
+            <div>⑤ <strong>按儲存</strong> — 完成 🎉</div>
+        </div>
+        <div style="background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:var(--rose-deep);">
+            💡 <strong>小提醒：</strong>補登過去的訂單可以在日期欄位更改日期喔！
+        </div>
+    </div>
+
+    <!-- 今日 -->
+    <div class="card">
+        <div class="card-header">☀️ 今日 ── 今天賺了多少一目瞭然</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">
+            顯示<strong style="color:var(--rose-deep);">今日淨利、營業額、成本</strong>，以及今天所有訂單的清單。
+        </div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>📌 每筆訂單都可以<strong>✏ 編輯</strong>修改或<strong>刪除</strong></div>
+            <div>📌 數字是即時更新的，開完單馬上可以看到</div>
+        </div>
+    </div>
+
+    <!-- 月報 -->
+    <div class="card">
+        <div class="card-header">📊 月報 ── 掌握整個月的節奏</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">
+            設定目標 → 看達成率，月底覆盤最好用！還有上月對照、系列佔比、熱銷排行等數據。
+        </div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>🎯 <strong>設定月目標淨利</strong> — 進度條讓你隨時看到離目標還差多少</div>
+            <div>📦 <strong>系列佔比</strong> — 了解哪類產品賣最好</div>
+            <div>⚖️ <strong>零售 vs 團隊</strong> — 觀察兩個口袋的比例是否健康</div>
+        </div>
+    </div>
+
+    <!-- 歷史 -->
+    <div class="card">
+        <div class="card-header">📋 歷史 ── 找回任何一筆訂單</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">
+            按月份查看所有訂單，也可以用<strong style="color:var(--rose-deep);">備註關鍵字搜尋</strong>（如客戶名稱），快速找到任一筆成交記錄。
+        </div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>🔍 在搜尋框輸入客戶名字或 IG 帳號即可找到</div>
+            <div>✏️ 每筆訂單都可以編輯（日期、備註、數量、成本）</div>
+        </div>
+    </div>
+
+    <!-- 淨利圖 -->
+    <div class="card">
+        <div class="card-header">💰 淨利圖 ── 讓上家一眼看到你的成長</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">
+            自動生成<strong style="color:var(--rose-deep);">兩口袋業績條狀圖</strong>，今年總淨利、零售、團隊分項統計，每個月一根柱子，左右滑動查看歷史趨勢。
+        </div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>📝 <strong>手動輸入歷史業績</strong> — 加入 App 之前的資料也能補登</div>
+            <div>📅 <strong>月份明細</strong> — 用年份選單篩選，查看指定年度的每月數字</div>
+            <div>✏️ 手動資料隨時可以修改</div>
+        </div>
+        <div style="background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:var(--rose-deep);">
+            💡 每個月覆盤都拿這張圖給上家看，展現你的努力！
+        </div>
+    </div>
+
+    <!-- 魔術曲線圖 -->
+    <div class="card">
+        <div class="card-header">✨ 魔術曲線圖 ── 粉絲成長是收入的前驅</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">
+            記錄每個月的 <strong style="color:#5BC8C0;">TikTok</strong> 和 <strong style="color:#D4607A;">IG</strong> 粉絲數，自動生成堆疊長條圖，讓你清楚看到社群成長的曲線。
+        </div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>① 每個月月底記錄當月粉絲總數</div>
+            <div>② 選年月 → 填 TikTok / IG 數字 → 按新增</div>
+            <div>③ 圖表自動顯示每月增減（↑ 綠色 ↓ 紅色）</div>
+            <div>④ 三格數字顯示<strong>今年度總成長</strong></div>
+        </div>
+        <div style="background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:var(--rose-deep);">
+            💡 粉絲持續增長，客源才會源源不絕！這張圖是你經營的健康指標 🚀
+        </div>
+    </div>
+
+    <!-- 設定 -->
+    <div class="card">
+        <div class="card-header">🌸 設定 ── 個人化 ＆ 保護資料</div>
+        <div style="font-size:.82rem;color:var(--text-sub);line-height:1.8;margin-bottom:10px;">
+            填寫個人資料讓圖表顯示你的名字，以及備份還原功能保護你的資料。
+        </div>
+        <div style="background:var(--beige);border-radius:12px;padding:12px;font-size:.79rem;color:var(--text-sub);line-height:1.9;">
+            <div>👤 <strong>填姓名 / 等級 / 上家</strong> — 顯示在兩張圖表上方</div>
+            <div>📥 <strong>每月匯出備份</strong> — 存到 iCloud / Google Drive</div>
+            <div>📤 <strong>換裝置時匯入</strong> — 資料完整還原</div>
+        </div>
+        <div style="background:#FFF8EE;border:1px solid #FAE5B8;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:#B08840;">
+            ⚠️ <strong>重要：</strong>清除瀏覽器快取會刪除資料！請養成定期備份的習慣。
+        </div>
+    </div>
+
+    <div style="text-align:center;padding:20px 0;font-size:.8rem;color:var(--text-muted);line-height:1.9;">
+        有任何問題隨時詢問上家 💕<br>
+        <span style="color:var(--rose-deep);font-weight:500;">妳可以的！加油 🌸</span>
+    </div>
+
+</div>
+
 </body>
 </html>
