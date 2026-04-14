@@ -583,6 +583,8 @@
 
 
 
+
+
 window.onerror=function(){return true;};
 
 function showOnboardingIfNeeded(){
@@ -1695,10 +1697,36 @@ function dismissWelcome(){
     o.classList.add('fade-out');
     setTimeout(function(){
         o.style.display='none';
-        var calcNav=document.querySelector('.nav-tab[onclick*="tab-calc"]');
-        switchTab('tab-calc', calcNav);
+        if(getProfile().name){
+            var calcNav=document.querySelector('.nav-tab[onclick*="tab-calc"]');
+            switchTab('tab-calc', calcNav);
+        }
     },500);
     window.scrollTo(0,0);
+}
+
+
+function startWelcomeProgress(){
+    var bar=document.getElementById('wm-progress-bar');
+    var txt=document.getElementById('wm-progress-text');
+    if(!bar) return;
+    var steps=[
+        {p:15,t:'載入產品資料…',d:400},
+        {p:35,t:'讀取訂單記錄…',d:400},
+        {p:55,t:'計算業績數字…',d:400},
+        {p:75,t:'準備圖表資料…',d:400},
+        {p:92,t:'即將完成…',d:360},
+        {p:100,t:'✨ 準備好了！',d:0}
+    ];
+    var i=0;
+    function next(){
+        if(i>=steps.length) return;
+        var s=steps[i++];
+        bar.style.width=s.p+'%';
+        if(txt) txt.innerText=s.t;
+        if(i<steps.length) setTimeout(next,s.d);
+    }
+    setTimeout(next,200);
 }
 
 window.onload=()=>{
@@ -1709,7 +1737,8 @@ window.onload=()=>{
     // Always show DCT Money in welcome logo
     if(p.name){ sub.innerHTML='每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡'; }
     // Auto dismiss after 2s if profile set
-    setTimeout(dismissWelcome, 2000);
+    startWelcomeProgress();
+    setTimeout(dismissWelcome, 2400);
     const lastQ=parseInt(localStorage.getItem('dct_last_quote')??'-1');
     let idx; do{idx=Math.floor(Math.random()*quotes.length);}while(idx===lastQ&&quotes.length>1);
     localStorage.setItem('dct_last_quote',idx);
@@ -2753,6 +2782,8 @@ function importAllData(e){
     reader.readAsText(file);
     e.target.value = '';
 }
+
+
 
 
 
