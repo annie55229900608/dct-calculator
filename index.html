@@ -283,7 +283,8 @@
     <div class="card">
         <div class="card-header">選擇產品</div>
         <div class="category-tabs">
-            <div class="cat-tab active" onclick="switchCat('活動',this)">活動</div>
+            <div class="cat-tab active" onclick="switchCat('本月活動',this)">本月活動</div>
+            <div class="cat-tab" onclick="switchCat('上月活動',this)">上月活動</div>
             <div class="cat-tab" onclick="switchCat('纖體',this)">纖體</div>
             <div class="cat-tab" onclick="switchCat('美肌',this)">美肌</div>
             <div class="cat-tab" onclick="switchCat('保健',this)">保健</div>
@@ -578,8 +579,10 @@ window.onerror=function(){return true;};
 
 if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
 const products={
-    "益生菌 買三送一":{cat:"活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
-    "葉黃素凍 買三送一":{cat:"活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
+    "本月活動A 纖體組":{cat:"本月活動",unit:"組",L2:1440,L3_sup:1890,L3_ret:2100,intern:3120,retail:3840,vip:3840,discount:3840},
+    "本月活動B 美肌組":{cat:"本月活動",unit:"組",L2:1020,L3_sup:1570,L3_ret:1760,intern:2580,retail:3560,vip:3560,discount:3560},
+    "益生菌 買三送一":{cat:"上月活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
+    "葉黃素凍 買三送一":{cat:"上月活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
     "纖纖飲X":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
     "纖飄錠":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
     "雪花紫纖飲":{cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
@@ -614,7 +617,7 @@ const buyers=[
     {id:"retail",name:"單盒零售",t:"retail"},{id:"vip",name:"VIP 價",t:"retail"},{id:"discount",name:"兩盒優惠",t:"retail"},
     {id:"intern",name:"實習價",t:"team"},{id:"L3_ret",name:"三級價",t:"team"},{id:"L3_sup",name:"三級輔導",t:"team"}
 ];
-let currentSeller="L3_sup",currentBuyer="retail",currentCat="活動",cart={};
+let currentSeller="L3_sup",currentBuyer="retail",currentCat="本月活動",cart={};
 let editingOrderId=null,editCart={},editBuyerType=null,selectedHistoryKey=null;
 
 function getOrders(){return JSON.parse(localStorage.getItem('dct_v9_ultimate'))||[];}
@@ -754,6 +757,11 @@ function initOrderUI(){
     var filtered=buyers.filter(function(b){return allowed.indexOf(b.id)!==-1;});
     if(filtered.length&&filtered.indexOf(filtered.find(function(b){return b.id===currentBuyer;}))===-1){currentBuyer=filtered[0].id;}
     document.getElementById('buyerSelector').innerHTML=filtered.map(function(b){return '<div class="buyer-btn '+(b.id===currentBuyer?'active':'')+'" onclick="currentBuyer=\''+b.id+'\';initOrderUI();updateCalc();">'+b.name+'</div>';}).join('');
+    currentCat=currentCat||'本月活動';
+    Array.prototype.forEach.call(document.querySelectorAll('.cat-tab'),function(t){
+        t.classList.remove('active');
+        if(t.innerText===currentCat||t.textContent===currentCat) t.classList.add('active');
+    });
     renderProducts();
     document.getElementById('mGoalInput').value=localStorage.getItem('dct_goal')||0;
 }
@@ -809,7 +817,7 @@ function loadDashboards(){
     const todayStr=new Date().toDateString(),curM=new Date().getMonth(),curY=new Date().getFullYear();
     const lastM=curM===0?11:curM-1,lastY=curM===0?curY-1:curY;
     let dP=0,dR=0,dC=0,dI={},dL='',mR=0,mP=0,mC=0,mRR=0,mTR=0,mI={},lR=0,lP=0,lC=0;
-    let ser={"活動":0,"纖體":0,"美肌":0,"保健":0};
+    let ser={"本月活動":0,"上月活動":0,"纖體":0,"美肌":0,"保健":0};
     let todayOrders=[];
     rs.forEach(r=>{
         const rd=getOrderDate(r);
@@ -845,7 +853,7 @@ function loadDashboards(){
     document.getElementById('mRetailBar').style.width=mrp+'%';document.getElementById('mTeamBar').style.width=mtp+'%';
     let mIH='';Object.entries(mI).sort((a,b)=>b[1].q-a[1].q).forEach(e=>mIH+=`<div class="item-row"><span>${e[0]}</span><b>${e[1].q} ${e[1].u}</b></div>`);
     document.getElementById('mItemStats').innerHTML=mIH||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
-    const sC={"活動":"#C8748A","纖體":"#7BBFDB","美肌":"#A98BC7","保健":"#7AB894"};
+    const sC={"本月活動":"#C8748A","上月活動":"#E8A0B0","纖體":"#7BBFDB","美肌":"#A98BC7","保健":"#7AB894"};
     let ts=Object.values(ser).reduce((a,b)=>a+b,0),sH='';
     for(let s in ser){let p=ts>0?Math.round(ser[s]/ts*100):0;sH+=`<div class="series-container"><div class="series-label"><span>${s}</span><span>${p}%</span></div><div class="series-bar"><div class="series-fill" style="width:${p}%;background:${sC[s]}"></div></div></div>`;}
     document.getElementById('seriesChart').innerHTML=sH;
