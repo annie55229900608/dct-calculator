@@ -581,6 +581,8 @@
 
 
 
+
+
 window.onerror=function(){return true;};
 
 function showOnboardingIfNeeded(){
@@ -1688,10 +1690,15 @@ function showToast(msg, color){
     t._timer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 function dismissWelcome(){
-    const o=document.getElementById('welcomeOverlay');
+    var o=document.getElementById('welcomeOverlay');
+    if(!o)return;
     o.classList.add('fade-out');
-    setTimeout(()=>{o.style.display='none';},500);
-    window.scrollTo({top:0,behavior:'instant'});
+    setTimeout(function(){
+        o.style.display='none';
+        var calcNav=document.querySelector('.nav-tab[onclick*="tab-calc"]');
+        switchTab('tab-calc', calcNav);
+    },500);
+    window.scrollTo(0,0);
 }
 
 window.onload=()=>{
@@ -1700,7 +1707,7 @@ window.onload=()=>{
     const greet=document.getElementById('welcomeGreeting');
     const sub=document.getElementById('welcomeSub');
     // Always show DCT Money in welcome logo
-    if(p.name){ sub.innerHTML=`${p.level?p.level+'<br>':''}每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡`; }
+    if(p.name){ sub.innerHTML='每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡'; }
     // Auto dismiss after 2s if profile set
     setTimeout(dismissWelcome, 2000);
     const lastQ=parseInt(localStorage.getItem('dct_last_quote')??'-1');
@@ -2746,6 +2753,8 @@ function importAllData(e){
     reader.readAsText(file);
     e.target.value = '';
 }
+
+
 
 
 
