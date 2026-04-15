@@ -363,14 +363,14 @@
             <span id="chartProfileText" style="font-size:.8rem;color:var(--rose-deep);font-weight:500;"></span>
         </div>
         <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>第一口袋 零售</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>第二口袋 團隊</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>零售淨利</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--c2)"></div>團隊淨利</div>
         </div>
         <div class="chart-wrap" id="chartWrap"></div>
     </div>
     <div class="card">
         <div class="card-header">📝 手動輸入歷史業績</div>
-        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:12px;line-height:1.6;">補登過去未記錄的月份業績，輸入後圖表與歷史同步更新。</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:12px;line-height:1.6;">補登過去月份的<strong style="color:var(--rose-deep)">淨利數字</strong>（不是營業額！），輸入後圖表同步更新。</div>
         <div class="input-group"><span class="input-label">年份 / 月份</span>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                 <div style="position:relative;"><select id="manualYear" class="month-select" style="font-size:.85rem;padding:10px 30px 10px 12px;"></select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
@@ -380,8 +380,8 @@
             </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#3A9E97;">第一口袋 零售淨利</span><input type="number" id="manualRetail" class="custom-input" placeholder="0" style="border-left:3px solid #5BC8C0;"></div>
-            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#2856C8;">第二口袋 團隊淨利</span><input type="number" id="manualTeam" class="custom-input" placeholder="0" style="border-left:3px solid #3B6EDE;"></div>
+            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#3A9E97;">零售淨利（手動）</span><input type="number" id="manualRetail" class="custom-input" placeholder="0" style="border-left:3px solid #5BC8C0;"></div>
+            <div class="input-group" style="margin-bottom:0;"><span class="input-label" style="color:#2856C8;">團隊淨利（手動）</span><input type="number" id="manualTeam" class="custom-input" placeholder="0" style="border-left:3px solid #3B6EDE;"></div>
         </div>
         <button class="save-btn" style="margin-top:0;" onclick="saveManualEntry()">儲存這個月份</button>
     </div>
@@ -470,7 +470,7 @@
         <div id="calc-detail-box" class="card"></div>
     <div id="calc-saving-box" style="display:none;background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:14px;padding:16px;margin-top:4px;"></div>
     </div>
-    <button onclick="clearCalc()" style="width:100%;margin-top:8px;padding:13px;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:12px;font-size:.82rem;cursor:pointer;font-family:inherit;">🗑 清除重算</button>
+    <button onclick="clearCalc()" style="width:100%;margin-top:8px;padding:13px;background:var(--rose-pale);color:var(--rose-deep);border:1px solid var(--rose-light);border-radius:12px;font-size:.82rem;font-weight:500;cursor:pointer;font-family:inherit;">🗑 清除重算</button>
 </div>
 
 <!-- 設定 -->
@@ -578,6 +578,7 @@
 </div>
 
 <script>
+
 
 
 
@@ -1943,11 +1944,11 @@ function renderHistoryMonth(){
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div style="background:rgba(91,200,192,.1);border:1px solid rgba(91,200,192,.3);border-radius:10px;padding:12px;text-align:center;">
-                <div style="font-size:.67rem;color:#3A9E97;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第一口袋 零售淨利</div>
+                <div style="font-size:.67rem;color:#3A9E97;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">零售淨利（手動）</div>
                 <div style="font-size:1rem;font-weight:600;color:#3A9E97">$${rP.toLocaleString()}</div>
             </div>
             <div style="background:rgba(59,110,222,.08);border:1px solid rgba(59,110,222,.2);border-radius:10px;padding:12px;text-align:center;">
-                <div style="font-size:.67rem;color:#2856C8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第二口袋 團隊淨利</div>
+                <div style="font-size:.67rem;color:#2856C8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">團隊淨利（手動）</div>
                 <div style="font-size:1rem;font-weight:600;color:#2856C8">$${tP2.toLocaleString()}</div>
             </div>
         </div>
@@ -1958,11 +1959,11 @@ function renderHistoryMonth(){
             <div class="card-header" style="margin-bottom:8px;">手動輸入業績</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                 <div style="background:rgba(91,200,192,.1);border:1px solid rgba(91,200,192,.3);border-radius:10px;padding:11px;text-align:center;">
-                    <div style="font-size:.67rem;color:#3A9E97;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第一口袋 零售</div>
+                    <div style="font-size:.67rem;color:#3A9E97;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">零售淨利</div>
                     <div style="font-size:.95rem;font-weight:600;color:#3A9E97">$${manualEntry.retail.toLocaleString()}</div>
                 </div>
                 <div style="background:rgba(59,110,222,.08);border:1px solid rgba(59,110,222,.2);border-radius:10px;padding:11px;text-align:center;">
-                    <div style="font-size:.67rem;color:#2856C8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第二口袋 團隊</div>
+                    <div style="font-size:.67rem;color:#2856C8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">團隊淨利</div>
                     <div style="font-size:.95rem;font-weight:600;color:#2856C8">$${manualEntry.team.toLocaleString()}</div>
                 </div>
             </div>
@@ -2042,7 +2043,7 @@ function getMonthlyData(){
         var d=getOrderDate(r);
         var k=`${d.getFullYear()}-${d.getMonth()}`;
         if(!data[k]) data[k]={retail:0,team:0};
-        if(r.type==='retail') data[k].retail+=r.rev; else data[k].team+=r.rev;
+        if(r.type==='retail') data[k].retail+=r.profit; else data[k].team+=r.profit;
     });
     var manualD=getManualData();
     Object.keys(manualD).forEach(function(k){
@@ -2075,8 +2076,8 @@ function renderChartTableFiltered(){
                 <button onclick="toggleChartEdit('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button>
             </div>
             <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
-                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售額 $${d.retail.toLocaleString()}</span>
-                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊額 $${d.team.toLocaleString()}</span>
+                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售淨利 $${d.retail.toLocaleString()}</span>
+                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊淨利 $${d.team.toLocaleString()}</span>
             </div>
             <div id="${mk}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
                 <div style="font-size:.72rem;color:var(--rose-deep);margin-bottom:8px;font-weight:600;">修改手動輸入數字</div>
@@ -2393,6 +2394,7 @@ var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
 
 
 
