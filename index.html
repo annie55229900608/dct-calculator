@@ -44,7 +44,7 @@
         .qty-control{display:flex;align-items:center;gap:8px;}
         .btn-qty{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--beige);color:var(--rose);font-weight:600;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
         .btn-qty:active{background:var(--rose);color:white;transform:scale(.92);}
-        .qty-input{width:26px;text-align:center;font-weight:600;font-size:.9rem;color:var(--text-main);border:none;background:transparent;outline:none;}
+        .qty-input{width:38px;text-align:center;font-weight:600;font-size:.9rem;color:var(--text-main);border:none;background:transparent;outline:none;-moz-appearance:textfield;appearance:textfield;} .qty-input::-webkit-inner-spin-button,.qty-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;display:none;}
         .result-card{background:var(--rose);color:white;padding:20px;border-radius:18px;text-align:center;margin-top:12px;position:relative;overflow:hidden;}
         .result-card::before{content:'';position:absolute;top:-30px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.07);}
         .result-label{font-size:.74rem;opacity:.85;letter-spacing:1px;text-transform:uppercase;}
@@ -143,7 +143,7 @@
         /* Top bar wrapper */
         #topBar{position:fixed;top:0;left:0;right:0;z-index:200;}
         /* Welcome screen */
-        .welcome-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#FFE8F4 0%,#FFCCE6 35%,#FFB8DA 65%,#F499C0 100%);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px;transition:opacity .8s ease;overflow:hidden;}
+        .welcome-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#FFE8F4 0%,#FFCCE6 35%,#FFB8DA 65%,#F499C0 100%);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px;overflow:hidden;}
         .welcome-overlay::before{content:'';position:absolute;width:420px;height:420px;border-radius:50%;border:1px solid rgba(255,255,255,.2);top:-80px;left:-80px;pointer-events:none;}
         .welcome-overlay::after{content:'';position:absolute;width:320px;height:320px;border-radius:50%;border:1px solid rgba(255,255,255,.08);bottom:60px;right:-60px;pointer-events:none;}
         .welcome-overlay.fade-out{opacity:0;pointer-events:none;}
@@ -291,6 +291,7 @@
             <div class="cat-tab" onclick="switchCat('保健',this)">保健</div>
         </div>
         <div id="productList"></div>
+    <div style="text-align:center;font-size:.68rem;color:var(--text-muted);margin-top:4px;letter-spacing:.3px;">✏️ 數量可直接點擊輸入</div>
     </div>
     <div class="card">
         <div class="card-header">日期、費用與備註</div>
@@ -304,7 +305,7 @@
         </div>
         <div class="input-group" style="margin-bottom:0">
             <span class="input-label">客戶備註</span>
-            <input type="text" id="orderNote" class="custom-input" placeholder="客戶 IG 帳號或姓名">
+            <textarea id="orderNote" class="custom-input" placeholder="客戶 IG 帳號或姓名" rows="2" style="resize:none;"></textarea>
         </div>
     </div>
     <div class="result-card">
@@ -458,6 +459,7 @@
             <div class="cat-tab" onclick="calcSwitchCat('保健',this)">保健</div>
         </div>
         <div id="calc-product-list"></div>
+    <div style="text-align:center;font-size:.68rem;color:var(--text-muted);margin-top:4px;letter-spacing:.3px;">✏️ 數量可直接點擊輸入</div>
     </div>
     <div id="calc-result" style="display:none;">
         <div style="background:var(--rose);color:white;border-radius:18px;padding:20px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden;">
@@ -588,6 +590,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 window.onerror=function(){return true;};
 
 function showOnboardingIfNeeded(){
@@ -615,25 +642,7 @@ function saveOnboarding(){
 function skipOnboarding(){var ob=document.getElementById('obScreen');if(ob)ob.style.display='none';}
 
 window.onerror=function(){return true;};
-function showOnboardingIfNeeded(){if(!getProfile().name){setTimeout(function(){var ob=document.getElementById('obScreen');if(ob)ob.style.display='block';},200);}}
-function syncLevelToSettings(v){var m={'L2':'二級輔導','L3_sup':'三級輔導','L3_ret':'三級零售','intern':'實習'};var ln=m[v];if(!ln)return;var sl=document.getElementById('settingLevel');if(sl)sl.value=ln;var p=getProfile();if(p.level!==ln){p.level=ln;saveProfileData(p);updateProfileDisplay(p);updateAllBadges();}showToast('等級已同步：'+ln,'var(--rose)');}
 
-
-
-
-
-
-
-
-
-
-// ══ 算錢 ══
-var calcMode = 'consumer';
-var calcBuyer = 'retail';
-var calcPartnerLevel = 'intern';
-var calcCat = '本月活動';
-// Use array of {name, qty} to avoid any key collision issues
-var calcItems = [];
 
 function calcGetPrice(name) {
     var p = products[name];
@@ -720,9 +729,11 @@ function calcRender() {
         var minusBtn = document.createElement('button');
         minusBtn.className = 'btn-qty';
         minusBtn.innerText = '−';
-        var qtyDiv = document.createElement('div');
+        var qtyDiv = document.createElement('input');
+        qtyDiv.type = 'number';
+        qtyDiv.min = '0';
         qtyDiv.className = 'qty-input';
-        qtyDiv.innerText = qty;
+        qtyDiv.value = qty;
         var plusBtn = document.createElement('button');
         plusBtn.className = 'btn-qty';
         plusBtn.innerText = '+';
@@ -737,16 +748,22 @@ function calcRender() {
         // Bind events - use closure with explicit variables
         (function(pName, qDiv) {
             minusBtn.addEventListener('click', function() {
-                var cur = parseInt(qDiv.innerText) || 0;
+                var cur = parseInt(qDiv.value) || 0;
                 var nq = Math.max(0, cur - 1);
-                qDiv.innerText = nq;
+                qDiv.value = nq;
                 calcSetQty(pName, nq);
                 calcShowResult();
             });
             plusBtn.addEventListener('click', function() {
-                var cur = parseInt(qDiv.innerText) || 0;
+                var cur = parseInt(qDiv.value) || 0;
                 var nq = cur + 1;
-                qDiv.innerText = nq;
+                qDiv.value = nq;
+                calcSetQty(pName, nq);
+                calcShowResult();
+            });
+            qDiv.addEventListener('change', function() {
+                var nq = Math.max(0, parseInt(qDiv.value) || 0);
+                qDiv.value = nq;
                 calcSetQty(pName, nq);
                 calcShowResult();
             });
@@ -836,20 +853,20 @@ function initCalc() {
 function saveCurveDB(){ localStorage.setItem(CURVE_STORAGE, JSON.stringify(curveDB)); }
 
 function updateAllBadges(){
-    const p=getProfile();
+    var p=getProfile();
     // 淨利圖 badge
-    const badge=document.getElementById('chartProfileBadge');
-    const profTxt=document.getElementById('chartProfileText');
+    var badge=document.getElementById('chartProfileBadge');
+    var profTxt=document.getElementById('chartProfileText');
     if(badge&&profTxt){
-        const parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
+        var parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
         if(parts.length){ profTxt.innerText=parts.join(' · '); badge.style.display='flex'; }
         else badge.style.display='none';
     }
     // 魔術曲線圖 badge
-    const cb=document.getElementById('curveProfileBadge');
-    const ct=document.getElementById('curveProfileText');
+    var cb=document.getElementById('curveProfileBadge');
+    var ct=document.getElementById('curveProfileText');
     if(cb&&ct){
-        const parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
+        var parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
         if(parts.length){ ct.innerText=parts.join(' · '); cb.style.display='flex'; }
         else cb.style.display='none';
     }
@@ -857,15 +874,15 @@ function updateAllBadges(){
 function saveCurveConfig(){ updateCurveTitles(); }
 
 function updateCurveTitles(){
-    const p = getProfile();
-    const name   = p.name||'';
-    const level  = p.level ? ' ｜ ' + p.level : '';
-    const upline = p.upline ? ' ｜ 上家：' + p.upline : '';
-    const years = '';
-    const t1 = document.getElementById('curve-chart1-title');
-    const t2 = document.getElementById('curve-chart2-title');
-    const s1 = document.getElementById('curve-chart1-sub');
-    const s2 = document.getElementById('curve-chart2-sub');
+    var p = getProfile();
+    var name   = p.name||'';
+    var level  = p.level ? ' ｜ ' + p.level : '';
+    var upline = p.upline ? ' ｜ 上家：' + p.upline : '';
+    var years = '';
+    var t1 = document.getElementById('curve-chart1-title');
+    var t2 = document.getElementById('curve-chart2-title');
+    var s1 = document.getElementById('curve-chart1-sub');
+    var s2 = document.getElementById('curve-chart2-sub');
     if(t1) t1.textContent = '淨利曲線圖';
     if(t2) t2.textContent = '魔術曲線圖';
     if(s1) s1.textContent = '三口袋月度淨利' + level + upline;
@@ -875,11 +892,11 @@ function updateCurveTitles(){
 function getCurveSortedKeys(){ return Object.keys(curveDB).sort(); }
 
 function initCurveBasic(){
-    const yr=document.getElementById('curve-year');
+    var yr=document.getElementById('curve-year');
     if(yr && !yr.options.length){
-        const cy=new Date().getFullYear();
-        for(let y=2022;y<=cy+2;y++){
-            const o=document.createElement('option');
+        var cy=new Date().getFullYear();
+        for(var y=2022;y<=cy+2;y++){
+            var o=document.createElement('option');
             o.value=y; o.textContent=y+'年';
             if(y===cy) o.selected=true;
             yr.appendChild(o);
@@ -889,11 +906,11 @@ function initCurveBasic(){
     renderCurveTable();
 }
 function initCurve(){
-    const yr = document.getElementById('curve-year');
+    var yr = document.getElementById('curve-year');
     if(yr && !yr.options.length){
-        const cy = new Date().getFullYear();
-        for(let y=2022;y<=cy+2;y++){
-            const o=document.createElement('option');
+        var cy = new Date().getFullYear();
+        for(var y=2022;y<=cy+2;y++){
+            var o=document.createElement('option');
             o.value=y; o.textContent=y+'年';
             if(y===cy) o.selected=true;
             yr.appendChild(o);
@@ -906,47 +923,47 @@ function initCurve(){
 }
 
 function switchCurve(panelId, el){
-    document.querySelectorAll('.curve-sub-tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.curve-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.curve-sub-tab').forEach(function(b){ b.classList.remove('active') });
+    document.querySelectorAll('.curve-panel').forEach(function(p){ p.classList.remove('active') });
     el.classList.add('active');
     document.getElementById(panelId).classList.add('active');
     renderCurveCharts();
 }
 
 function addCurveMonth(){
-    const y = document.getElementById('curve-year').value;
-    const m = document.getElementById('curve-month').value;
-    const key = y + '-' + String(m).padStart(2,'0');
+    var y = document.getElementById('curve-year').value;
+    var m = document.getElementById('curve-month').value;
+    var key = y + '-' + String(m).padStart(2,'0');
     if(curveDB[key]){ showToast('此月份已存在，請直接在表格修改'); return; }
     curveDB[key] = {
         tiktok: parseInt(document.getElementById('cv-tiktok').value)||0,
         ig:     parseInt(document.getElementById('cv-ig').value)||0,
     };
     saveCurveDB();
-    ['cv-tiktok','cv-ig'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    ['cv-tiktok','cv-ig'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
     renderCurveTableFiltered();
     renderCurveCharts();
     showToast('✓ 已新增 ' + y + '年' + parseInt(m) + '月');
 }
 
 function renderCurveTable(){
-    const wrap=document.getElementById('curve-edit-table');
+    var wrap=document.getElementById('curve-edit-table');
     if(!wrap) return;
-    const eyf=document.getElementById('curveEditYearFilter');
-    const eyr=eyf?eyf.value:'';
-    const allKeys=getCurveSortedKeys().slice().reverse();
+    var eyf=document.getElementById('curveEditYearFilter');
+    var eyr=eyf?eyf.value:'';
+    var allKeys=getCurveSortedKeys().slice().reverse();
     // Update year options in edit filter
     if(eyf){
-        const yrs=[...new Set(allKeys.map(k=>k.split('-')[0]))].sort((a,b)=>b-a);
-        const curV=eyf.value;
-        eyf.innerHTML='<option value="">全部年份</option>'+yrs.map(y=>`<option value="${y}"${y===curV?'selected':''}>${y}年</option>`).join('');
+        var yrs=Array.from(new Set(allKeys.map(function(k){ return k.split('-')[0]; }))).sort(function(a,b){ return a-b; });
+        var curV=eyf.value;
+        eyf.innerHTML='<option value="">全部年份</option>'+yrs.map(function(y){ return '<option value="'+y+'"'+(y===curV?' selected':'')+'>'+y+'年</option>'; }).join('');
     }
-    const keys=eyr?allKeys.filter(k=>k.startsWith(eyr)):allKeys;
+    var keys=eyr?allKeys.filter(function(k){ return k.startsWith(eyr); }):allKeys;
     if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚未新增任何資料</div>'; return; }
-    let html='';
-    keys.forEach(key=>{
-        const d=curveDB[key],[y,m]=key.split('-');
-        const eid='cedit_'+key.replace('-','_');
+    var html='';
+    keys.forEach(function(key){
+        var d=curveDB[key],[y,m]=key.split('-');
+        var eid='cedit_'+key.replace('-','_');
         html+=`<div style="padding:10px 0;border-bottom:1px solid var(--beige-dark);">
             <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div>
@@ -975,16 +992,16 @@ function renderCurveTable(){
 }
 
 function toggleCurveEdit(key){
-    const id='cedit_'+key.replace('-','_');
-    const el=document.getElementById(id);
+    var id='cedit_'+key.replace('-','_');
+    var el=document.getElementById(id);
     if(el) el.style.display=el.style.display==='none'?'block':'none';
 }
 function saveCurveEdit(key){
-    const id='cedit_'+key.replace('-','_');
-    const tiktok=parseInt((document.getElementById(id+'_tiktok')||{}).value)||0;
-    const ig=parseInt((document.getElementById(id+'_ig')||{}).value)||0;
+    var id='cedit_'+key.replace('-','_');
+    var tiktok=parseInt((document.getElementById(id+'_tiktok')||{}).value)||0;
+    var ig=parseInt((document.getElementById(id+'_ig')||{}).value)||0;
     if(!curveDB[key]) return;
-    curveDB[key]={tiktok,ig};
+    curveDB[key]={tiktok:tiktok,ig:ig};
     saveCurveDB();
     renderCurveTableFiltered();
     renderCurveCharts();
@@ -999,7 +1016,7 @@ function updateCurveCell(key,field,val){
     showToast('✓ 已儲存');
 }
 function deleteCurveRow(key){
-    const[y,m]=key.split('-');
+    var _sp=key.split('-'); var y=_sp[0],m=_sp[1];
     if(!confirm(y+'年'+parseInt(m)+'月 確定刪除？')) return;
     delete curveDB[key];
     saveCurveDB();
@@ -1021,28 +1038,28 @@ function clearCurveChart(id){
 
 function buildCurveChart(id, labels, datasets, deltaArr){
     clearCurveChart(id);
-    const el=document.getElementById(id);
+    var el=document.getElementById(id);
     if(!el) return;
 
     // Disable built-in datalabels
-    datasets.forEach(ds=>{ ds.datalabels={display:false}; });
+    datasets.forEach(function(ds){ ds.datalabels={display:false}; });
 
-    const customPlugin = {
+    var customPlugin = {
         id: 'curveLabels_'+id,
         afterDraw(chart){
-            const ctx=chart.ctx;
-            const nDS=chart.data.datasets.length;
+            var ctx=chart.ctx;
+            var nDS=chart.data.datasets.length;
             // Segment labels
-            chart.data.datasets.forEach((ds,di)=>{
-                const meta=chart.getDatasetMeta(di);
-                meta.data.forEach((bar,bi)=>{
-                    const v=ds.data[bi]; if(!v) return;
-                    const segH=Math.abs(bar.base-bar.y); if(segH<16) return;
-                    const cx=bar.x, cy=(bar.y+bar.base)/2;
-                    const lbl=fmtCK(v);
+            chart.data.datasets.forEach(function(ds,di){
+                var meta=chart.getDatasetMeta(di);
+                meta.data.forEach(function(bar,bi){
+                    var v=ds.data[bi]; if(!v) return;
+                    var segH=Math.abs(bar.base-bar.y); if(segH<16) return;
+                    var cx=bar.x, cy=(bar.y+bar.base)/2;
+                    var lbl=fmtCK(v);
                     ctx.font='bold 9px "Noto Sans TC",sans-serif';
-                    const tw=ctx.measureText(lbl).width;
-                    const pad=3,rh=13,rw=tw+pad*2;
+                    var tw=ctx.measureText(lbl).width;
+                    var pad=3,rh=13,rw=tw+pad*2;
                     ctx.fillStyle='rgba(0,0,0,.42)';
                     ctx.beginPath(); ctx.roundRect(cx-rw/2,cy-rh/2,rw,rh,2); ctx.fill();
                     ctx.fillStyle='#FFE566'; ctx.textAlign='center'; ctx.textBaseline='middle';
@@ -1050,24 +1067,24 @@ function buildCurveChart(id, labels, datasets, deltaArr){
                 });
             });
             // Totals above bars
-            const topMeta=chart.getDatasetMeta(nDS-1);
-            topMeta.data.forEach((bar,bi)=>{
-                const tot=datasets.reduce((s,ds)=>s+(ds.data[bi]||0),0); if(!tot) return;
-                const cx=bar.x; let topY=bar.y-5;
+            var topMeta=chart.getDatasetMeta(nDS-1);
+            topMeta.data.forEach(function(bar,bi){
+                var tot=datasets.reduce(function(s,ds){ return s+(ds.data[bi]||0); },0); if(!tot) return;
+                var cx=bar.x; var topY=bar.y-5;
                 if(deltaArr){
-                    const d=deltaArr[bi];
+                    var d=deltaArr[bi];
                     if(d!==null&&d!==undefined){
-                        const dl=(d>=0?'+':'')+fmtCK(d);
+                        var dl=(d>=0?'+':'')+fmtCK(d);
                         ctx.font='bold 9px "Noto Sans TC",sans-serif';
                         ctx.fillStyle=d>=0?'#3A9E97':'#e05050';
                         ctx.textAlign='center'; ctx.textBaseline='bottom';
                         ctx.fillText(dl,cx,topY-1); topY-=12;
                     }
                 }
-                const tl=fmtCK(tot);
+                var tl=fmtCK(tot);
                 ctx.font='bold 10px "Noto Sans TC",sans-serif';
-                const tw=ctx.measureText(tl).width;
-                const pad=4,rh=14,rw=tw+pad*2;
+                var tw=ctx.measureText(tl).width;
+                var pad=4,rh=14,rw=tw+pad*2;
                 ctx.fillStyle='rgba(44,34,38,.72)';
                 ctx.beginPath(); ctx.roundRect(cx-rw/2,topY-rh,rw,rh,3); ctx.fill();
                 ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='bottom';
@@ -1077,24 +1094,24 @@ function buildCurveChart(id, labels, datasets, deltaArr){
     };
 
     // Resize canvas for scrollable chart (18 months per screen)
-    const _wrapEl=el.parentElement;
-    const _visW=(_wrapEl&&_wrapEl.offsetWidth>100)?_wrapEl.offsetWidth:360;
-    const _numBars=labels.length;
-    const _chartW=_numBars>18?Math.round(_visW*_numBars/18):_visW;
+    var _wrapEl=el.parentElement;
+    var _visW=(_wrapEl&&_wrapEl.offsetWidth>100)?_wrapEl.offsetWidth:360;
+    var _numBars=labels.length;
+    var _chartW=_numBars>18?Math.round(_visW*_numBars/18):_visW;
     el.style.width=_chartW+'px'; el.style.minWidth=_chartW+'px';
 
-    const ctx2=el.getContext('2d');
+    var ctx2=el.getContext('2d');
     curveCharts[id]=new Chart(ctx2,{
         type:'bar',
-        data:{labels,datasets},
+        data:{labels:labels,datasets:datasets},
         options:{
             plugins:{legend:{display:false},datalabels:{display:false},
                 tooltip:{backgroundColor:'#fff8f4',titleColor:'#2C2226',bodyColor:'#7A6872',borderColor:'#E8DDE3',borderWidth:1,padding:10,
-                    callbacks:{label:c=>' '+c.dataset.label+': '+Number(c.parsed.y).toLocaleString('zh-TW')}}
+                    callbacks:{label:function(c){ return ' '+c.dataset.label+': '+Number(c.parsed.y).toLocaleString('zh-TW'); }}}
             },
             scales:{
                 x:{stacked:true,ticks:{color:'#B09EA8',font:{size:10}},grid:{display:false}},
-                y:{stacked:true,ticks:{color:'#B09EA8',font:{size:10},callback:v=>fmtCK(v)},grid:{color:'rgba(232,221,227,.6)'}}
+                y:{stacked:true,ticks:{color:'#B09EA8',font:{size:10},callback:function(v){ return fmtCK(v); }},grid:{color:'rgba(232,221,227,.6)'}}
             },
             layout:{padding:{top:deltaArr?52:36}},
             responsive:false,maintainAspectRatio:false,animation:{duration:500}
@@ -1104,29 +1121,29 @@ function buildCurveChart(id, labels, datasets, deltaArr){
 }
 
 function buildCurveDetailTable(wrapId, keys, colNames, colData, colors){
-    const wrap=document.getElementById(wrapId); if(!wrap) return;
+    var wrap=document.getElementById(wrapId); if(!wrap) return;
     if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:16px;font-size:.8rem;color:var(--text-muted)">尚無資料</div>'; return; }
-    let html='<div class="curve-table-wrap"><table><thead><tr><th>月份</th>';
-    colNames.forEach((n,i)=>html+=`<th><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[i]};margin-right:3px;vertical-align:middle"></span>${n}</th>`);
+    var html='<div class="curve-table-wrap"><table><thead><tr><th>月份</th>';
+    colNames.forEach(function(n,i){ html+='<th><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+colors[i]+';margin-right:3px;vertical-align:middle"></span>'+n+'</th>'; });
     html+='<th>合計</th>';
-    colNames.forEach((n,i)=>html+=`<th>△${n}</th>`);
+    colNames.forEach(function(n,i){ html+='<th>△'+n+'</th>'; });
     html+='<th>△合計</th></tr></thead><tbody>';
-    let grand=colNames.map(()=>0);
-    keys.forEach((key,ri)=>{
-        const vals=colData.map(a=>a[ri]);
-        const tot=vals.reduce((a,b)=>a+b,0);
-        grand=grand.map((g,i)=>g+vals[i]);
-        const prev=ri>0?colData.map(a=>a[ri-1]):null;
-        const prevTot=prev?prev.reduce((a,b)=>a+b,0):null;
-        const[y,m]=key.split('-');
+    var grand=colNames.map(function(){ return 0; });
+    keys.forEach(function(key,ri){
+        var vals=colData.map(function(a){ return a[ri]; });
+        var tot=vals.reduce(function(a,b){ return a+b,0; });
+        grand=grand.map(function(g,i){ return g+vals[i]; });
+        var prev=ri>0?colData.map(function(a){ return a[ri-1]; }):null;
+        var prevTot=prev?prev.reduce(function(a,b){ return a+b,0; }):null;
+        var _sp=key.split('-'); var y=_sp[0],m=_sp[1];
         html+=`<tr><td>${y}/${parseInt(m)}</td>`;
-        vals.forEach(v=>html+=`<td>${Number(v).toLocaleString('zh-TW')}</td>`);
+        vals.forEach(function(v){ html+='<td>'+Number(v).toLocaleString('zh-TW')+'</td>'; });
         html+=`<td><strong>${Number(tot).toLocaleString('zh-TW')}</strong></td>`;
         if(prev){
-            vals.forEach((v,i)=>{ const d=v-prev[i]; html+=`<td class="${d>0?'delta-pos':d<0?'delta-neg':''}">${d>0?'+':''}${Number(d).toLocaleString('zh-TW')}</td>`; });
-            const dt=tot-prevTot;
+            vals.forEach(function(v,i){ var d=v-prev[i]; html+=`<td class="${d>0?'delta-pos':d<0?'delta-neg':''}">${d>0?'+':''}${Number(d).toLocaleString('zh-TW')}</td>`; });
+            var dt=tot-prevTot;
             html+=`<td class="${dt>0?'delta-pos':dt<0?'delta-neg':''}">${dt>0?'+':''}${Number(dt).toLocaleString('zh-TW')}</td>`;
-        } else { colNames.forEach(()=>html+='<td>–</td>'); html+='<td>–</td>'; }
+        } else { colNames.forEach(function(){ html+='<td>–</td>'; }); html+='<td>–</td>'; }
         html+='</tr>';
     });
     html+='</tbody></table></div>';
@@ -1135,55 +1152,55 @@ function buildCurveDetailTable(wrapId, keys, colNames, colData, colors){
 
 
 function buildCurveSVG(keys, tiktok, ig, dF){
-    const wrap = document.getElementById('curve-chart2-svg');
+    var wrap = document.getElementById('curve-chart2-svg');
     if(!wrap) return;
-    const VISIBLE=18;
-    const _cW=(wrap.parentElement&&wrap.parentElement.offsetWidth>100)?wrap.parentElement.offsetWidth:360;
-    const BW=Math.max(22,Math.floor((_cW-54-20-10*VISIBLE)/VISIBLE));
-    const G=10,PL=54,PR=20,PT=60,PB=50,CH=260;
-    const n=keys.length;
-    const aMax=Math.max(...tiktok.map((t,i)=>t+(ig[i]||0)),1);
-    const nM=Math.ceil(aMax/1000)*1000||1000;
-    const TW=PL+n*(BW+G)+PR;
-    const ys=v=>PT+(CH*(1-v/nM));
-    let tks='';
-    for(let i=0;i<=5;i++){
-        const v=Math.round(nM*i/5);
-        const y=ys(v);
-        const lbl=v>=10000?(v/1000).toFixed(0)+'k':v>=1000?(v/1000).toFixed(1)+'k':v;
+    var VISIBLE=18;
+    var _cW=(wrap.parentElement&&wrap.parentElement.offsetWidth>100)?wrap.parentElement.offsetWidth:360;
+    var BW=Math.max(22,Math.floor((_cW-54-20-10*VISIBLE)/VISIBLE));
+    var G=10,PL=54,PR=20,PT=60,PB=50,CH=260;
+    var n=keys.length;
+    var aMax=Math.max(...tiktok.map(function(t,i){ return t+(ig[i]||0); }),1);
+    var nM=Math.ceil(aMax/1000)*1000||1000;
+    var TW=PL+n*(BW+G)+PR;
+    function ys(v){ return PT+(CH*(1-v/nM)); }
+    var tks='';
+    for(var i=0;i<=5;i++){
+        var v=Math.round(nM*i/5);
+        var y=ys(v);
+        var lbl=v>=10000?(v/1000).toFixed(0)+'k':v>=1000?(v/1000).toFixed(1)+'k':v;
         tks+=`<line x1="${PL-6}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="#EDE7DE" stroke-width="1"/>
               <text x="${PL-9}" y="${y+4}" text-anchor="end" font-size="9" fill="#B09EA8">${lbl}</text>`;
     }
-    let bars='';
-    keys.forEach((k,i)=>{
-        const[yr,mo]=k.split('-');
-        const tk=tiktok[i]||0, ig2=ig[i]||0, tot=tk+ig2;
-        const x=PL+i*(BW+G);
-        const htk=CH*tk/nM, hig=CH*ig2/nM;
-        const ytot=ys(tot), ytk=ys(tk);
+    var bars='';
+    keys.forEach(function(k,i){
+        var _sp=k.split('-'); var yr=_sp[0],mo=_sp[1];
+        var tk=tiktok[i]||0, ig2=ig[i]||0, tot=tk+ig2;
+        var x=PL+i*(BW+G);
+        var htk=CH*tk/nM, hig=CH*ig2/nM;
+        var ytot=ys(tot), ytk=ys(tk);
         if(ig2>0){
             bars+=`<rect x="${x}" y="${ytot}" width="${BW}" height="${hig}" fill="#D4607A" rx="2"/>`;
-            if(hig>14){const igL=ig2>=10000?Math.round(ig2/1000)+'k':ig2>=1000?(ig2/1000).toFixed(1)+'k':ig2;bars+=`<text x="${x+BW/2}" y="${ytot+hig/2+4}" text-anchor="middle" font-size="8" font-weight="700" fill="rgba(255,255,255,.9)">${igL}</text>`;}
+            if(hig>14){var igL=ig2>=10000?Math.round(ig2/1000)+'k':ig2>=1000?(ig2/1000).toFixed(1)+'k':ig2;bars+=`<text x="${x+BW/2}" y="${ytot+hig/2+4}" text-anchor="middle" font-size="8" font-weight="700" fill="rgba(255,255,255,.9)">${igL}</text>`;}
         }
         if(tk>0){
             bars+=`<rect x="${x}" y="${ytk}"  width="${BW}" height="${htk}" fill="#5BC8C0" rx="2"/>`;
-            if(htk>14){const tkL=tk>=10000?Math.round(tk/1000)+'k':tk>=1000?(tk/1000).toFixed(1)+'k':tk;bars+=`<text x="${x+BW/2}" y="${ytk+htk/2+4}" text-anchor="middle" font-size="8" font-weight="700" fill="rgba(255,255,255,.9)">${tkL}</text>`;}
+            if(htk>14){var tkL=tk>=10000?Math.round(tk/1000)+'k':tk>=1000?(tk/1000).toFixed(1)+'k':tk;bars+=`<text x="${x+BW/2}" y="${ytk+htk/2+4}" text-anchor="middle" font-size="8" font-weight="700" fill="rgba(255,255,255,.9)">${tkL}</text>`;}
         }
         // delta label
         if(dF&&dF[i]!==null&&dF[i]!==undefined){
-            const d=dF[i];
-            const dl=(d>=0?'+':'')+(d>=1000||d<=-1000?(d/1000).toFixed(1)+'k':d);
+            var d=dF[i];
+            var dl=(d>=0?'+':'')+(d>=1000||d<=-1000?(d/1000).toFixed(1)+'k':d);
             bars+=`<text x="${x+BW/2}" y="${ytot-18}" text-anchor="middle" font-size="9" font-weight="600" fill="${d>=0?'#3A9E97':'#e05050'}">${dl}</text>`;
         }
         // total label
         if(tot>0){
-            const tl=tot>=1000?(tot/1000).toFixed(1).replace(/.0$/,'')+'k':tot;
+            var tl=tot>=1000?(tot/1000).toFixed(1).replace(/.0$/,'')+'k':tot;
             bars+=`<text x="${x+BW/2}" y="${ytot-6}" text-anchor="middle" font-size="10" font-weight="600" fill="#2C2226">${tl}</text>`;
         }
         // month label
         bars+=`<text x="${x+BW/2}" y="${PT+CH+16}" text-anchor="middle" font-size="9.5" fill="#7A6872">${parseInt(mo)}月</text>`;
         // year label (when year changes)
-        const prevY=i>0?keys[i-1].split('-')[0]:null;
+        var prevY=i>0?keys[i-1].split('-')[0]:null;
         if(i===0||prevY!==yr){
             bars+=`<text x="${x+BW/2}" y="${PT+CH+30}" text-anchor="middle" font-size="8" font-weight="600" fill="#C8748A">${yr}</text>`;
         }
@@ -1194,7 +1211,7 @@ function buildCurveSVG(keys, tiktok, ig, dF){
     </svg>`;
 }
 function renderCurveCharts(){
-    const keys=getCurveSortedKeys();
+    var keys=getCurveSortedKeys();
     if(!keys.length){
         // Still update stats to show 0
         ['curve-stat-total','curve-stat-tiktok','curve-stat-ig'].forEach(function(id){
@@ -1205,22 +1222,22 @@ function renderCurveCharts(){
         if(w) w.innerHTML='<div style="text-align:center;padding:16px;font-size:.8rem;color:var(--text-muted)">尚無資料，請先新增月份</div>';
         return;
     }
-    const labels=keys.map((k,i)=>{
-        const[y,m]=k.split('-');
-        const prevY=i>0?keys[i-1].split('-')[0]:null;
+    var labels=keys.map(function(k,i){
+        var _sp=k.split('-'); var y=_sp[0],m=_sp[1];
+        var prevY=i>0?keys[i-1].split('-')[0]:null;
         return prevY!==y ? y+'·'+parseInt(m)+'月' : parseInt(m)+'月';
     });
-    const tiktok=keys.map(k=>curveDB[k].tiktok||0);
-    const ig=keys.map(k=>curveDB[k].ig||0);
+    var tiktok=keys.map(function(k){ return curveDB[k].tiktok||0; });
+    var ig=keys.map(function(k){ return curveDB[k].ig||0; });
 
-    const totF=tiktok.map((t,i)=>t+ig[i]);
-    const dF=totF.map((v,i)=>i===0?null:v-totF[i-1]);
+    var totF=tiktok.map(function(t,i){ return t+ig[i]; });
+    var dF=totF.map(function(v,i){ return i===0?null:v-totF[i-1]; });
     buildCurveSVG(keys, tiktok, ig, dF);
     updateCurveYearFilter();
     renderCurveTableFiltered();
 
     // Stats
-    const fmtN=n=>Number(n).toLocaleString('zh-TW');
+    function fmtN(n){ return Number(n).toLocaleString('zh-TW'); }
     // Update always-visible stat boxes
     (function(){
         // Use current year's first entry as Jan 1 baseline
@@ -1247,11 +1264,11 @@ function renderCurveCharts(){
         setStatEl('curve-stat-ig', igInc, igInc>0?'#3A9E97':igInc<0?'#e05050':'#D4607A');
     })();
     // Profile badge
-    const p2=getProfile();
-    const cb=document.getElementById('curveProfileBadge');
-    const ct=document.getElementById('curveProfileText');
+    var p2=getProfile();
+    var cb=document.getElementById('curveProfileBadge');
+    var ct=document.getElementById('curveProfileText');
     if(cb&&ct){
-        const parts2=[p2.name,p2.level,p2.upline?'上家：'+p2.upline:''].filter(Boolean);
+        var parts2=[p2.name,p2.level,p2.upline?'上家：'+p2.upline:''].filter(Boolean);
         if(parts2.length){ ct.innerText=parts2.join(' · '); cb.style.display='flex'; }
         else cb.style.display='none';
     }
@@ -1260,7 +1277,7 @@ function renderCurveCharts(){
 
 // ── 備份匯出 / 匯入 ──
 function exportAllData(){
-    const payload = {
+    var payload = {
         exportDate: new Date().toISOString().slice(0,10),
         orders:      JSON.parse(localStorage.getItem('dct_v9_ultimate')   || '[]'),
         manualMonths:JSON.parse(localStorage.getItem('dct_manual_months') || '{}'),
@@ -1268,8 +1285,8 @@ function exportAllData(){
         profile:     JSON.parse(localStorage.getItem('dct_profile')       || '{}'),
         goal:        localStorage.getItem('dct_goal') || '0',
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-    const a = document.createElement('a');
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'DCT_Money_備份_' + payload.exportDate + '.json';
     a.click();
@@ -1277,28 +1294,28 @@ function exportAllData(){
 }
 
 function importAllData(e){
-    const file = e.target.files[0];
+    var file = e.target.files[0];
     if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
         try {
-            const data = JSON.parse(ev.target.result);
+            var data = JSON.parse(ev.target.result);
             // Merge orders
             if(Array.isArray(data.orders)){
-                const existing = JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]');
-                const merged = [...existing];
-                data.orders.forEach(o => { if(!merged.find(e=>e.id===o.id)) merged.push(o); });
+                var existing = JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]');
+                var merged = existing.slice();
+                data.orders.forEach(function(o){ if(!merged.find(function(e){ return e.id===o.id; })) merged.push(o); });
                 saveOrders(merged);
             }
             // Merge manual months
             if(data.manualMonths){
-                const ex = getManualData();
-                saveManualDataStore({...data.manualMonths, ...ex});
+                var ex = getManualData();
+                saveManualDataStore(Object.assign({},data.manualMonths,ex));
             }
             // Merge curve data
             if(data.curveData){
-                const ex = JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}');
-                localStorage.setItem('dct_monthly_data_v1', JSON.stringify({...data.curveData,...ex}));
+                var ex = JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}');
+                localStorage.setItem('dct_monthly_data_v1', JSON.stringify(Object.assign({},data.curveData,ex)));
                 curveDB = JSON.parse(localStorage.getItem('dct_monthly_data_v1'));
             }
             // Restore profile (only if not already set)
@@ -1330,13 +1347,13 @@ function updateReviewTitle(){
     // title hidden - no month display
 }
 function initReview(){
-    const sel=document.getElementById('reviewYear');
+    var sel=document.getElementById('reviewYear');
     if(sel&&!sel.options.length){
         sel.style.display='';
-        const cy=new Date().getFullYear();
-        for(let y=cy;y>=cy-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y+'年';sel.appendChild(o);}
+        var cy=new Date().getFullYear();
+        for(var y=cy;y>=cy-3;y--){var o=document.createElement('option');o.value=y;o.textContent=y+'年';sel.appendChild(o);}
     }
-    const cm=document.getElementById('reviewMonth');
+    var cm=document.getElementById('reviewMonth');
     if(cm) cm.value=new Date().getMonth();
     updateReviewTitle();
     renderPastReviews();
@@ -1344,21 +1361,21 @@ function initReview(){
 
 
 function getReviewKey(){
-    const y=(document.getElementById('reviewYear')||{}).value||new Date().getFullYear();
-    const m=(document.getElementById('reviewMonth')||{}).value||new Date().getMonth();
+    var y=(document.getElementById('reviewYear')||{}).value||new Date().getFullYear();
+    var m=(document.getElementById('reviewMonth')||{}).value||new Date().getMonth();
     return y+'-'+m;
 }
 
 
 function loadReviewData(){
-    const key=getReviewKey();
-    const [y,m]=key.split('-');
+    var key=getReviewKey();
+    var _sp=key.split('-'); var y=_sp[0],m=_sp[1];
     // Update title
-    const title=document.getElementById('reviewMonthTitle');
+    var title=document.getElementById('reviewMonthTitle');
     // title hidden
     // Auto-fill from orders
-    const rs=getOrders();
-    let mR=0,mT=0,mN=0;
+    var rs=getOrders();
+    var mR=0,mT=0,mN=0;
     rs.forEach(function(r){
         var d=new Date(r.orderDate||r.id);
         if(String(d.getFullYear())===String(y)&&String(d.getMonth())===String(m)){
@@ -1371,9 +1388,9 @@ function loadReviewData(){
     var cKey=y+'-'+String(parseInt(m)+1).padStart(2,'0');
     var cData=curveDB[cKey]||{};
     // Load saved review
-    const saved=getReviews()[key]||{};
+    var saved=getReviews()[key]||{};
     // Fields
-    const fields=['rv_target','rv_score','rv_score_reason','rv_compare','rv_breakthrough','rv_improve',
+    var fields=['rv_target','rv_score','rv_score_reason','rv_compare','rv_breakthrough','rv_improve',
         'rv_next_profit','rv_next_recruit','rv_next_reels','rv_next_todo','rv_next_avoid','rv_next_challenge',
         'rv_self_note','rv_question','rv_new_member','rv_direct','rv_indirect','rv_reels','rv_story','rv_fans_growth',
         'rv_pro_order','rv_pro_sell','rv_pro_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
@@ -1395,7 +1412,7 @@ function loadReviewData(){
     if(igEl&&!saved.rv_ig&&cData.ig) igEl.value=cData.ig;
     updateReviewTotal();
     // Show auto note
-    const note=document.getElementById('reviewAutoNote');
+    var note=document.getElementById('reviewAutoNote');
     if(note&&(mR||mT||mN)){
         note.style.display='block';
         note.innerHTML='✦ 已自動帶入本月業績：零售 $'+mR.toLocaleString()+' · 團隊 $'+mT.toLocaleString()+' · 培育 $'+mN.toLocaleString();
@@ -1419,15 +1436,15 @@ function updateReviewTotal(){
 
 
 function saveReview(){
-    const key=getReviewKey();
-    const fields=['rv_target','rv_retail','rv_team','rv_nurture','rv_score','rv_score_reason',
+    var key=getReviewKey();
+    var fields=['rv_target','rv_retail','rv_team','rv_nurture','rv_score','rv_score_reason',
         'rv_compare','rv_breakthrough','rv_improve','rv_next_profit','rv_next_recruit','rv_next_reels',
         'rv_next_todo','rv_next_avoid','rv_next_challenge','rv_self_note','rv_question',
         'rv_new_member','rv_direct','rv_indirect','rv_reels','rv_story','rv_fans_growth',
         'rv_pro_order','rv_pro_sell','rv_pro_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
-    const data={};
+    var data={};
     fields.forEach(function(f){var el=document.getElementById(f);if(el) data[f]=el.value;});
-    const all=getReviews();
+    var all=getReviews();
     all[key]=data;
     saveReviews(all);
     showToast('✓ 復盤已儲存！');
@@ -1436,9 +1453,9 @@ function saveReview(){
 
 
 function copyReview(){
-    const key=getReviewKey();
-    const [y,m]=key.split('-');
-    const mn=parseInt(m)+1;
+    var key=getReviewKey();
+    var _sp=key.split('-'); var y=_sp[0],m=_sp[1];
+    var mn=parseInt(m)+1;
     var get=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
     var lines=[
         '@All 想成長者完成月復盤',
@@ -1620,7 +1637,7 @@ function skipDMOnboarding(){
 }
 
 if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
-const products={
+var products={
     "本月活動A 纖體組":{cat:"本月活動",unit:"組",L2:2640,L3_sup:2865,L3_ret:2970,intern:3480,retail:3840,vip:3840,discount:3840,msrp:12120},
     "本月活動B 美肌組":{cat:"本月活動",unit:"組",L2:2290,L3_sup:2565,L3_ret:2660,intern:3070,retail:3560,vip:3560,discount:3560,msrp:5250},
     "益生菌 買三送一":{cat:"上月活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
@@ -1653,14 +1670,14 @@ const products={
     "法樂蓬洗髮露體驗包":{cat:"美肌",unit:"包",L2:17,L3_sup:20,L3_ret:21,intern:24,vip:30,discount:30,retail:30},
     "婕肌零體驗包":{cat:"美肌",unit:"包",L2:20,L3_sup:24,L3_ret:25,intern:30,vip:40,discount:40,retail:40}
 };
-const quotes=["每一次成交都是因為妳傳遞了價值。","溫柔且堅定，讓妳的專業帶領客戶。","最好的招商力，就是活出妳想要的樣子。","目標不是用來達成的，是用來超越的。","真正的領袖，是把身邊的人都帶向更好的地方。","今天的每一步，都是明天格局的地基。","妳的自律，就是妳最強的名片。","不是等到準備好了才開始，是開始了才會準備好。","每一個相信妳的客人，都值得妳最真誠的回應。","成功從來不是偶然，是每一天選擇累積的結果。","妳的能量，決定妳吸引到的人。","把服務做到讓客人捨不得離開。","學會感謝每一個說不的人，他們讓妳更精準。","今日的業績，是昨日種下的信任。","妳不是在賣產品，妳是在傳遞一種生活方式。","讓自己發光，就是最好的行銷。","堅持，是把普通人和成功者分開的那條線。","每一通訊息背後，都可能是一個改變的開始。","妳的故事，就是妳最有說服力的案例。","不用完美，但要真實。","把每一位客人當成朋友，生意就會長久。","成長的速度，取決於妳願意學習的深度。","妳的熱情是會感染人的，請大方展現它。","相信自己，是所有行動最重要的前提。","今天比昨天多努力一點，就是進步。","妳的限制，往往只存在於妳的想法裡。","用心服務一個人，她會幫妳介紹十個人。","記錄每一筆成交，讓數字告訴妳妳有多厲害。","做生意最重要的資產，是關係。","不要害怕被拒絕，每一個不是都讓妳離對的人更近。","妳選擇的事業，值得妳全力以赴。","把困難看成課題，把挫折看成養分。","每天早晨，都是重新出發的機會。","細節決定信任，信任創造業績。","讓妳的專業成為客人最安心的依靠。","今天種下的善意，明天會開成花。","妳的堅持，終將被看見。","成功不是終點，是一種持續的狀態。","妳有多愛這份事業，客人就有多感受得到。","信念有多強，舞台就有多大。"];
-const levels=[{id:"L2",name:"二級輔導"},{id:"L3_sup",name:"三級輔導"},{id:"L3_ret",name:"三級零售"},{id:"intern",name:"實習零售"}];
-const buyers=[
+var quotes=["每一次成交都是因為妳傳遞了價值。","溫柔且堅定，讓妳的專業帶領客戶。","最好的招商力，就是活出妳想要的樣子。","目標不是用來達成的，是用來超越的。","真正的領袖，是把身邊的人都帶向更好的地方。","今天的每一步，都是明天格局的地基。","妳的自律，就是妳最強的名片。","不是等到準備好了才開始，是開始了才會準備好。","每一個相信妳的客人，都值得妳最真誠的回應。","成功從來不是偶然，是每一天選擇累積的結果。","妳的能量，決定妳吸引到的人。","把服務做到讓客人捨不得離開。","學會感謝每一個說不的人，他們讓妳更精準。","今日的業績，是昨日種下的信任。","妳不是在賣產品，妳是在傳遞一種生活方式。","讓自己發光，就是最好的行銷。","堅持，是把普通人和成功者分開的那條線。","每一通訊息背後，都可能是一個改變的開始。","妳的故事，就是妳最有說服力的案例。","不用完美，但要真實。","把每一位客人當成朋友，生意就會長久。","成長的速度，取決於妳願意學習的深度。","妳的熱情是會感染人的，請大方展現它。","相信自己，是所有行動最重要的前提。","今天比昨天多努力一點，就是進步。","妳的限制，往往只存在於妳的想法裡。","用心服務一個人，她會幫妳介紹十個人。","記錄每一筆成交，讓數字告訴妳妳有多厲害。","做生意最重要的資產，是關係。","不要害怕被拒絕，每一個不是都讓妳離對的人更近。","妳選擇的事業，值得妳全力以赴。","把困難看成課題，把挫折看成養分。","每天早晨，都是重新出發的機會。","細節決定信任，信任創造業績。","讓妳的專業成為客人最安心的依靠。","今天種下的善意，明天會開成花。","妳的堅持，終將被看見。","成功不是終點，是一種持續的狀態。","妳有多愛這份事業，客人就有多感受得到。","信念有多強，舞台就有多大。"];
+var levels=[{id:"L2",name:"二級輔導"},{id:"L3_sup",name:"三級輔導"},{id:"L3_ret",name:"三級零售"},{id:"intern",name:"實習零售"}];
+var buyers=[
     {id:"retail",name:"單盒零售",t:"retail"},{id:"vip",name:"VIP 價",t:"retail"},{id:"discount",name:"兩盒優惠",t:"retail"},
     {id:"intern",name:"實習價",t:"team"},{id:"L3_ret",name:"三級價",t:"team"},{id:"L3_sup",name:"三級輔導",t:"team"}
 ];
-let currentSeller="L3_sup",currentBuyer="retail",currentCat="本月活動",cart={};
-let editingOrderId=null,editCart={},editBuyerType=null,selectedHistoryKey=null;
+var currentSeller="L3_sup",currentBuyer="retail",currentCat="本月活動",cart={};
+var editingOrderId=null,editCart={},editBuyerType=null,selectedHistoryKey=null;
 
 function getOrders(){return JSON.parse(localStorage.getItem('dct_v9_ultimate'))||[];}
 function saveOrders(rs){localStorage.setItem('dct_v9_ultimate',JSON.stringify(rs));}
@@ -1671,7 +1688,7 @@ function toLocalISO(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).
 
 
 function fixLayout(){
-    const tb=document.getElementById('topBar');
+    var tb=document.getElementById('topBar');
     if(!tb) return;
     document.body.style.paddingTop=tb.offsetHeight+'px';
 }
@@ -1687,29 +1704,25 @@ document.addEventListener('touchmove', function(e){
 }, {passive:false});
 
 function showToast(msg, color){
-    const t=document.getElementById('toast');
+    var t=document.getElementById('toast');
     t.textContent=msg;
     t.style.background=color||'#2C2226';
     t.classList.add('show');
     clearTimeout(t._timer);
-    t._timer=setTimeout(()=>t.classList.remove('show'),2200);
+    t._timer=setTimeout(function(){ t.classList.remove('show'); },2200);
 }
 function dismissWelcome(){
     var o=document.getElementById('welcomeOverlay');
     if(!o)return;
     if(!getProfile().name){
-        // Show onboarding immediately, covering everything during fade
         var ob=document.getElementById('obScreen');
         if(ob) ob.style.display='block';
-    }
-    o.classList.add('fade-out');
-    setTimeout(function(){
         o.style.display='none';
-        if(getProfile().name){
-            var calcNav=document.querySelector('.nav-tab[onclick*="tab-calc"]');
-            switchTab('tab-calc', calcNav);
-        }
-    },500);
+    } else {
+        o.style.display='none';
+        var calcNav=document.querySelector('.nav-tab[onclick*="tab-calc"]');
+        switchTab('tab-calc', calcNav);
+    }
     window.scrollTo(0,0);
 }
 
@@ -1737,18 +1750,18 @@ function startWelcomeProgress(){
     setTimeout(next,200);
 }
 
-window.onload=()=>{
+window.onload=function(){
     // Welcome screen
-    const p=getProfile();
-    const greet=document.getElementById('welcomeGreeting');
-    const sub=document.getElementById('welcomeSub');
+    var p=getProfile();
+    var greet=document.getElementById('welcomeGreeting');
+    var sub=document.getElementById('welcomeSub');
     // Always show DCT Money in welcome logo
     if(p.name){ sub.innerHTML='每一筆記錄，都是妳認真的證明<br>每一條曲線，都是妳成長的足跡'; }
     // Auto dismiss after 2s if profile set
     startWelcomeProgress();
     setTimeout(dismissWelcome, 2400);
-    const lastQ=parseInt(localStorage.getItem('dct_last_quote')??'-1');
-    let idx; do{idx=Math.floor(Math.random()*quotes.length);}while(idx===lastQ&&quotes.length>1);
+    var lastQ=parseInt(localStorage.getItem('dct_last_quote')||'-1');
+    var idx; do{idx=Math.floor(Math.random()*quotes.length);}while(idx===lastQ&&quotes.length>1);
     localStorage.setItem('dct_last_quote',idx);
     document.getElementById('dailyQuote').innerText=quotes[idx];
     document.getElementById('orderDate').value=toLocalISO(new Date());
@@ -1759,22 +1772,22 @@ window.onload=()=>{
 };
 
 function loadProfileUI(){
-    const p=getProfile();
+    var p=getProfile();
     document.getElementById('settingName').value=p.name||'';
     document.getElementById('settingLevel').value=p.level||'';
     document.getElementById('settingUpline').value=p.upline||'';
     updateAllBadges();
     updateProfileDisplay(p);
 }
-const levelMap={'二級輔導':'L2','三級輔導':'L3_sup','三級零售':'L3_ret','實習':'intern','一級輔導':'L2','執行':'L2','銀牌執行':'L2','金牌執行':'L2'};
+var levelMap={'二級輔導':'L2','三級輔導':'L3_sup','三級零售':'L3_ret','實習':'intern','一級輔導':'L2','執行':'L2','銀牌執行':'L2','金牌執行':'L2'};
 function saveProfile(){
-    const p={name:document.getElementById('settingName').value,level:document.getElementById('settingLevel').value,upline:document.getElementById('settingUpline').value};
+    var p={name:document.getElementById('settingName').value,level:document.getElementById('settingLevel').value,upline:document.getElementById('settingUpline').value};
     saveProfileData(p);updateProfileDisplay(p);
     updateCurveTitles(); updateAllBadges();
     // Sync level to 開單 seller selector
     if(p.level && levelMap[p.level]){
         currentSeller=levelMap[p.level];
-        const ss=document.getElementById('sellerSelect');
+        var ss=document.getElementById('sellerSelect');
         if(ss) ss.value=currentSeller;
         renderProducts(); updateCalc();
     }
@@ -1786,8 +1799,8 @@ function updateProfileDisplay(p){
 }
 
 function initOrderUI(){
-    const ss=document.getElementById('sellerSelect'); if(ss) ss.value=currentSeller;
-    document.getElementById('buyerSelector').innerHTML=buyers.map(b=>`<div class="buyer-btn ${b.id===currentBuyer?'active':''}" onclick="currentBuyer='${b.id}';initOrderUI();updateCalc();">${b.name}</div>`).join('');
+    var ss=document.getElementById('sellerSelect'); if(ss) ss.value=currentSeller;
+    document.getElementById('buyerSelector').innerHTML=buyers.map(function(b){ return '<div class="buyer-btn '+(b.id===currentBuyer?'active':'')+' " onclick="currentBuyer=\''+b.id+'\';initOrderUI();updateCalc();">'+b.name+'</div>'; }).join('');
     renderProducts();
     currentCat=currentCat||'本月活動';
     Array.prototype.forEach.call(document.querySelectorAll('.cat-tab'),function(t){
@@ -1797,30 +1810,30 @@ function initOrderUI(){
     document.getElementById('mGoalInput').value=localStorage.getItem('dct_goal')||0;
 }
 function renderProducts(){
-    const div=document.getElementById('productList');div.innerHTML='';
-    for(let n in products){
+    var div=document.getElementById('productList');div.innerHTML='';
+    for(var n in products){
         if(products[n].cat!==currentCat) continue;
-        const qty=cart[n]||0,cp=products[n][currentSeller],sp=products[n][currentBuyer],profit=sp-cp;
-        div.innerHTML+=`<div class="product-item"><div style="flex:1;min-width:0;"><div class="product-name">${n}</div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:3px;"><span style="font-size:.71rem;color:var(--text-muted)">成本$${cp.toLocaleString()}</span><span style="font-size:.67rem;color:var(--beige-dark)">→</span><span style="font-size:.78rem;color:var(--rose);font-weight:600">售$${sp.toLocaleString()}</span><span style="font-size:.69rem;color:${profit>=0?'var(--rose)':'#e05050'}">利$${profit.toLocaleString()}</span></div></div><div class="qty-control"><button class="btn-qty" onclick="changeQty('${n}',-1)">−</button><div class="qty-input">${qty}</div><button class="btn-qty" onclick="changeQty('${n}',1)">+</button></div></div>`;
+        var qty=cart[n]||0,cp=products[n][currentSeller],sp=products[n][currentBuyer],profit=sp-cp;
+        div.innerHTML+=`<div class="product-item"><div style="flex:1;min-width:0;"><div class="product-name">${n}</div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:3px;"><span style="font-size:.71rem;color:var(--text-muted)">成本$${cp.toLocaleString()}</span><span style="font-size:.67rem;color:var(--beige-dark)">→</span><span style="font-size:.78rem;color:var(--rose);font-weight:600">售$${sp.toLocaleString()}</span><span style="font-size:.69rem;color:${profit>=0?'var(--rose)':'#e05050'}">利$${profit.toLocaleString()}</span></div></div><div class="qty-control"><button class="btn-qty" onclick="changeQty('${n}',-1)">−</button><input type="number" class="qty-input" min="0" value="${qty}" onchange="cart['${n}']=Math.max(0,parseInt(this.value)||0);this.value=cart['${n}'];renderProducts();updateCalc();" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><button class="btn-qty" onclick="changeQty('${n}',1)">+</button></div></div>`;
     }
 }
 function changeQty(n,d){cart[n]=Math.max(0,(cart[n]||0)+d);renderProducts();updateCalc();}
 function updateCalc(){
-    let cost=0,rev=0,extra=parseInt(document.getElementById('extraCost').value)||0;
-    for(let n in cart){cost+=products[n][currentSeller]*cart[n];rev+=products[n][currentBuyer]*cart[n];}
+    var cost=0,rev=0,extra=parseInt(document.getElementById('extraCost').value)||0;
+    for(var n in cart){cost+=products[n][currentSeller]*cart[n];rev+=products[n][currentBuyer]*cart[n];}
     document.getElementById('revDisplay').innerText=`$${rev.toLocaleString()}`;
     document.getElementById('profitDisplay').innerText=`預估淨利 $${(rev-cost-extra).toLocaleString()}`;
     document.getElementById('costDisplay').innerText=`總成本（含額外）$${(cost+extra).toLocaleString()}`;
 }
 function saveOrder(){
-    let items=[],cost=0,rev=0,extra=parseInt(document.getElementById('extraCost').value)||0;
-    for(let n in cart){if(cart[n]>0){items.push({name:n,qty:cart[n],unit:products[n].unit,cat:products[n].cat});cost+=products[n][currentSeller]*cart[n];rev+=products[n][currentBuyer]*cart[n];}}
+    var items=[],cost=0,rev=0,extra=parseInt(document.getElementById('extraCost').value)||0;
+    for(var n in cart){if(cart[n]>0){items.push({name:n,qty:cart[n],unit:products[n].unit,cat:products[n].cat});cost+=products[n][currentSeller]*cart[n];rev+=products[n][currentBuyer]*cart[n];}}
     if(!items.length){showToast("⚠ 請先選擇產品數量","#C8748A");return;}
-    const dateVal=document.getElementById('orderDate').value;
-    const orderDateTs=dateVal?new Date(dateVal).getTime():Date.now();
-    const d=new Date(orderDateTs);
-    const rs=getOrders();
-    rs.push({id:Date.now(),orderDate:orderDateTs,year:d.getFullYear(),month:d.getMonth(),sellerLevel:currentSeller,buyerType:currentBuyer,profit:rev-cost-extra,rev,cost:cost+extra,itemsCost:cost,extraCost:extra,type:buyers.find(b=>b.id===currentBuyer).t,note:document.getElementById('orderNote').value||'無備註',items});
+    var dateVal=document.getElementById('orderDate').value;
+    var orderDateTs=dateVal?new Date(dateVal).getTime():Date.now();
+    var d=new Date(orderDateTs);
+    var rs=getOrders();
+    rs.push({id:Date.now(),orderDate:orderDateTs,year:d.getFullYear(),month:d.getMonth(),sellerLevel:currentSeller,buyerType:currentBuyer,profit:rev-cost-extra,rev,cost:cost+extra,itemsCost:cost,extraCost:extra,type:(buyers.find(function(b){ return b.id===currentBuyer; })||{}).t,note:document.getElementById('orderNote').value||'無備註',items});
     saveOrders(rs);
     cart={};document.getElementById('orderNote').value='';document.getElementById('extraCost').value='';
     document.getElementById('orderDate').value=toLocalISO(new Date());
@@ -1829,8 +1842,8 @@ function saveOrder(){
 }
 
 function switchTab(id,el){
-    document.querySelectorAll('.container').forEach(c=>c.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.container').forEach(function(c){ c.classList.remove('active') });
+    document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active') });
     document.getElementById(id).classList.add('active');el.classList.add('active');
     window.scrollTo({top:0,behavior:'smooth'});
     if(id==='tab-daily'||id==='tab-monthly') loadDashboards();
@@ -1840,36 +1853,36 @@ function switchTab(id,el){
     if(id==='tab-calc') initCalc();
     if(id==='tab-review') initReview();
 }
-function switchCat(cat,el){currentCat=cat;document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderProducts();}
+function switchCat(cat,el){currentCat=cat;document.querySelectorAll('.cat-tab').forEach(function(t){ t.classList.remove('active') });el.classList.add('active');renderProducts();}
 function updateGoal(v){localStorage.setItem('dct_goal',v);loadDashboards();}
 
 function loadDashboards(){
-    const rs=getOrders();
-    const todayStr=new Date().toDateString(),curM=new Date().getMonth(),curY=new Date().getFullYear();
-    const lastM=curM===0?11:curM-1,lastY=curM===0?curY-1:curY;
-    let dP=0,dR=0,dC=0,dI={},dL='',mR=0,mP=0,mC=0,mRR=0,mTR=0,mI={},lR=0,lP=0,lC=0;
-    let ser={"本月活動":0,"上月活動":0,"纖體":0,"美肌":0,"保健":0};
-    let todayOrders=[];
-    rs.forEach(r=>{
-        const rd=getOrderDate(r);
+    var rs=getOrders();
+    var todayStr=new Date().toDateString(),curM=new Date().getMonth(),curY=new Date().getFullYear();
+    var lastM=curM===0?11:curM-1,lastY=curM===0?curY-1:curY;
+    var dP=0,dR=0,dC=0,dI={},dL='',mR=0,mP=0,mC=0,mRR=0,mTR=0,mI={},lR=0,lP=0,lC=0;
+    var ser={"本月活動":0,"上月活動":0,"纖體":0,"美肌":0,"保健":0};
+    var todayOrders=[];
+    rs.forEach(function(r){
+        var rd=getOrderDate(r);
         if(rd.toDateString()===todayStr){
             dP+=r.profit;dR+=r.rev;dC+=r.cost;
-            r.items.forEach(i=>dI[i.name]={q:(dI[i.name]?.q||0)+i.qty,u:i.unit});
+            r.items.forEach(function(i){ dI[i.name]={q:(dI[i.name]?dI[i.name].q||0:0)+i.qty,u:i.unit}; });
             todayOrders.push({r,rd});
         }
-        if(rd.getMonth()===curM&&rd.getFullYear()===curY){mR+=r.rev;mP+=r.profit;mC+=r.cost;if(r.type==='retail')mRR+=r.rev;else mTR+=r.rev;r.items.forEach(i=>{mI[i.name]={q:(mI[i.name]?.q||0)+i.qty,u:i.unit};ser[i.cat]+=r.rev;});}
+        if(rd.getMonth()===curM&&rd.getFullYear()===curY){mR+=r.rev;mP+=r.profit;mC+=r.cost;if(r.type==='retail')mRR+=r.rev;else mTR+=r.rev;r.items.forEach(function(i){mI[i.name]={q:(mI[i.name]?mI[i.name].q||0:0)+i.qty,u:i.unit};ser[i.cat]+=r.rev;});}
         if(rd.getMonth()===lastM&&rd.getFullYear()===lastY){lR+=r.rev;lP+=r.profit;lC+=r.cost;}
     });
-    todayOrders.sort((a,b)=>b.rd-a.rd).forEach(({r,rd})=>{
-        const bl=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
-        const back=r.orderDate&&new Date(r.orderDate).toDateString()!==new Date(r.id).toDateString();
+    todayOrders.sort(function(a,b){ return b.rd-a.rd; }).forEach(function(__o__){ var r=__o__.r,rd=__o__.rd;
+        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
+        var back=r.orderDate&&new Date(r.orderDate).toDateString()!==new Date(r.id).toDateString();
         dL+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}${back?'<span class="date-badge">補登</span>':''}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">${bl} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="order-profit">+$${r.profit.toLocaleString()}</div></div><div class="order-items">${r.items.map(i=>`${i.name}×${i.qty}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
     document.getElementById('dTotalProfit').innerText=`$${dP.toLocaleString()}`;
     document.getElementById('dTotalRev').innerText=`$${dR.toLocaleString()}`;
     document.getElementById('dTotalCost').innerText=`$${dC.toLocaleString()}`;
     document.getElementById('dOrderList').innerHTML=dL||'<span style="font-size:.81rem;color:var(--text-muted)">今日尚未開單</span>';
-    let dIH='';for(let n in dI)dIH+=`<div class="item-row"><span>${n}</span><b>${dI[n].q} ${dI[n].u}</b></div>`;
+    var dIH='';for(var n in dI)dIH+=`<div class="item-row"><span>${n}</span><b>${dI[n].q} ${dI[n].u}</b></div>`;
     document.getElementById('dItemStats').innerHTML=dIH||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
     document.getElementById('mTotalRev').innerText=`$${mR.toLocaleString()}`;
     document.getElementById('mTotalCost').innerText=`$${mC.toLocaleString()}`;
@@ -1877,31 +1890,31 @@ function loadDashboards(){
     document.getElementById('lastMRev').innerText=`$${lR.toLocaleString()}`;
     document.getElementById('lastMProfit').innerText=`$${lP.toLocaleString()}`;
     document.getElementById('lastMCost').innerText=`$${lC.toLocaleString()}`;
-    let g=localStorage.getItem('dct_goal')||0,gp=g>0?Math.min(Math.round(mP/g*100),100):0;
+    var g=localStorage.getItem('dct_goal')||0,gp=g>0?Math.min(Math.round(mP/g*100),100):0;
     document.getElementById('mGoalPercent').innerText=gp+'%';document.getElementById('mGoalBar').style.width=gp+'%';
-    let mrp=mR>0?Math.round(mRR/mR*100):0,mtp=mR>0?Math.round(mTR/mR*100):0;
+    var mrp=mR>0?Math.round(mRR/mR*100):0,mtp=mR>0?Math.round(mTR/mR*100):0;
     document.getElementById('mRetailP').innerText=mrp+'%';document.getElementById('mTeamP').innerText=mtp+'%';
     document.getElementById('mRetailBar').style.width=mrp+'%';document.getElementById('mTeamBar').style.width=mtp+'%';
-    let mIH='';Object.entries(mI).sort((a,b)=>b[1].q-a[1].q).forEach(e=>mIH+=`<div class="item-row"><span>${e[0]}</span><b>${e[1].q} ${e[1].u}</b></div>`);
+    var mIH='';Object.keys(mI).sort(function(a,b){ return mI[b].q-mI[a].q; }).forEach(function(e){ mIH+='<div class="item-row"><span>'+e+'</span><b>'+mI[e].q+' '+mI[e].u+'</b></div>'; });
     document.getElementById('mItemStats').innerHTML=mIH||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
-    const sC={"本月活動":"#C8748A","上月活動":"#E8A0B0","纖體":"#7BBFDB","美肌":"#A98BC7","保健":"#7AB894"};
-    let ts=Object.values(ser).reduce((a,b)=>a+b,0),sH='';
-    for(let s in ser){let p=ts>0?Math.round(ser[s]/ts*100):0;sH+=`<div class="series-container"><div class="series-label"><span>${s}</span><span>${p}%</span></div><div class="series-bar"><div class="series-fill" style="width:${p}%;background:${sC[s]}"></div></div></div>`;}
+    var sC={"本月活動":"#C8748A","上月活動":"#E8A0B0","纖體":"#7BBFDB","美肌":"#A98BC7","保健":"#7AB894"};
+    var ts=Object.values(ser).reduce(function(a,b){ return a+b,0; }),sH='';
+    for(var s in ser){var p=ts>0?Math.round(ser[s]/ts*100):0;sH+=`<div class="series-container"><div class="series-label"><span>${s}</span><span>${p}%</span></div><div class="series-bar"><div class="series-fill" style="width:${p}%;background:${sC[s]}"></div></div></div>`;}
     document.getElementById('seriesChart').innerHTML=sH;
 }
 
 // HISTORY
 function loadHistory(){
-    const rs=getOrders();
-    const set=new Set();
-    rs.forEach(r=>{const d=getOrderDate(r);set.add(`${d.getFullYear()}-${d.getMonth()}`);});
+    var rs=getOrders();
+    var set=new Set();
+    rs.forEach(function(r){var d=getOrderDate(r);set.add(`${d.getFullYear()}-${d.getMonth()}`);});
     // Also include manual entry months in picker
-    Object.keys(getManualData()).forEach(k=>set.add(k));
-    const keys=Array.from(set).sort((a,b)=>b.localeCompare(a));
-    const sel=document.getElementById('monthSelect');
-    const prev=sel.value||selectedHistoryKey;
+    Object.keys(getManualData()).forEach(function(k){ set.add(k) });
+    var keys=Array.from(set).sort(function(a,b){ return a.localeCompare(b); });
+    var sel=document.getElementById('monthSelect');
+    var prev=sel.value||selectedHistoryKey;
     sel.innerHTML='<option value="">— 請選擇月份 —</option>';
-    keys.forEach(k=>{const[y,mo]=k.split('-');const o=document.createElement('option');o.value=k;o.textContent=`${y}年${parseInt(mo)+1}月`;sel.appendChild(o);});
+    keys.forEach(function(k){var _sp=k.split('-'); var y=_sp[0],mo=_sp[1];var o=document.createElement('option');o.value=k;o.textContent=`${y}年${parseInt(mo)+1}月`;sel.appendChild(o);});
     if(keys.length){
         if(prev&&keys.includes(prev))sel.value=prev;
         else{sel.value=keys[0];selectedHistoryKey=keys[0];}
@@ -1910,16 +1923,16 @@ function loadHistory(){
 }
 function onMonthChange(){selectedHistoryKey=document.getElementById('monthSelect').value||null;renderHistoryMonth();}
 function renderHistoryMonth(){
-    const c=document.getElementById('historyContent');
+    var c=document.getElementById('historyContent');
     if(!selectedHistoryKey){c.innerHTML='';return;}
-    const[y,mo]=selectedHistoryKey.split('-');
-    const rs=getOrders().filter(r=>{const d=getOrderDate(r);return d.getFullYear()==y&&d.getMonth()==mo;});
-    const mKey=y+'-'+mo;
-    const manualEntry=getManualData()[mKey];
+    var _sp=selectedHistoryKey.split('-'); var y=_sp[0],mo=_sp[1];
+    var rs=getOrders().filter(function(r){var d=getOrderDate(r);return d.getFullYear()==y&&d.getMonth()==mo;});
+    var mKey=y+'-'+mo;
+    var manualEntry=getManualData()[mKey];
     if(!rs.length && !manualEntry){c.innerHTML=`<div class="card"><div style="font-size:.82rem;color:var(--text-muted);text-align:center;padding:8px">本月暫無訂單</div></div>`;return;}
-    let tR=0,tP=0,tC=0,rP=0,tP2=0;
-    rs.forEach(r=>{tR+=r.rev;tP+=r.profit;tC+=r.cost;if(r.type==='retail')rP+=r.profit;else tP2+=r.profit;});
-    let html=`<div class="card"><div class="card-header">${y}年${parseInt(mo)+1}月 · 共${rs.length}筆</div>
+    var tR=0,tP=0,tC=0,rP=0,tP2=0;
+    rs.forEach(function(r){tR+=r.rev;tP+=r.profit;tC+=r.cost;if(r.type==='retail')rP+=r.profit;else tP2+=r.profit;});
+    var html=`<div class="card"><div class="card-header">${y}年${parseInt(mo)+1}月 · 共${rs.length}筆</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
             <div class="stat-box"><span class="stat-label">營業額</span><div class="stat-value">$${tR.toLocaleString()}</div></div>
             <div class="stat-box"><span class="stat-label">成本</span><div class="stat-value" style="color:var(--text-sub)">$${tC.toLocaleString()}</div></div>
@@ -1952,11 +1965,11 @@ function renderHistoryMonth(){
             </div>
         </div>`;
     }
-    rs.sort((a,b)=>getOrderDate(b)-getOrderDate(a)).forEach(r=>{
-        const d=getOrderDate(r);
-        const ds=`${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
-        const bl=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
-        const tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
+    rs.sort(function(a,b){ return getOrderDate(b)-getOrderDate(a); }).forEach(function(r){
+        var d=getOrderDate(r);
+        var ds=`${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
+        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
+        var tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
         html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(i=>`${i.name} × ${i.qty}${i.unit}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
     c.innerHTML=html;
@@ -1967,12 +1980,12 @@ function getManualData(){ return JSON.parse(localStorage.getItem('dct_manual_mon
 function saveManualDataStore(d){ localStorage.setItem('dct_manual_months',JSON.stringify(d)); }
 
 function initManualYearSelect(){
-    const sel=document.getElementById('manualYear');
+    var sel=document.getElementById('manualYear');
     if(!sel) return;
-    const curY=new Date().getFullYear();
+    var curY=new Date().getFullYear();
     sel.innerHTML='';
-    for(let y=curY;y>=curY-5;y--){
-        const o=document.createElement('option');
+    for(var y=curY;y>=curY-5;y--){
+        var o=document.createElement('option');
         o.value=y; o.textContent=y+'年';
         sel.appendChild(o);
     }
@@ -1981,14 +1994,14 @@ function initManualYearSelect(){
 }
 
 function saveManualEntry(){
-    const y=document.getElementById('manualYear').value;
-    const mo=document.getElementById('manualMonth').value;
-    const retail=parseInt(document.getElementById('manualRetail').value)||0;
-    const team=parseInt(document.getElementById('manualTeam').value)||0;
+    var y=document.getElementById('manualYear').value;
+    var mo=document.getElementById('manualMonth').value;
+    var retail=parseInt(document.getElementById('manualRetail').value)||0;
+    var team=parseInt(document.getElementById('manualTeam').value)||0;
     if(!y){ showToast('⚠ 請選擇年份','#C8748A'); return; }
-    const key=y+'-'+mo;
-    const d=getManualData();
-    if(retail===0&&team===0){ delete d[key]; } else { d[key]={retail,team}; }
+    var key=y+'-'+mo;
+    var d=getManualData();
+    if(retail===0&&team===0){ delete d[key]; } else { d[key]={retail:retail,team:team}; }
     saveManualDataStore(d);
     document.getElementById('manualRetail').value='';
     document.getElementById('manualTeam').value='';
@@ -1998,8 +2011,8 @@ function saveManualEntry(){
 }
 
 function editManualEntry(key){
-    const[y,mo]=key.split('-');
-    const d=getManualData()[key];
+    var _sp=key.split('-'); var y=_sp[0],mo=_sp[1];
+    var d=getManualData()[key];
     if(!d) return;
     document.getElementById('manualYear').value=y;
     document.getElementById('manualMonth').value=mo;
@@ -2009,7 +2022,7 @@ function editManualEntry(key){
     document.getElementById('manualYear').scrollIntoView({behavior:'smooth',block:'center'});
 }
 function deleteManualEntry(key){
-    const d=getManualData();
+    var d=getManualData();
     delete d[key];
     saveManualDataStore(d);
     renderChart(); loadHistory();
@@ -2020,16 +2033,16 @@ function renderManualList(){}
 
 
 function getMonthlyData(){
-    const rs=getOrders();
-    const data={};
-    rs.forEach(r=>{
-        const d=getOrderDate(r);
-        const k=`${d.getFullYear()}-${d.getMonth()}`;
+    var rs=getOrders();
+    var data={};
+    rs.forEach(function(r){
+        var d=getOrderDate(r);
+        var k=`${d.getFullYear()}-${d.getMonth()}`;
         if(!data[k]) data[k]={retail:0,team:0};
         if(r.type==='retail') data[k].retail+=r.rev; else data[k].team+=r.rev;
     });
-    const manualD=getManualData();
-    Object.keys(manualD).forEach(k=>{
+    var manualD=getManualData();
+    Object.keys(manualD).forEach(function(k){
         if(!data[k]) data[k]={retail:0,team:0};
         data[k].retail+=manualD[k].retail||0;
         data[k].team+=manualD[k].team||0;
@@ -2038,21 +2051,21 @@ function getMonthlyData(){
 }
 
 function updateChartYearFilter(){
-    const sel=document.getElementById('chartYearFilter'); if(!sel) return;
-    const data=getMonthlyData();
-    const years=[...new Set(Object.keys(data).map(k=>k.split('-')[0]))].sort((a,b)=>b-a);
-    const cur=sel.value;
-    sel.innerHTML='<option value="">全部年份</option>'+years.map(y=>`<option value="${y}"${y===cur?'selected':''}>${y}年</option>`).join('');
+    var sel=document.getElementById('chartYearFilter'); if(!sel) return;
+    var data=getMonthlyData();
+    var years=Array.from(new Set(Object.keys(data).map(function(k){ return k.split('-')[0]; }))).sort(function(a,b){ return b-a; });
+    var cur=sel.value;
+    sel.innerHTML='<option value="">全部年份</option>'+years.map(function(y){ return '<option value="'+y+'"'+(y===cur?' selected':'')+'>'+y+'年</option>'; }).join('');
 }
 function renderChartTableFiltered(){
-    const sel=document.getElementById('chartYearFilter');
-    const yr=sel?sel.value:'';
-    const data=getMonthlyData();
-    const manualD=getManualData();
-    let th='';
-    Object.keys(data).filter(k=>!yr||k.startsWith(yr)).sort((a,b)=>b.localeCompare(a)).forEach(k=>{
-        const d=data[k],[y,mo]=k.split('-'),tot=d.retail+d.team;
-        const mk='edit_'+k.replace('-','_'),hasManual=!!manualD[k];
+    var sel=document.getElementById('chartYearFilter');
+    var yr=sel?sel.value:'';
+    var data=getMonthlyData();
+    var manualD=getManualData();
+    var th='';
+    Object.keys(data).filter(function(k){ return !yr||k.startsWith(yr); }).sort(function(a,b){ return b.localeCompare(a); }).forEach(function(k){
+        var d=data[k],[y,mo]=k.split('-'),tot=d.retail+d.team;
+        var mk='edit_'+k.replace('-','_'),hasManual=!!manualD[k];
         th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                 <span style="font-size:.82rem;font-weight:600">${y}年${parseInt(mo)+1}月 <span style="color:var(--rose);margin-left:4px">$${tot.toLocaleString()}</span>${hasManual?'<span style="font-size:.65rem;background:var(--rose-pale);color:var(--rose-deep);padding:2px 6px;border-radius:5px;margin-left:5px">含手動</span>':''}</span>
@@ -2065,8 +2078,8 @@ function renderChartTableFiltered(){
             <div id="${mk}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
                 <div style="font-size:.72rem;color:var(--rose-deep);margin-bottom:8px;font-weight:600;">修改手動輸入數字</div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-                    <div><div style="font-size:.68rem;color:#3A9E97;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">零售淨利</div><input type="number" id="${mk}_retail" class="custom-input" value="${(manualD[k]?.retail||0)}" style="border-left:3px solid #5BC8C0;padding:9px 10px;"></div>
-                    <div><div style="font-size:.68rem;color:#2856C8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">團隊淨利</div><input type="number" id="${mk}_team" class="custom-input" value="${(manualD[k]?.team||0)}" style="border-left:3px solid #3B6EDE;padding:9px 10px;"></div>
+                    <div><div style="font-size:.68rem;color:#3A9E97;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">零售淨利</div><input type="number" id="${mk}_retail" class="custom-input" value="${(manualD[k]?manualD[k].retail||0:0)}" style="border-left:3px solid #5BC8C0;padding:9px 10px;"></div>
+                    <div><div style="font-size:.68rem;color:#2856C8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">團隊淨利</div><input type="number" id="${mk}_team" class="custom-input" value="${(manualD[k]?manualD[k].team||0:0)}" style="border-left:3px solid #3B6EDE;padding:9px 10px;"></div>
                 </div>
                 <div style="display:flex;gap:8px;"><button onclick="saveChartEdit('${k}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button><button onclick="toggleChartEdit('${k}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button></div>
             </div>
@@ -2077,22 +2090,22 @@ function renderChartTableFiltered(){
 }
 
 function updateCurveYearFilter(){
-    const sel=document.getElementById('curveYearFilter'); if(!sel) return;
-    const years=[...new Set(getCurveSortedKeys().map(k=>k.split('-')[0]))].sort((a,b)=>b-a);
-    const cur=sel.value;
-    sel.innerHTML='<option value="">全部年份</option>'+years.map(y=>`<option value="${y}"${y===cur?'selected':''}>${y}年</option>`).join('');
+    var sel=document.getElementById('curveYearFilter'); if(!sel) return;
+    var years=Array.from(new Set(getCurveSortedKeys().map(function(k){ return k.split('-')[0]; }))).sort(function(a,b){ return b-a; });
+    var cur=sel.value;
+    sel.innerHTML='<option value="">全部年份</option>'+years.map(function(y){ return '<option value="'+y+'"'+(y===cur?' selected':'')+'>'+y+'年</option>'; }).join('');
 }
 function renderCurveTableFiltered(){
-    const sel=document.getElementById('curveYearFilter');
-    const yr=sel?sel.value:'';
-    const keys=getCurveSortedKeys().filter(k=>!yr||k.startsWith(yr)).slice().reverse();
-    const wrap=document.getElementById('curve-table2');
+    var sel=document.getElementById('curveYearFilter');
+    var yr=sel?sel.value:'';
+    var keys=getCurveSortedKeys().filter(function(k){ return !yr||k.startsWith(yr); }).slice().reverse();
+    var wrap=document.getElementById('curve-table2');
     if(!wrap) return;
     if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:16px;font-size:.8rem;color:var(--text-muted)">尚無資料</div>'; updateCurveYearFilter(); return; }
-    let html='';
-    keys.forEach(k=>{
-        const d=curveDB[k],[y,m]=k.split('-');
-        const eid='cedit2_'+k.replace('-','_');
+    var html='';
+    keys.forEach(function(k){
+        var d=curveDB[k],[y,m]=k.split('-');
+        var eid='cedit2_'+k.replace('-','_');
         html+=`<div style="padding:10px 0;border-bottom:1px solid var(--beige-dark);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:.83rem;font-weight:600;color:var(--rose-deep)">${y}年${parseInt(m)}月</span>
@@ -2118,15 +2131,15 @@ function renderCurveTableFiltered(){
     updateCurveYearFilter();
 }
 function toggleCurveEdit2(key){
-    const el=document.getElementById('cedit2_'+key.replace('-','_'));
+    var el=document.getElementById('cedit2_'+key.replace('-','_'));
     if(el) el.style.display=el.style.display==='none'?'block':'none';
 }
 function saveCurveEdit2(key){
-    const eid='cedit2_'+key.replace('-','_');
-    const tiktok=parseInt(document.getElementById(eid+'_tiktok')?.value)||0;
-    const ig=parseInt(document.getElementById(eid+'_ig')?.value)||0;
+    var eid='cedit2_'+key.replace('-','_');
+    var tiktok=parseInt((document.getElementById(eid+'_tiktok')?document.getElementById(eid+'_tiktok').value:undefined))||0;
+    var ig=parseInt((document.getElementById(eid+'_ig')?document.getElementById(eid+'_ig').value:undefined))||0;
     if(!curveDB[key]) return;
-    curveDB[key]={tiktok,ig};
+    curveDB[key]={tiktok:tiktok,ig:ig};
     saveCurveDB();
     renderCurveCharts();
     renderCurveTableFiltered();
@@ -2135,18 +2148,18 @@ function saveCurveEdit2(key){
 
 
 function toggleChartEdit(key){
-    const id='edit_'+key.replace('-','_');
-    const el=document.getElementById(id);
+    var id='edit_'+key.replace('-','_');
+    var el=document.getElementById(id);
     if(!el) return;
     el.style.display=el.style.display==='none'?'block':'none';
 }
 
 function saveChartEdit(key){
-    const id='edit_'+key.replace('-','_');
-    const retail=parseInt(document.getElementById(id+'_retail')?.value)||0;
-    const team=parseInt(document.getElementById(id+'_team')?.value)||0;
-    const d=getManualData();
-    if(retail===0&&team===0) delete d[key]; else d[key]={retail,team};
+    var id='edit_'+key.replace('-','_');
+    var retail=parseInt((document.getElementById(id+'_retail')?document.getElementById(id+'_retail').value:undefined))||0;
+    var team=parseInt((document.getElementById(id+'_team')?document.getElementById(id+'_team').value:undefined))||0;
+    var d=getManualData();
+    if(retail===0&&team===0) delete d[key]; else d[key]={retail:retail,team:team};
     saveManualDataStore(d);
     renderChart();
     loadHistory();
@@ -2155,34 +2168,34 @@ function saveChartEdit(key){
 
 // CHART
 function renderChart(){
-    const rs=getOrders();
-    const data={};
-    rs.forEach(r=>{const d=getOrderDate(r);const k=`${d.getFullYear()}-${d.getMonth()}`;if(!data[k])data[k]={retail:0,team:0};if(r.type==='retail')data[k].retail+=r.rev;else data[k].team+=r.rev;});
+    var rs=getOrders();
+    var data={};
+    rs.forEach(function(r){var d=getOrderDate(r);var k=`${d.getFullYear()}-${d.getMonth()}`;if(!data[k])data[k]={retail:0,team:0};if(r.type==='retail')data[k].retail+=r.rev;else data[k].team+=r.rev;});
     // Merge manual entries
-    const manualD=getManualData();
-    Object.keys(manualD).forEach(k=>{
+    var manualD=getManualData();
+    Object.keys(manualD).forEach(function(k){
         if(!data[k])data[k]={retail:0,team:0};
         data[k].retail+=manualD[k].retail||0;
         data[k].team+=manualD[k].team||0;
     });
-    const keys=Object.keys(data).sort();
+    var keys=Object.keys(data).sort();
     if(!keys.length){document.getElementById('chartWrap').innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚無數據，請先新增訂單</div>';document.getElementById('chartTable').innerHTML='';return;}
-    const VISIBLE=18;
-    const _wrap=document.getElementById('chartWrap');
-    const _cW=(_wrap&&_wrap.offsetWidth>100)?_wrap.offsetWidth:360;
-    const BW=Math.max(22,Math.floor((_cW-54-20-10*VISIBLE)/VISIBLE));
-    const G=10,PL=54,PR=20,PT=50,PB=50,CH=260;
-    const aMax=Math.max(...keys.map(k=>data[k].retail+data[k].team),1);
-    const nM=Math.ceil(aMax/100000)*100000||100000;
-    const TW=PL+keys.length*(BW+G)+PR;
-    const ys=v=>PT+(CH*(1-v/nM));
-    let tks='';
-    for(let i=0;i<=5;i++){const v=nM*i/5,y=ys(v);tks+=`<line x1="${PL-6}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="#EDE7DE" stroke-width="1"/><text x="${PL-9}" y="${y+4}" text-anchor="end" font-size="9" fill="#B09EA8">${v>=10000?Math.round(v/1000)+'k':v}</text>`;}
-    let bars='';
-    keys.forEach((k,i)=>{
-        const d=data[k],[yr,mo]=k.split('-');
-        const x=PL+i*(BW+G),tot=d.retail+d.team;
-        const hr=CH*d.retail/nM,ht=CH*d.team/nM,yt=ys(tot),yr2=ys(d.retail);
+    var VISIBLE=18;
+    var _wrap=document.getElementById('chartWrap');
+    var _cW=(_wrap&&_wrap.offsetWidth>100)?_wrap.offsetWidth:360;
+    var BW=Math.max(22,Math.floor((_cW-54-20-10*VISIBLE)/VISIBLE));
+    var G=10,PL=54,PR=20,PT=50,PB=50,CH=260;
+    var aMax=Math.max.apply(null,keys.map(function(k){ return data[k].retail+data[k].team; }).concat([1]));
+    var nM=Math.ceil(aMax/100000)*100000||100000;
+    var TW=PL+keys.length*(BW+G)+PR;
+    function ys(v){ return PT+(CH*(1-v/nM)); }
+    var tks='';
+    for(var i=0;i<=5;i++){var v=nM*i/5,y=ys(v);tks+=`<line x1="${PL-6}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="#EDE7DE" stroke-width="1"/><text x="${PL-9}" y="${y+4}" text-anchor="end" font-size="9" fill="#B09EA8">${v>=10000?Math.round(v/1000)+'k':v}</text>`;}
+    var bars='';
+    keys.forEach(function(k,i){
+        var d=data[k],[yr,mo]=k.split('-');
+        var x=PL+i*(BW+G),tot=d.retail+d.team;
+        var hr=CH*d.retail/nM,ht=CH*d.team/nM,yt=ys(tot),yr2=ys(d.retail);
         if(d.team>0) bars+=`<rect x="${x}" y="${yt}" width="${BW}" height="${ht}" fill="#3B6EDE" rx="2"/>`;
         if(d.retail>0) bars+=`<rect x="${x}" y="${yr2}" width="${BW}" height="${hr}" fill="#5BC8C0" rx="2"/>`;
         if(tot>0) bars+=`<text x="${x+BW/2}" y="${yt-8}" text-anchor="middle" font-size="11" font-weight="600" fill="#2C2226">${tot>=1000?(tot/1000).toFixed(1).replace(/.0$/,'')+'k':tot}</text>`;
@@ -2192,23 +2205,23 @@ function renderChart(){
         bars+=`<text x="${x+BW/2}" y="${PT+CH+30}" text-anchor="middle" font-size="8" fill="#B09EA8">${yr}</text>`;
     });
     // Show profile on chart
-    const prof=getProfile();
-    const badge=document.getElementById('chartProfileBadge');
-    const profTxt=document.getElementById('chartProfileText');
+    var prof=getProfile();
+    var badge=document.getElementById('chartProfileBadge');
+    var profTxt=document.getElementById('chartProfileText');
     updateAllBadges();
     document.getElementById('chartWrap').innerHTML=`<svg width="${TW}" height="${PT+CH+PB}" xmlns="http://www.w3.org/2000/svg" style="display:block;">${tks}<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+CH}" stroke="#EDE7DE" stroke-width="1.5"/>${bars}</svg>`;
 
     updateChartYearFilter(); renderChartTableFiltered();
     // Update yearly stat boxes
-    const curY=new Date().getFullYear().toString();
-    const rs2=getOrders();
-    let yProfit=0,yRetail=0,yTeam=0;
-    rs2.forEach(r=>{ const d=getOrderDate(r); if(d.getFullYear().toString()===curY){ yProfit+=r.profit; if(r.type==='retail') yRetail+=r.profit; else yTeam+=r.profit; } });
-    const md2=getManualData();
-    Object.keys(md2).forEach(k=>{ if(k.startsWith(curY)){ yRetail+=md2[k].retail||0; yTeam+=md2[k].team||0; yProfit+=(md2[k].retail||0)+(md2[k].team||0); } });
-    const spEl=document.getElementById('chartStatProfit');
-    const srEl=document.getElementById('chartStatRetail');
-    const stEl=document.getElementById('chartStatTeam');
+    var curY=new Date().getFullYear().toString();
+    var rs2=getOrders();
+    var yProfit=0,yRetail=0,yTeam=0;
+    rs2.forEach(function(r){ var d=getOrderDate(r); if(d.getFullYear().toString()===curY){ yProfit+=r.profit; if(r.type==='retail') yRetail+=r.profit; else yTeam+=r.profit; } });
+    var md2=getManualData();
+    Object.keys(md2).forEach(function(k){ if(k.startsWith(curY)){ yRetail+=md2[k].retail||0; yTeam+=md2[k].team||0; yProfit+=(md2[k].retail||0)+(md2[k].team||0); } });
+    var spEl=document.getElementById('chartStatProfit');
+    var srEl=document.getElementById('chartStatRetail');
+    var stEl=document.getElementById('chartStatTeam');
     if(spEl){ spEl.innerText='$'+yProfit.toLocaleString(); spEl.style.color=yProfit>=0?'var(--rose)':'#e05050'; }
     if(srEl) srEl.innerText='$'+yRetail.toLocaleString();
     if(stEl) stEl.innerText='$'+yTeam.toLocaleString();
@@ -2216,26 +2229,26 @@ function renderChart(){
 
 // EDIT MODAL
 function openEditModal(id){
-    const order=getOrders().find(r=>r.id===id);
+    var order=getOrders().find(function(r){ return r.id===id; });
     if(!order) return;
     editingOrderId=id;editCart={};
     editBuyerType=order.buyerType||'retail';
-    order.items.forEach(i=>{editCart[i.name]=i.qty;});
-    const d=getOrderDate(order);
+    order.items.forEach(function(i){editCart[i.name]=i.qty;});
+    var d=getOrderDate(order);
     document.getElementById('editModalTitle').innerText=`編輯訂單 · ${d.getMonth()+1}/${d.getDate()}`;
     renderEditModal(order);
     document.getElementById('editModal').classList.add('open');
 }
 function renderEditModal(order){
-    const sl=order.sellerLevel||'L3_sup',bt=editBuyerType||order.buyerType||'retail';
-    const slN=levels.find(l=>l.id===sl)?.name||sl,btN=buyers.find(b=>b.id===bt)?.name||bt;
-    const d=getOrderDate(order);
+    var sl=order.sellerLevel||'L3_sup',bt=editBuyerType||order.buyerType||'retail';
+    var slN=(levels.find(function(l){ return l.id===sl; })||{name:sl}).name,btN=(buyers.find(function(b){ return b.id===bt; })||{name:bt}).name;
+    var d=getOrderDate(order);
     // Build all products in editCart (original + any added)
-    const allNames=[...new Set([...order.items.map(i=>i.name),...Object.keys(editCart)])];
-    let iH='';
-    allNames.forEach(n=>{
-        const q=editCart[n]||0; if(q===0&&!order.items.find(i=>i.name===n)) return;
-        const cp=products[n]?products[n][sl]:0,sp=products[n]?products[n][bt]:0;
+    var allNames=Array.from(new Set(order.items.map(function(i){ return i.name; }).concat(Object.keys(editCart))));
+    var iH='';
+    allNames.forEach(function(n){
+        var q=editCart[n]||0; if(q===0&&!order.items.find(function(i){ return i.name===n; })) return;
+        var cp=products[n]?products[n][sl]:0,sp=products[n]?products[n][bt]:0;
         iH+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--beige-dark);">
             <div style="flex:1;min-width:0;">
                 <div style="font-size:.83rem;font-weight:500;color:var(--text-main)">${n}</div>
@@ -2249,13 +2262,13 @@ function renderEditModal(order){
         </div>`;
     });
     // Product picker options
-    const catOpts=['活動','纖體','美肌','保健'].map(cat=>{
-        const opts=Object.keys(products).filter(n=>products[n].cat===cat).map(n=>`<option value="${n}">${n} (售$${products[n][bt].toLocaleString()})</option>`).join('');
+    var catOpts=['活動','纖體','美肌','保健'].map(function(cat){
+        var opts=Object.keys(products).filter(function(n){ return products[n].cat===cat; }).map(function(n){ return '<option value="'+n+'">'+n+' (售$'+products[n][bt].toLocaleString()+')</option>'; }).join('');
         return `<optgroup label="── ${cat} ──">${opts}</optgroup>`;
     }).join('');
-    let rev=0,cost=0;
-    allNames.forEach(n=>{const q=editCart[n]||0;if(products[n]){rev+=products[n][bt]*q;cost+=products[n][sl]*q;}});
-    const extra=order.extraCost||0;
+    var rev=0,cost=0;
+    allNames.forEach(function(n){var q=editCart[n]||0;if(products[n]){rev+=products[n][bt]*q;cost+=products[n][sl]*q;}});
+    var extra=order.extraCost||0;
     document.getElementById('editModalContent').innerHTML=`
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
             <div style="background:var(--rose-pale);border-radius:10px;padding:8px 12px;text-align:center;">
@@ -2263,8 +2276,8 @@ function renderEditModal(order){
                 <div style="font-size:.82rem;font-weight:500;color:var(--rose-deep)">${slN}</div>
             </div>
             <div style="position:relative;">
-                <select id="editBuyerSelect" class="month-select" style="font-size:.8rem;padding:8px 28px 8px 10px;border-color:var(--rose-light);" onchange="editBuyerType=this.value;renderEditModal(getOrders().find(r=>r.id===editingOrderId));">
-                    ${buyers.map(b=>'<option value="'+b.id+'"'+(b.id===editBuyerType?' selected':'')+'>'+b.name+'</option>').join('')}
+                <select id="editBuyerSelect" class="month-select" style="font-size:.8rem;padding:8px 28px 8px 10px;border-color:var(--rose-light);" onchange="editBuyerType=this.value;renderEditModal(getOrders().find(function(r){ return r.id===editingOrderId; }));">
+                    ${buyers.map(function(b){ return '<option value="'+b.id+'"'+(b.id===editBuyerType?' selected':'')+'>'+b.name+'</option>'; }).join('')}
                 </select>
                 <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span>
             </div>
@@ -2292,69 +2305,69 @@ function renderEditModal(order){
         <div class="modal-actions"><button class="btn-secondary" onclick="closeEditModal()">取消</button><button class="btn-danger" onclick="deleteAndRefresh(${order.id});closeEditModal()">刪除</button><button class="btn-primary" onclick="saveEditOrder()">儲存</button></div>`;
 }
 function addProductToEdit(){
-    const sel=document.getElementById('addProductSelect');
-    const n=sel.value; if(!n) return;
+    var sel=document.getElementById('addProductSelect');
+    var n=sel.value; if(!n) return;
     editCart[n]=(editCart[n]||0)+1;
     // Re-render modal items
-    const order=getOrders().find(r=>r.id===editingOrderId);
+    var order=getOrders().find(function(r){ return r.id===editingOrderId; });
     if(order) renderEditModal(order);
 }
 function changeEditQty(n,d){
     editCart[n]=Math.max(0,(editCart[n]||0)+d);
-    const el=document.getElementById('eq_'+n.replace(/[^a-zA-Z0-9]/g,'_'));
+    var el=document.getElementById('eq_'+n.replace(/[^a-zA-Z0-9]/g,'_'));
     if(el)el.innerText=editCart[n];
     refreshEditTotal();
 }
 function refreshEditTotal(){
-    const order=getOrders().find(r=>r.id===editingOrderId);if(!order)return;
-    const sl=order.sellerLevel||'L2',bt=order.buyerType||'retail';
-    let rev=0,cost=0;
-    order.items.forEach(i=>{const q=editCart[i.name]||0;if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}});
-    const extra=parseInt(document.getElementById('editExtra')?.value)||0;
-    const el=document.getElementById('editTotal');
+    var order=getOrders().find(function(r){ return r.id===editingOrderId; });if(!order)return;
+    var sl=order.sellerLevel||'L2',bt=order.buyerType||'retail';
+    var rev=0,cost=0;
+    order.items.forEach(function(i){var q=editCart[i.name]||0;if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}});
+    var extra=parseInt((document.getElementById('editExtra')?document.getElementById('editExtra').value:undefined))||0;
+    var el=document.getElementById('editTotal');
     if(el)el.innerHTML=`<div style="font-size:.73rem;color:var(--rose-deep);margin-bottom:4px;">預估淨利</div><div style="font-size:1.6rem;font-weight:600;color:var(--rose)">$${(rev-cost-extra).toLocaleString()}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">售$${rev.toLocaleString()} 成本$${(cost+extra).toLocaleString()}</div>`;
 }
 function saveEditOrder(){
-    const rs=getOrders();const idx=rs.findIndex(r=>r.id===editingOrderId);if(idx<0)return;
-    const order=rs[idx];const sl=order.sellerLevel||'L3_sup',bt=editBuyerType||order.buyerType||'retail';
-    const extra=parseInt(document.getElementById('editExtra')?.value)||0;
-    const dateVal=document.getElementById('editDate')?.value;
-    const newTs=dateVal?new Date(dateVal).getTime():order.orderDate||order.id;
-    const nd=new Date(newTs);
-    let rev=0,cost=0,items=[];
-    order.items.forEach(i=>{const q=editCart[i.name]||0;if(q>0){items.push({...i,qty:q});if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}}});
+    var rs=getOrders();var idx=rs.findIndex(function(r){ return r.id===editingOrderId; });if(idx<0)return;
+    var order=rs[idx];var sl=order.sellerLevel||'L3_sup',bt=editBuyerType||order.buyerType||'retail';
+    var extra=parseInt((document.getElementById('editExtra')?document.getElementById('editExtra').value:undefined))||0;
+    var dateVal=(document.getElementById('editDate')?document.getElementById('editDate').value:undefined);
+    var newTs=dateVal?new Date(dateVal).getTime():order.orderDate||order.id;
+    var nd=new Date(newTs);
+    var rev=0,cost=0,items=[];
+    order.items.forEach(function(i){var q=editCart[i.name]||0;if(q>0){items.push(Object.assign({},i,{qty:q}));if(products[i.name]){rev+=products[i.name][bt]*q;cost+=products[i.name][sl]*q;}}});
     if(!items.length){showToast('⚠ 請保留至少一項商品','#C8748A');return;}
-    rs[idx]={...order,orderDate:newTs,year:nd.getFullYear(),month:nd.getMonth(),buyerType:bt,type:buyers.find(b=>b.id===bt)?.t||order.type,note:document.getElementById('editNote').value||'無備註',extraCost:extra,itemsCost:cost,cost:cost+extra,rev,profit:rev-cost-extra,items};
+    rs[idx]=Object.assign({},order,{orderDate:newTs,year:nd.getFullYear(),month:nd.getMonth(),buyerType:bt,type:(buyers.find(function(b){ return b.id===bt; })||{}).t||order.type,note:document.getElementById('editNote').value||'無備註',extraCost:extra,itemsCost:cost,cost:cost+extra,rev:rev,profit:rev-cost-extra,items});
     saveOrders(rs);closeEditModal();loadHistory();loadDashboards();renderChart();
     showToast('✓ 訂單已更新', 'var(--rose)');
 }
 function closeEditModal(e){if(e&&e.target!==document.getElementById('editModal'))return;document.getElementById('editModal').classList.remove('open');editingOrderId=null;editCart={};}
 // SEARCH
 function onSearchInput(){
-    const q=document.getElementById('historySearch').value.trim();
-    const sr=document.getElementById('searchResults');
-    const mc=document.getElementById('monthPickerCard');
-    const hc=document.getElementById('historyContent');
+    var q=document.getElementById('historySearch').value.trim();
+    var sr=document.getElementById('searchResults');
+    var mc=document.getElementById('monthPickerCard');
+    var hc=document.getElementById('historyContent');
     if(!q){ sr.style.display='none'; mc.style.display=''; hc.style.display=''; return; }
     mc.style.display='none'; hc.style.display='none'; sr.style.display='block';
-    const all=getOrders().filter(r=>(r.note||'').toLowerCase().includes(q.toLowerCase()));
+    var all=getOrders().filter(function(r){ return (r.note||'').toLowerCase().indexOf(q.toLowerCase())!==-1; });
     if(!all.length){ sr.innerHTML='<div style="text-align:center;font-size:.82rem;color:var(--text-muted);padding:12px">找不到符合的備註</div>'; return; }
-    all.sort((a,b)=>getOrderDate(b)-getOrderDate(a));
-    let html=`<div style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px">共找到 ${all.length} 筆含「${q}」的訂單</div>`;
-    all.forEach(r=>{
-        const d=getOrderDate(r);
-        const ds=`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
-        const bl=buyers.find(b=>b.id===r.buyerType)?.name||r.type;
-        const tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
+    all.sort(function(a,b){ return getOrderDate(b)-getOrderDate(a); });
+    var html=`<div style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px">共找到 ${all.length} 筆含「${q}」的訂單</div>`;
+    all.forEach(function(r){
+        var d=getOrderDate(r);
+        var ds=`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
+        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
+        var tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
         // Highlight matching text in note
-        const regex=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
-        const hiNote=(r.note||'').replace(regex,'<mark style="background:#FFE8C0;border-radius:3px;padding:0 2px">$1</mark>');
+        var regex=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+        var hiNote=(r.note||'').replace(regex,'<mark style="background:#FFE8C0;border-radius:3px;padding:0 2px">$1</mark>');
         html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${hiNote}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(i=>`${i.name} × ${i.qty}${i.unit}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
     sr.innerHTML=html;
 }
 
-function deleteAndRefresh(id){saveOrders(getOrders().filter(r=>r.id!==id));loadHistory();loadDashboards();renderChart();showToast('已刪除訂單','#7A6872');}
+function deleteAndRefresh(id){saveOrders(getOrders().filter(function(r){ return r.id!==id; }));loadHistory();loadDashboards();renderChart();showToast('已刪除訂單','#7A6872');}
 
 // roundRect polyfill for older Safari
 if (!CanvasRenderingContext2D.prototype.roundRect) {
@@ -2371,425 +2384,21 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 // ══════════════════════════════════════════
 //  魔術曲線圖 JS
 // ══════════════════════════════════════════
-const CURVE_STORAGE = 'dct_monthly_data_v1';
-const CURVE_CONFIG  = 'dct_curve_config_v1';
-let curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
-let curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
-let curveCharts = {}; // legacy stubs kept for safety
-
-function saveCurveDB(){ localStorage.setItem(CURVE_STORAGE, JSON.stringify(curveDB)); }
-
-function updateAllBadges(){
-    const p=getProfile();
-    // 淨利圖 badge
-    const badge=document.getElementById('chartProfileBadge');
-    const profTxt=document.getElementById('chartProfileText');
-    if(badge&&profTxt){
-        const parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
-        if(parts.length){ profTxt.innerText=parts.join(' · '); badge.style.display='flex'; }
-        else badge.style.display='none';
-    }
-    // 魔術曲線圖 badge
-    const cb=document.getElementById('curveProfileBadge');
-    const ct=document.getElementById('curveProfileText');
-    if(cb&&ct){
-        const parts=[p.name,p.level,p.upline?'上家：'+p.upline:''].filter(Boolean);
-        if(parts.length){ ct.innerText=parts.join(' · '); cb.style.display='flex'; }
-        else cb.style.display='none';
-    }
-}
-function saveCurveConfig(){ updateCurveTitles(); }
-
-function updateCurveTitles(){
-    const p = getProfile();
-    const name   = p.name||'';
-    const level  = p.level ? ' ｜ ' + p.level : '';
-    const upline = p.upline ? ' ｜ 上家：' + p.upline : '';
-    const years = '';
-    const t1 = document.getElementById('curve-chart1-title');
-    const t2 = document.getElementById('curve-chart2-title');
-    const s1 = document.getElementById('curve-chart1-sub');
-    const s2 = document.getElementById('curve-chart2-sub');
-    if(t1) t1.textContent = '淨利曲線圖';
-    if(t2) t2.textContent = '魔術曲線圖';
-    if(s1) s1.textContent = '三口袋月度淨利' + level + upline;
-    // subtitle is now inline with title
-}
-
-function getCurveSortedKeys(){ return Object.keys(curveDB).sort(); }
-
-function initCurveBasic(){
-    const yr=document.getElementById('curve-year');
-    if(yr && !yr.options.length){
-        const cy=new Date().getFullYear();
-        for(let y=2022;y<=cy+2;y++){
-            const o=document.createElement('option');
-            o.value=y; o.textContent=y+'年';
-            if(y===cy) o.selected=true;
-            yr.appendChild(o);
-        }
-        document.getElementById('curve-month').value=new Date().getMonth()+1;
-    }
-    renderCurveTable();
-}
-function initCurve(){
-    const yr = document.getElementById('curve-year');
-    if(yr && !yr.options.length){
-        const cy = new Date().getFullYear();
-        for(let y=2022;y<=cy+2;y++){
-            const o=document.createElement('option');
-            o.value=y; o.textContent=y+'年';
-            if(y===cy) o.selected=true;
-            yr.appendChild(o);
-        }
-        document.getElementById('curve-month').value = new Date().getMonth()+1;
-    }
-    updateCurveTitles();
-    renderCurveTableFiltered();
-    setTimeout(renderCurveCharts, 50);
-}
-
-function switchCurve(panelId, el){
-    document.querySelectorAll('.curve-sub-tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.curve-panel').forEach(p=>p.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById(panelId).classList.add('active');
-    renderCurveCharts();
-}
-
-function addCurveMonth(){
-    const y = document.getElementById('curve-year').value;
-    const m = document.getElementById('curve-month').value;
-    const key = y + '-' + String(m).padStart(2,'0');
-    if(curveDB[key]){ showToast('此月份已存在，請直接在表格修改'); return; }
-    curveDB[key] = {
-        tiktok: parseInt(document.getElementById('cv-tiktok').value)||0,
-        ig:     parseInt(document.getElementById('cv-ig').value)||0,
-    };
-    saveCurveDB();
-    ['cv-tiktok','cv-ig'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-    renderCurveTableFiltered();
-    renderCurveCharts();
-    showToast('✓ 已新增 ' + y + '年' + parseInt(m) + '月');
-}
-
-function renderCurveTable(){
-    const wrap=document.getElementById('curve-edit-table');
-    if(!wrap) return;
-    const eyf=document.getElementById('curveEditYearFilter');
-    const eyr=eyf?eyf.value:'';
-    const allKeys=getCurveSortedKeys().slice().reverse();
-    // Update year options in edit filter
-    if(eyf){
-        const yrs=[...new Set(allKeys.map(k=>k.split('-')[0]))].sort((a,b)=>b-a);
-        const curV=eyf.value;
-        eyf.innerHTML='<option value="">全部年份</option>'+yrs.map(y=>`<option value="${y}"${y===curV?'selected':''}>${y}年</option>`).join('');
-    }
-    const keys=eyr?allKeys.filter(k=>k.startsWith(eyr)):allKeys;
-    if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚未新增任何資料</div>'; return; }
-    let html='';
-    keys.forEach(key=>{
-        const d=curveDB[key],[y,m]=key.split('-');
-        const eid='cedit_'+key.replace('-','_');
-        html+=`<div style="padding:10px 0;border-bottom:1px solid var(--beige-dark);">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div>
-                    <span style="font-size:.85rem;font-weight:600;color:var(--rose-deep)">${y}年${parseInt(m)}月</span>
-                    <span style="font-size:.75rem;color:#5BC8C0;margin-left:8px">TikTok ${(d.tiktok||0).toLocaleString()}</span>
-                    <span style="font-size:.75rem;color:var(--rose);margin-left:6px">IG ${(d.ig||0).toLocaleString()}</span>
-                </div>
-                <div style="display:flex;gap:6px;">
-                    <button class="action-btn edit" onclick="toggleCurveEdit('${key}')">✏ 編輯</button>
-                    <button class="action-btn" onclick="deleteCurveRow('${key}')">刪除</button>
-                </div>
-            </div>
-            <div id="${eid}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-                    <div><div style="font-size:.68rem;color:#5BC8C0;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">TikTok</div><input type="number" id="${eid}_tiktok" class="custom-input" value="${d.tiktok||0}" style="border-left:3px solid #5BC8C0;padding:9px 10px;"></div>
-                    <div><div style="font-size:.68rem;color:var(--rose);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;">IG</div><input type="number" id="${eid}_ig" class="custom-input" value="${d.ig||0}" style="border-left:3px solid var(--rose);padding:9px 10px;"></div>
-                </div>
-                <div style="display:flex;gap:8px;">
-                    <button onclick="saveCurveEdit('${key}')" style="flex:1;padding:10px;background:var(--rose);color:white;border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">儲存</button>
-                    <button onclick="toggleCurveEdit('${key}')" style="padding:10px 14px;background:var(--beige);color:var(--text-sub);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit;">取消</button>
-                </div>
-            </div>
-        </div>`;
-    });
-    wrap.innerHTML=html;
-}
-
-function toggleCurveEdit(key){
-    const id='cedit_'+key.replace('-','_');
-    const el=document.getElementById(id);
-    if(el) el.style.display=el.style.display==='none'?'block':'none';
-}
-function saveCurveEdit(key){
-    const id='cedit_'+key.replace('-','_');
-    const tiktok=parseInt(document.getElementById(id+'_tiktok')?.value)||0;
-    const ig=parseInt(document.getElementById(id+'_ig')?.value)||0;
-    if(!curveDB[key]) return;
-    curveDB[key]={tiktok,ig};
-    saveCurveDB();
-    renderCurveTableFiltered();
-    renderCurveCharts();
-    showToast('✓ 已儲存');
-}
-
-function updateCurveCell(key,field,val){
-    if(!curveDB[key]) return;
-    curveDB[key][field]=parseInt(val)||0;
-    saveCurveDB();
-    renderCurveCharts();
-    showToast('✓ 已儲存');
-}
-function deleteCurveRow(key){
-    const[y,m]=key.split('-');
-    if(!confirm(y+'年'+parseInt(m)+'月 確定刪除？')) return;
-    delete curveDB[key];
-    saveCurveDB();
-    renderCurveTableFiltered();
-    renderCurveCharts();
-    showToast('已刪除');
-}
-
-function fmtCK(n){
-    if(n>=1000000) return (n/1000000).toFixed(1)+'M';
-    if(n>=10000) return (n/10000).toFixed(0)+'w';
-    if(n>=1000) return (n/1000).toFixed(1)+'k';
-    return String(n);
-}
-
-function clearCurveChart(id){
-    if(curveCharts[id]){ curveCharts[id].destroy(); delete curveCharts[id]; }
-}
-
-function buildCurveChart(id, labels, datasets, deltaArr){
-    clearCurveChart(id);
-    const el=document.getElementById(id);
-    if(!el) return;
-
-    // Disable built-in datalabels
-    datasets.forEach(ds=>{ ds.datalabels={display:false}; });
-
-    const customPlugin = {
-        id: 'curveLabels_'+id,
-        afterDraw(chart){
-            const ctx=chart.ctx;
-            const nDS=chart.data.datasets.length;
-            // Segment labels
-            chart.data.datasets.forEach((ds,di)=>{
-                const meta=chart.getDatasetMeta(di);
-                meta.data.forEach((bar,bi)=>{
-                    const v=ds.data[bi]; if(!v) return;
-                    const segH=Math.abs(bar.base-bar.y); if(segH<16) return;
-                    const cx=bar.x, cy=(bar.y+bar.base)/2;
-                    const lbl=fmtCK(v);
-                    ctx.font='bold 9px "Noto Sans TC",sans-serif';
-                    const tw=ctx.measureText(lbl).width;
-                    const pad=3,rh=13,rw=tw+pad*2;
-                    ctx.fillStyle='rgba(0,0,0,.42)';
-                    ctx.beginPath(); ctx.roundRect(cx-rw/2,cy-rh/2,rw,rh,2); ctx.fill();
-                    ctx.fillStyle='#FFE566'; ctx.textAlign='center'; ctx.textBaseline='middle';
-                    ctx.fillText(lbl,cx,cy);
-                });
-            });
-            // Totals above bars
-            const topMeta=chart.getDatasetMeta(nDS-1);
-            topMeta.data.forEach((bar,bi)=>{
-                const tot=datasets.reduce((s,ds)=>s+(ds.data[bi]||0),0); if(!tot) return;
-                const cx=bar.x; let topY=bar.y-5;
-                if(deltaArr){
-                    const d=deltaArr[bi];
-                    if(d!==null&&d!==undefined){
-                        const dl=(d>=0?'+':'')+fmtCK(d);
-                        ctx.font='bold 9px "Noto Sans TC",sans-serif';
-                        ctx.fillStyle=d>=0?'#3A9E97':'#e05050';
-                        ctx.textAlign='center'; ctx.textBaseline='bottom';
-                        ctx.fillText(dl,cx,topY-1); topY-=12;
-                    }
-                }
-                const tl=fmtCK(tot);
-                ctx.font='bold 10px "Noto Sans TC",sans-serif';
-                const tw=ctx.measureText(tl).width;
-                const pad=4,rh=14,rw=tw+pad*2;
-                ctx.fillStyle='rgba(44,34,38,.72)';
-                ctx.beginPath(); ctx.roundRect(cx-rw/2,topY-rh,rw,rh,3); ctx.fill();
-                ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='bottom';
-                ctx.fillText(tl,cx,topY-1);
-            });
-        }
-    };
-
-    // Resize canvas for scrollable chart (18 months per screen)
-    const _wrapEl=el.parentElement;
-    const _visW=(_wrapEl&&_wrapEl.offsetWidth>100)?_wrapEl.offsetWidth:360;
-    const _numBars=labels.length;
-    const _chartW=_numBars>18?Math.round(_visW*_numBars/18):_visW;
-    el.style.width=_chartW+'px'; el.style.minWidth=_chartW+'px';
-
-    const ctx2=el.getContext('2d');
-    curveCharts[id]=new Chart(ctx2,{
-        type:'bar',
-        data:{labels,datasets},
-        options:{
-            plugins:{legend:{display:false},datalabels:{display:false},
-                tooltip:{backgroundColor:'#fff8f4',titleColor:'#2C2226',bodyColor:'#7A6872',borderColor:'#E8DDE3',borderWidth:1,padding:10,
-                    callbacks:{label:c=>' '+c.dataset.label+': '+Number(c.parsed.y).toLocaleString('zh-TW')}}
-            },
-            scales:{
-                x:{stacked:true,ticks:{color:'#B09EA8',font:{size:10}},grid:{display:false}},
-                y:{stacked:true,ticks:{color:'#B09EA8',font:{size:10},callback:v=>fmtCK(v)},grid:{color:'rgba(232,221,227,.6)'}}
-            },
-            layout:{padding:{top:deltaArr?52:36}},
-            responsive:false,maintainAspectRatio:false,animation:{duration:500}
-        },
-        plugins:[ChartDataLabels, customPlugin]
-    });
-}
-
-function buildCurveDetailTable(wrapId, keys, colNames, colData, colors){
-    const wrap=document.getElementById(wrapId); if(!wrap) return;
-    if(!keys.length){ wrap.innerHTML='<div style="text-align:center;padding:16px;font-size:.8rem;color:var(--text-muted)">尚無資料</div>'; return; }
-    let html='<div class="curve-table-wrap"><table><thead><tr><th>月份</th>';
-    colNames.forEach((n,i)=>html+=`<th><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[i]};margin-right:3px;vertical-align:middle"></span>${n}</th>`);
-    html+='<th>合計</th>';
-    colNames.forEach((n,i)=>html+=`<th>△${n}</th>`);
-    html+='<th>△合計</th></tr></thead><tbody>';
-    let grand=colNames.map(()=>0);
-    keys.forEach((key,ri)=>{
-        const vals=colData.map(a=>a[ri]);
-        const tot=vals.reduce((a,b)=>a+b,0);
-        grand=grand.map((g,i)=>g+vals[i]);
-        const prev=ri>0?colData.map(a=>a[ri-1]):null;
-        const prevTot=prev?prev.reduce((a,b)=>a+b,0):null;
-        const[y,m]=key.split('-');
-        html+=`<tr><td>${y}/${parseInt(m)}</td>`;
-        vals.forEach(v=>html+=`<td>${Number(v).toLocaleString('zh-TW')}</td>`);
-        html+=`<td><strong>${Number(tot).toLocaleString('zh-TW')}</strong></td>`;
-        if(prev){
-            vals.forEach((v,i)=>{ const d=v-prev[i]; html+=`<td class="${d>0?'delta-pos':d<0?'delta-neg':''}">${d>0?'+':''}${Number(d).toLocaleString('zh-TW')}</td>`; });
-            const dt=tot-prevTot;
-            html+=`<td class="${dt>0?'delta-pos':dt<0?'delta-neg':''}">${dt>0?'+':''}${Number(dt).toLocaleString('zh-TW')}</td>`;
-        } else { colNames.forEach(()=>html+='<td>–</td>'); html+='<td>–</td>'; }
-        html+='</tr>';
-    });
-    html+='</tbody></table></div>';
-    wrap.innerHTML=html;
-}
+var CURVE_STORAGE = 'dct_monthly_data_v1';
+var CURVE_CONFIG  = 'dct_curve_config_v1';
+var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
+var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
+var curveCharts = {}; // legacy stubs kept for safety
 
 
-function buildCurveSVG(keys, tiktok, ig, dF){
-    const wrap = document.getElementById('curve-chart2-svg');
-    if(!wrap) return;
-    const VISIBLE=18;
-    const _cW=(wrap.parentElement&&wrap.parentElement.offsetWidth>100)?wrap.parentElement.offsetWidth:360;
-    const BW=Math.max(22,Math.floor((_cW-54-20-10*VISIBLE)/VISIBLE));
-    const G=10,PL=54,PR=20,PT=60,PB=50,CH=260;
-    const n=keys.length;
-    const aMax=Math.max(...tiktok.map((t,i)=>t+(ig[i]||0)),1);
-    const nM=Math.ceil(aMax/1000)*1000||1000;
-    const TW=PL+n*(BW+G)+PR;
-    const ys=v=>PT+(CH*(1-v/nM));
-    let tks='';
-    for(let i=0;i<=5;i++){
-        const v=Math.round(nM*i/5);
-        const y=ys(v);
-        const lbl=v>=10000?(v/1000).toFixed(0)+'k':v>=1000?(v/1000).toFixed(1)+'k':v;
-        tks+=`<line x1="${PL-6}" y1="${y}" x2="${TW-PR}" y2="${y}" stroke="#EDE7DE" stroke-width="1"/>
-              <text x="${PL-9}" y="${y+4}" text-anchor="end" font-size="9" fill="#B09EA8">${lbl}</text>`;
-    }
-    let bars='';
-    keys.forEach((k,i)=>{
-        const[yr,mo]=k.split('-');
-        const tk=tiktok[i]||0, ig2=ig[i]||0, tot=tk+ig2;
-        const x=PL+i*(BW+G);
-        const htk=CH*tk/nM, hig=CH*ig2/nM;
-        const ytot=ys(tot), ytk=ys(tk);
-        if(ig2>0) bars+=`<rect x="${x}" y="${ytot}" width="${BW}" height="${hig}" fill="#D4607A" rx="2"/>`;
-        if(tk>0)  bars+=`<rect x="${x}" y="${ytk}"  width="${BW}" height="${htk}" fill="#5BC8C0" rx="2"/>`;
-        // delta label
-        if(dF&&dF[i]!==null&&dF[i]!==undefined){
-            const d=dF[i];
-            const dl=(d>=0?'+':'')+(d>=1000||d<=-1000?(d/1000).toFixed(1)+'k':d);
-            bars+=`<text x="${x+BW/2}" y="${ytot-18}" text-anchor="middle" font-size="9" font-weight="600" fill="${d>=0?'#3A9E97':'#e05050'}">${dl}</text>`;
-        }
-        // total label
-        if(tot>0){
-            const tl=tot>=1000?(tot/1000).toFixed(1).replace(/.0$/,'')+'k':tot;
-            bars+=`<text x="${x+BW/2}" y="${ytot-6}" text-anchor="middle" font-size="10" font-weight="600" fill="#2C2226">${tl}</text>`;
-        }
-        // month label
-        bars+=`<text x="${x+BW/2}" y="${PT+CH+16}" text-anchor="middle" font-size="9.5" fill="#7A6872">${parseInt(mo)}月</text>`;
-        // year label (when year changes)
-        const prevY=i>0?keys[i-1].split('-')[0]:null;
-        if(i===0||prevY!==yr){
-            bars+=`<text x="${x+BW/2}" y="${PT+CH+30}" text-anchor="middle" font-size="8" font-weight="600" fill="#C8748A">${yr}</text>`;
-        }
-    });
-    wrap.innerHTML=`<svg width="${TW}" height="${PT+CH+PB}" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-        <line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+CH}" stroke="#EDE7DE" stroke-width="1.5"/>
-        ${tks}${bars}
-    </svg>`;
-}
 
-function exportAllData(){
-    const payload = {
-        exportDate: new Date().toISOString().slice(0,10),
-        orders:      JSON.parse(localStorage.getItem('dct_v9_ultimate')   || '[]'),
-        manualMonths:JSON.parse(localStorage.getItem('dct_manual_months') || '{}'),
-        curveData:   JSON.parse(localStorage.getItem('dct_monthly_data_v1')|| '{}'),
-        profile:     JSON.parse(localStorage.getItem('dct_profile')       || '{}'),
-        goal:        localStorage.getItem('dct_goal') || '0',
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'DCT_Money_備份_' + payload.exportDate + '.json';
-    a.click();
-    showToast('✓ 備份已匯出！請存至安全的地方');
-}
 
-function importAllData(e){
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-        try {
-            const data = JSON.parse(ev.target.result);
-            // Merge orders
-            if(Array.isArray(data.orders)){
-                const existing = JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]');
-                const merged = [...existing];
-                data.orders.forEach(o => { if(!merged.find(e=>e.id===o.id)) merged.push(o); });
-                saveOrders(merged);
-            }
-            // Merge manual months
-            if(data.manualMonths){
-                const ex = getManualData();
-                saveManualDataStore({...data.manualMonths, ...ex});
-            }
-            // Merge curve data
-            if(data.curveData){
-                const ex = JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}');
-                localStorage.setItem('dct_monthly_data_v1', JSON.stringify({...data.curveData,...ex}));
-                curveDB = JSON.parse(localStorage.getItem('dct_monthly_data_v1'));
-            }
-            // Restore profile (only if not already set)
-            if(data.profile && !getProfile().name){
-                saveProfileData(data.profile);
-                loadProfileUI();
-            }
-            // Restore goal
-            if(data.goal) localStorage.setItem('dct_goal', data.goal);
-            loadDashboards(); renderChart(); renderCurveCharts(); renderCurveTableFiltered();
-            showToast('✓ 還原成功！資料已合併匯入');
-        } catch(err) {
-            showToast('⚠ 檔案格式錯誤，請確認是正確的備份檔');
-        }
-    };
-    reader.readAsText(file);
-    e.target.value = '';
-}
+
+
+
+
+
+
 
 
 
