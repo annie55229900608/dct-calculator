@@ -619,6 +619,8 @@
 
 
 
+
+
 window.onerror=function(){return true;};
 
 function showOnboardingIfNeeded(){
@@ -1361,6 +1363,7 @@ function initReview(){
     if(cm) cm.value=new Date().getMonth();
     updateReviewTitle();
     renderPastReviews();
+    loadReviewData();
 }
 
 
@@ -1388,6 +1391,11 @@ function loadReviewData(){
             mN+=(r.nurture||0);
         }
     });
+    // Auto-fill from manual monthly data
+    var manKey=y+'-'+m;
+    var manD=getManualData()[manKey]||{};
+    mR += manD.retail||0;
+    mT += manD.team||0;
     // Auto-fill from curve
     var cKey=y+'-'+String(parseInt(m)+1).padStart(2,'0');
     var cData=curveDB[cKey]||{};
@@ -1417,9 +1425,9 @@ function loadReviewData(){
     updateReviewTotal();
     // Show auto note
     var note=document.getElementById('reviewAutoNote');
-    if(note&&(mR||mT||mN)){
+    if(note&&(mR||mT||mN||manD.retail||manD.team)){
         note.style.display='block';
-        note.innerHTML='✦ 已自動帶入本月業績：零售 $'+mR.toLocaleString()+' · 團隊 $'+mT.toLocaleString()+' · 培育 $'+mN.toLocaleString();
+        note.innerHTML='✦ 已自動帶入本月業績（含手動）：零售淨利 $'+mR.toLocaleString()+' · 團隊淨利 $'+mT.toLocaleString()+(mN?' · 培育 $'+mN.toLocaleString():'');
     }
     renderPastReviews();
 }
@@ -2422,6 +2430,8 @@ var curveCharts = {}; // legacy stubs kept for safety
 
 
 
+
+
 </script>
 <!-- ════════ 復盤 ════════ -->
 <div id="tab-review" class="container">
@@ -2438,12 +2448,13 @@ var curveCharts = {}; // legacy stubs kept for safety
     <div class="card" style="margin-bottom:12px;">
         <div class="card-header">選擇復盤月份</div>
         <div style="display:flex;gap:8px;align-items:center;">
-            <div style="position:relative;flex:1;"><select id="reviewYear" class="month-select" style="display:none;font-size:.8rem;padding:9px 28px 9px 10px;"></select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
-            <div style="position:relative;flex:1;"><select id="reviewMonth" class="month-select" style="font-size:.8rem;padding:9px 28px 9px 10px;">
+            <div style="position:relative;flex:1;"><select id="reviewYear" class="month-select" onchange="loadReviewData()" style="display:none;font-size:.8rem;padding:9px 28px 9px 10px;"></select><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;font-size:.8rem;">▾</span></div>
+            <div style="position:relative;flex:1;"><select id="reviewMonth" class="month-select" style="font-size:.8rem;padding:9px 28px 9px 10px;" onchange="loadReviewData();">
                 <option value="0">1月</option><option value="1">2月</option><option value="2">3月</option><option value="3">4月</option><option value="4">5月</option><option value="5">6月</option><option value="6">7月</option><option value="7">8月</option><option value="8">9月</option><option value="9">10月</option><option value="10">11月</option><option value="11">12月</option>
             </select><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--rose);pointer-events:none;">▾</span></div>
         </div>
         <div id="reviewAutoNote" style="font-size:.72rem;color:var(--rose-deep);margin-top:8px;padding:8px 10px;background:var(--rose-pale);border-radius:8px;display:none;"></div>
+        <button onclick="loadReviewData()" style="width:100%;margin-top:12px;padding:14px;background:linear-gradient(135deg,var(--rose),var(--rose-deep));color:white;border:none;border-radius:12px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit;letter-spacing:.5px;box-shadow:0 3px 12px rgba(200,116,138,.3);">📊 抓取本月業績資料</button>
     </div>
 
     <!-- 活動庫存 -->
