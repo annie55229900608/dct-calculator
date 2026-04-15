@@ -615,6 +615,9 @@
 
 
 
+
+
+
 window.onerror=function(){return true;};
 
 function showOnboardingIfNeeded(){
@@ -1876,7 +1879,7 @@ function loadDashboards(){
     todayOrders.sort(function(a,b){ return b.rd-a.rd; }).forEach(function(__o__){ var r=__o__.r,rd=__o__.rd;
         var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
         var back=r.orderDate&&new Date(r.orderDate).toDateString()!==new Date(r.id).toDateString();
-        dL+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}${back?'<span class="date-badge">補登</span>':''}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">${bl} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="order-profit">+$${r.profit.toLocaleString()}</div></div><div class="order-items">${r.items.map(i=>`${i.name}×${i.qty}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
+        dL+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}${back?'<span class="date-badge">補登</span>':''}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">${bl} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="order-profit">+$${r.profit.toLocaleString()}</div></div><div class="order-items">${r.items.map(function(i){ return i.name+'×'+i.qty; }).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
     document.getElementById('dTotalProfit').innerText=`$${dP.toLocaleString()}`;
     document.getElementById('dTotalRev').innerText=`$${dR.toLocaleString()}`;
@@ -1940,11 +1943,11 @@ function renderHistoryMonth(){
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div style="background:rgba(91,200,192,.1);border:1px solid rgba(91,200,192,.3);border-radius:10px;padding:12px;text-align:center;">
-                <div style="font-size:.67rem;color:#3A9E97;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第一口袋 零售</div>
+                <div style="font-size:.67rem;color:#3A9E97;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第一口袋 零售淨利</div>
                 <div style="font-size:1rem;font-weight:600;color:#3A9E97">$${rP.toLocaleString()}</div>
             </div>
             <div style="background:rgba(59,110,222,.08);border:1px solid rgba(59,110,222,.2);border-radius:10px;padding:12px;text-align:center;">
-                <div style="font-size:.67rem;color:#2856C8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第二口袋 團隊</div>
+                <div style="font-size:.67rem;color:#2856C8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">第二口袋 團隊淨利</div>
                 <div style="font-size:1rem;font-weight:600;color:#2856C8">$${tP2.toLocaleString()}</div>
             </div>
         </div>
@@ -1970,7 +1973,7 @@ function renderHistoryMonth(){
         var ds=`${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
         var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
         var tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
-        html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(i=>`${i.name} × ${i.qty}${i.unit}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
+        html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(function(i){ return i.name+' × '+i.qty+i.unit; }).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
     c.innerHTML=html;
 }
@@ -2072,8 +2075,8 @@ function renderChartTableFiltered(){
                 <button onclick="toggleChartEdit('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button>
             </div>
             <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
-                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售 $${d.retail.toLocaleString()}</span>
-                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊 $${d.team.toLocaleString()}</span>
+                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售額 $${d.retail.toLocaleString()}</span>
+                <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#3B6EDE;border-radius:2px;margin-right:4px;vertical-align:middle"></span>團隊額 $${d.team.toLocaleString()}</span>
             </div>
             <div id="${mk}" style="display:none;background:var(--rose-pale);border-radius:10px;padding:12px;margin-top:8px;">
                 <div style="font-size:.72rem;color:var(--rose-deep);margin-bottom:8px;font-weight:600;">修改手動輸入數字</div>
@@ -2170,7 +2173,7 @@ function saveChartEdit(key){
 function renderChart(){
     var rs=getOrders();
     var data={};
-    rs.forEach(function(r){var d=getOrderDate(r);var k=`${d.getFullYear()}-${d.getMonth()}`;if(!data[k])data[k]={retail:0,team:0};if(r.type==='retail')data[k].retail+=r.rev;else data[k].team+=r.rev;});
+    rs.forEach(function(r){var d=getOrderDate(r);var k=`${d.getFullYear()}-${d.getMonth()}`;if(!data[k])data[k]={retail:0,team:0};if(r.type==='retail')data[k].retail+=r.profit;else data[k].team+=r.profit;});
     // Merge manual entries
     var manualD=getManualData();
     Object.keys(manualD).forEach(function(k){
@@ -2362,7 +2365,7 @@ function onSearchInput(){
         // Highlight matching text in note
         var regex=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
         var hiNote=(r.note||'').replace(regex,'<mark style="background:#FFE8C0;border-radius:3px;padding:0 2px">$1</mark>');
-        html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${hiNote}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(i=>`${i.name} × ${i.qty}${i.unit}`).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
+        html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${hiNote}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(function(i){ return i.name+' × '+i.qty+i.unit; }).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
     sr.innerHTML=html;
 }
@@ -2385,10 +2388,14 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 //  魔術曲線圖 JS
 // ══════════════════════════════════════════
 var CURVE_STORAGE = 'dct_monthly_data_v1';
+var REVIEW_KEY_MONEY = 'dct_money_review_v1';
 var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
+
+
 
 
 
