@@ -628,6 +628,8 @@
 
 
 
+
+
 window.onerror=function(){return true;};
 
 function showOnboardingIfNeeded(){
@@ -1389,13 +1391,12 @@ function loadReviewData(){
     // title hidden
     // Auto-fill from orders
     var rs=getOrders();
-    var mR=0,mT=0,mN=0;
+    var mR=0,mT=0;
     rs.forEach(function(r){
         var d=new Date(r.orderDate||r.id);
         if(String(d.getFullYear())===String(y)&&String(d.getMonth())===String(m)){
             if(r.type==='retail') mR+=r.profit;
             else if(r.type==='team') mT+=r.profit;
-            mN+=(r.nurture||0);
         }
     });
     // Auto-fill from manual monthly data
@@ -1422,19 +1423,31 @@ function loadReviewData(){
     if(retEl) retEl.value=saved.rv_retail!==undefined?saved.rv_retail:mR||'';
     var teamEl=document.getElementById('rv_team');
     if(teamEl) teamEl.value=saved.rv_team!==undefined?saved.rv_team:mT||'';
-    var nurEl=document.getElementById('rv_nurture');
-    if(nurEl) nurEl.value=saved.rv_nurture!==undefined?saved.rv_nurture:mN||'';
+
     // Auto-fill TikTok/IG if not saved
     var tikEl=document.getElementById('rv_tiktok');
     if(tikEl&&!saved.rv_tiktok&&cData.tiktok) tikEl.value=cData.tiktok;
     var igEl=document.getElementById('rv_ig');
     if(igEl&&!saved.rv_ig&&cData.ig) igEl.value=cData.ig;
+    // Auto-fill fans growth: current month total - previous month total
+    var fgEl=document.getElementById('rv_fans_growth');
+    if(fgEl&&!saved.rv_fans_growth){
+        var allKeys=Object.keys(curveDB).sort();
+        var cKeyIdx=allKeys.indexOf(cKey);
+        if(cKeyIdx>0&&curveDB[cKey]){
+            var prevKey=allKeys[cKeyIdx-1];
+            var curTotal=(curveDB[cKey].tiktok||0)+(curveDB[cKey].ig||0);
+            var prevTotal=(curveDB[prevKey].tiktok||0)+(curveDB[prevKey].ig||0);
+            var growth=curTotal-prevTotal;
+            if(growth>0) fgEl.value=growth;
+        }
+    }
     updateReviewTotal();
     // Show auto note
     var note=document.getElementById('reviewAutoNote');
-    if(note&&(mR||mT||mN||manD.retail||manD.team)){
+    if(note&&(mR||mT||manD.retail||manD.team)){
         note.style.display='block';
-        note.innerHTML='✦ 已自動帶入本月業績（含手動）：零售淨利 $'+mR.toLocaleString()+' · 團隊淨利 $'+mT.toLocaleString()+(mN?' · 培育 $'+mN.toLocaleString():'');
+        note.innerHTML='✦ 已自動帶入本月業績（含手動）：零售淨利 $'+mR.toLocaleString()+' · 團隊淨利 $'+mT.toLocaleString();
     }
     renderPastReviews();
 }
@@ -1443,20 +1456,19 @@ function loadReviewData(){
 function updateReviewTotal(){
     var r=parseInt((document.getElementById('rv_retail')||{}).value)||0;
     var t=parseInt((document.getElementById('rv_team')||{}).value)||0;
-    var n=parseInt((document.getElementById('rv_nurture')||{}).value)||0;
     var el=document.getElementById('rv_total_display');
-    if(el) el.innerText='$'+(r+t+n).toLocaleString();
+    if(el) el.innerText='$'+(r+t).toLocaleString();
 }
 
 // Update total when profit fields change
-['rv_retail','rv_team','rv_nurture'].forEach(function(id){
+['rv_retail','rv_team'].forEach(function(id){
     document.addEventListener('input',function(e){if(e.target&&e.target.id===id) updateReviewTotal();});
 });
 
 
 function saveReview(){
     var key=getReviewKey();
-    var fields=['rv_target','rv_retail','rv_team','rv_nurture','rv_score','rv_score_reason',
+    var fields=['rv_target','rv_retail','rv_team','rv_score','rv_score_reason',
         'rv_compare','rv_breakthrough','rv_improve','rv_next_profit','rv_next_recruit','rv_next_reels',
         'rv_next_todo','rv_next_avoid','rv_next_challenge','rv_self_note','rv_question',
         'rv_new_member','rv_direct','rv_indirect','rv_reels','rv_story','rv_fans_growth',
@@ -1491,11 +1503,11 @@ function copyReview(){
         '剩餘 '+get('rv_jelly_left')+'組',
         '',
         '🔹本月淨利：$'+(
-            (parseInt(get('rv_retail'))||0)+(parseInt(get('rv_team'))||0)+(parseInt(get('rv_nurture'))||0)
+            (parseInt(get('rv_retail'))||0)+(parseInt(get('rv_team'))||0)
         ).toLocaleString(),
         '　零售淨利：$'+(get('rv_retail')||0),
         '　團隊淨利：$'+(get('rv_team')||0),
-        '　培育獎金：$'+(get('rv_nurture')||0),
+
         '',
         '🔹目標淨利：$'+get('rv_target'),
         '🔹本月給自己打幾分：'+get('rv_score')+'分',
@@ -1627,7 +1639,7 @@ function jumpToReview(key){
 
 
 
-['rv_retail','rv_team','rv_nurture'].forEach(function(id){
+['rv_retail','rv_team'].forEach(function(id){
     document.addEventListener('input',function(e){if(e.target&&e.target.id===id) updateReviewTotal();});
 });
 
@@ -2440,6 +2452,8 @@ var curveCharts = {}; // legacy stubs kept for safety
 
 
 
+
+
 </script>
 <!-- ════════ 復盤 ════════ -->
 <div id="tab-review" class="container">
@@ -2490,7 +2504,7 @@ var curveCharts = {}; // legacy stubs kept for safety
         <div class="input-group"><span class="input-label">原設定目標淨利</span><input type="number" id="rv_target" class="custom-input" placeholder="$"></div>
         <div class="input-group"><span class="input-label">🟡 零售淨利</span><input type="number" id="rv_retail" class="custom-input" style="border-left:3px solid #C9A84C;" placeholder="$"></div>
         <div class="input-group"><span class="input-label">🔵 團隊淨利（無加盟商填0）</span><input type="number" id="rv_team" class="custom-input" style="border-left:3px solid #5A7EC7;" placeholder="$"></div>
-        <div class="input-group"><span class="input-label">🟢 培育獎金</span><input type="number" id="rv_nurture" class="custom-input" style="border-left:3px solid #4BAE73;" placeholder="$"></div>
+
         <div style="background:var(--beige);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;">
             <div style="font-size:.7rem;color:var(--rose-deep);opacity:.7;margin-bottom:4px;">本月總淨利</div>
             <div id="rv_total_display" style="font-size:1.6rem;font-weight:700;color:var(--rose);">$0</div>
