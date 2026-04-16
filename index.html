@@ -177,6 +177,12 @@
     </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/annie55229900608/dct-calculator/main/IMG_2570.JPG">
+    <link rel="apple-touch-icon-precomposed" href="https://raw.githubusercontent.com/annie55229900608/dct-calculator/main/IMG_2570.JPG">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="DCT Money">
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/annie55229900608/dct-calculator/main/IMG_2570.JPG">
 </head>
 <body>
 <div class="toast" id="toast"></div>
@@ -578,6 +584,7 @@
 </div>
 
 <script>
+
 
 
 
@@ -1886,7 +1893,7 @@ function loadDashboards(){
         if(rd.getMonth()===lastM&&rd.getFullYear()===lastY){lR+=r.rev;lP+=r.profit;lC+=r.cost;}
     });
     todayOrders.sort(function(a,b){ return b.rd-a.rd; }).forEach(function(__o__){ var r=__o__.r,rd=__o__.rd;
-        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
+        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r.buyerType}).name;
         var back=r.orderDate&&new Date(r.orderDate).toDateString()!==new Date(r.id).toDateString();
         dL+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}${back?'<span class="date-badge">補登</span>':''}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">${bl} · ${rd.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="order-profit">+$${r.profit.toLocaleString()}</div></div><div class="order-items">${r.items.map(function(i){ return i.name+'×'+i.qty; }).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
@@ -1980,7 +1987,7 @@ function renderHistoryMonth(){
     rs.sort(function(a,b){ return getOrderDate(b)-getOrderDate(a); }).forEach(function(r){
         var d=getOrderDate(r);
         var ds=`${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
-        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
+        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r.buyerType}).name;
         var tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
         html+=`<div class="order-card"><div class="order-card-header"><div><div class="order-note">${r.note}</div><div style="font-size:.72rem;color:var(--text-muted);margin-top:3px">${ds} <span style="background:${tb};color:${tc};font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:500">${bl}</span></div></div><div style="text-align:right;"><div class="order-profit">+$${r.profit.toLocaleString()}</div><div style="font-size:.71rem;color:var(--text-muted)">售$${r.rev.toLocaleString()}</div></div></div><div class="order-items">${r.items.map(function(i){ return i.name+' × '+i.qty+i.unit; }).join(' · ')}</div><div class="order-actions"><button class="action-btn edit" onclick="openEditModal(${r.id})">✏ 編輯</button><button class="action-btn" onclick="deleteAndRefresh(${r.id})">刪除</button></div></div>`;
     });
@@ -2369,7 +2376,7 @@ function onSearchInput(){
     all.forEach(function(r){
         var d=getOrderDate(r);
         var ds=`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`;
-        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r}).name.type;
+        var bl=(buyers.find(function(b){ return b.id===r.buyerType; })||{name:r.buyerType}).name;
         var tc=r.type==='retail'?'#3A9E97':'#2856C8',tb=r.type==='retail'?'rgba(91,200,192,.12)':'rgba(59,110,222,.1)';
         // Highlight matching text in note
         var regex=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
@@ -2402,6 +2409,7 @@ var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
 
 
 
@@ -2572,10 +2580,7 @@ var curveCharts = {}; // legacy stubs kept for safety
         </div>
         <div style="background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:var(--rose-deep);">💡 算完可以直接截圖傳給客人，省下打字的時間 🌸</div>
     </div>
-    <div style="text-align:center;padding:20px 0;font-size:.8rem;color:var(--text-muted);line-height:1.9;">
-        有任何問題隨時詢問上家 💕<br>
-        <span style="color:var(--rose-deep);font-weight:500;">妳可以的！加油 🌸</span>
-    </div>
+
 
 
     
@@ -2708,4 +2713,9 @@ var curveCharts = {}; // legacy stubs kept for safety
             <div>📤 <strong>換裝置時匯入</strong> — 匯入備份檔完整還原所有數據</div>
         </div>
         <div style="background:#FFF8EE;border:1px solid #FAE5B8;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.76rem;color:#B08840;">⚠️ <strong>重要：</strong>清除瀏覽器快取會刪除全部資料！請每月備份一次！</div>
+    </div>
+
+    <div style="text-align:center;padding:20px 0 8px;font-size:.85rem;color:var(--text-muted);line-height:2;">
+        有任何問題隨時詢問上家 💕<br>
+        <span style="color:var(--rose-deep);font-weight:600;">妳可以的！加油 🌸</span>
     </div>
