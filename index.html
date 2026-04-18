@@ -630,6 +630,9 @@
 
 
 
+
+
+
 window.onerror=function(){return true;};
 
 function showOnboardingIfNeeded(){
@@ -1429,19 +1432,20 @@ function loadReviewData(){
     if(tikEl&&!saved.rv_tiktok&&cData.tiktok) tikEl.value=cData.tiktok;
     var igEl=document.getElementById('rv_ig');
     if(igEl&&!saved.rv_ig&&cData.ig) igEl.value=cData.ig;
-    // Auto-fill fans growth: current month total - previous month total
-    var fgEl=document.getElementById('rv_fans_growth');
-    if(fgEl&&!saved.rv_fans_growth){
+    // Auto-calculate fans growth from curveDB
+    (function calcFansGrowth(){
+        var fgEl=document.getElementById('rv_fans_growth');
+        if(!fgEl) return;
         var allKeys=Object.keys(curveDB).sort();
         var cKeyIdx=allKeys.indexOf(cKey);
         if(cKeyIdx>0&&curveDB[cKey]){
             var prevKey=allKeys[cKeyIdx-1];
-            var curTotal=(curveDB[cKey].tiktok||0)+(curveDB[cKey].ig||0);
-            var prevTotal=(curveDB[prevKey].tiktok||0)+(curveDB[prevKey].ig||0);
-            var growth=curTotal-prevTotal;
-            if(growth>0) fgEl.value=growth;
+            var tikGrowth=(curveDB[cKey].tiktok||0)-(curveDB[prevKey].tiktok||0);
+            var igGrowth=(curveDB[cKey].ig||0)-(curveDB[prevKey].ig||0);
+            var total=tikGrowth+igGrowth;
+            fgEl.value=total>0?total:0;
         }
-    }
+    })();
     updateReviewTotal();
     // Show auto note
     var note=document.getElementById('reviewAutoNote');
@@ -1892,7 +1896,7 @@ function loadDashboards(){
     var todayStr=new Date().toDateString(),curM=new Date().getMonth(),curY=new Date().getFullYear();
     var lastM=curM===0?11:curM-1,lastY=curM===0?curY-1:curY;
     var dP=0,dR=0,dC=0,dI={},dL='',mR=0,mP=0,mC=0,mRR=0,mTR=0,mI={},lR=0,lP=0,lC=0;
-    var ser={"本月活動":0,"上月活動":0,"纖體":0,"美肌":0,"保健":0};
+    var ser={"本月活動":0,"上月活動":0,"纖體":0,"美肌":0,"保健":0};var serKnown={"本月活動":1,"上月活動":1,"纖體":1,"美肌":1,"保健":1,"活動":1};
     var todayOrders=[];
     rs.forEach(function(r){
         var rd=getOrderDate(r);
@@ -1901,7 +1905,7 @@ function loadDashboards(){
             r.items.forEach(function(i){ dI[i.name]={q:(dI[i.name]?dI[i.name].q||0:0)+i.qty,u:i.unit}; });
             todayOrders.push({r,rd});
         }
-        if(rd.getMonth()===curM&&rd.getFullYear()===curY){mR+=r.rev;mP+=r.profit;mC+=r.cost;if(r.type==='retail')mRR+=r.rev;else mTR+=r.rev;r.items.forEach(function(i){mI[i.name]={q:(mI[i.name]?mI[i.name].q||0:0)+i.qty,u:i.unit};ser[i.cat]+=r.rev;});}
+        if(rd.getMonth()===curM&&rd.getFullYear()===curY){mR+=r.rev;mP+=r.profit;mC+=r.cost;if(r.type==='retail')mRR+=r.rev;else mTR+=r.rev;r.items.forEach(function(i){mI[i.name]={q:(mI[i.name]?mI[i.name].q||0:0)+i.qty,u:i.unit};var sCat=i.cat==="活動"?"本月活動":i.cat;if(ser[sCat]!==undefined)ser[sCat]+=r.profit;});}
         if(rd.getMonth()===lastM&&rd.getFullYear()===lastY){lR+=r.rev;lP+=r.profit;lC+=r.cost;}
     });
     todayOrders.sort(function(a,b){ return b.rd-a.rd; }).forEach(function(__o__){ var r=__o__.r,rd=__o__.rd;
@@ -1929,7 +1933,7 @@ function loadDashboards(){
     var mIH='';Object.keys(mI).sort(function(a,b){ return mI[b].q-mI[a].q; }).forEach(function(e){ mIH+='<div class="item-row"><span>'+e+'</span><b>'+mI[e].q+' '+mI[e].u+'</b></div>'; });
     document.getElementById('mItemStats').innerHTML=mIH||'<span style="font-size:.81rem;color:var(--text-muted)">無數據</span>';
     var sC={"本月活動":"#C8748A","上月活動":"#E8A0B0","纖體":"#7BBFDB","美肌":"#A98BC7","保健":"#7AB894"};
-    var ts=Object.values(ser).reduce(function(a,b){ return a+b,0; }),sH='';
+    var ts=Object.values(ser).reduce(function(a,b){ return a+b; },0),sH='';
     for(var s in ser){var p=ts>0?Math.round(ser[s]/ts*100):0;sH+=`<div class="series-container"><div class="series-label"><span>${s}</span><span>${p}%</span></div><div class="series-bar"><div class="series-fill" style="width:${p}%;background:${sC[s]}"></div></div></div>`;}
     document.getElementById('seriesChart').innerHTML=sH;
 }
@@ -2421,6 +2425,9 @@ var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
+
+
 
 
 
