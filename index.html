@@ -588,6 +588,8 @@
 
 <script>
 
+
+
 function showCoinRain(){
     var btn=document.querySelector('.save-btn');
     var rect=btn?btn.getBoundingClientRect():{left:window.innerWidth/2-30,top:window.innerHeight-100,width:60};
@@ -1693,10 +1695,11 @@ function skipDMOnboarding(){
 
 if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
 var products={
-    "本月活動A 纖體組":{cat:"本月活動",unit:"組",L2:2640,L3_sup:2865,L3_ret:2970,intern:3480,retail:3840,vip:3840,discount:3840,msrp:12120},
-    "本月活動B 美肌組":{cat:"本月活動",unit:"組",L2:2290,L3_sup:2565,L3_ret:2660,intern:3070,retail:3560,vip:3560,discount:3560,msrp:5250},
-    "益生菌 買三送一":{cat:"上月活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
-    "葉黃素凍 買三送一":{cat:"上月活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
+        "肽纖飲組合":{cat:"本月活動",unit:"組",L2:1740,L3_sup:1905,L3_ret:1980,intern:2340,retail:2490,vip:2490,discount:2490,msrp:2490},
+    "纖體組（活動）":{cat:"上月活動",unit:"組",L2:2640,L3_sup:2865,L3_ret:2970,intern:3480,retail:3840,vip:3840,discount:3840,msrp:12120},
+    "美肌組（活動）":{cat:"上月活動",unit:"組",L2:2290,L3_sup:2565,L3_ret:2660,intern:3070,retail:3560,vip:3560,discount:3560,msrp:5250},
+    "益生菌（買三送一）":{cat:"上月活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
+    "葉黃素凍（買三送一）":{cat:"上月活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
     "纖纖飲X":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
     "纖飄錠":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
     "雪花紫纖飲":{cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
@@ -2124,7 +2127,7 @@ function renderChartTableFiltered(){
         th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                 <span style="font-size:.82rem;font-weight:600">${y}年${parseInt(mo)+1}月 <span style="color:var(--rose);margin-left:4px">$${tot.toLocaleString()}</span>${hasManual?'<span style="font-size:.65rem;background:var(--rose-pale);color:var(--rose-deep);padding:2px 6px;border-radius:5px;margin-left:5px">含手動</span>':''}</span>
-                <button onclick="toggleChartEdit('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button>
+                <button onclick="toggleChartEdit('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button><button onclick="deleteManualEntry('${k}')" style="background:transparent;border:1px solid #fcc;border-radius:6px;padding:3px 8px;font-size:.7rem;color:#c55;cursor:pointer;font-family:inherit;margin-left:4px;">刪除</button>
             </div>
             <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
                 <span style="font-size:.75rem"><span style="display:inline-block;width:8px;height:8px;background:#5BC8C0;border-radius:2px;margin-right:4px;vertical-align:middle"></span>零售淨利 $${d.retail.toLocaleString()}</span>
@@ -2164,7 +2167,7 @@ function renderCurveTableFiltered(){
         html+=`<div style="padding:10px 0;border-bottom:1px solid var(--beige-dark);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:.83rem;font-weight:600;color:var(--rose-deep)">${y}年${parseInt(m)}月</span>
-                <button onclick="toggleCurveEdit2('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button>
+                <button onclick="toggleCurveEdit2('${k}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.7rem;color:var(--rose);cursor:pointer;font-family:inherit;">✏ 編輯</button><button onclick="if(confirm('確定刪除此月份？')){deleteCurveRow('${k}')}" style="background:transparent;border:1px solid #fcc;border-radius:6px;padding:3px 8px;font-size:.7rem;color:#c55;cursor:pointer;font-family:inherit;margin-left:4px;">刪除</button>
             </div>
             <div style="display:flex;gap:14px;">
                 <span style="font-size:.75rem"><span style="display:inline-block;width:7px;height:7px;background:#5BC8C0;border-radius:50%;margin-right:3px;vertical-align:middle"></span>TikTok ${(d.tiktok||0).toLocaleString()}</span>
@@ -2445,6 +2448,8 @@ var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
+
 
 
 
