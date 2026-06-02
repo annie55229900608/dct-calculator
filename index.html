@@ -590,6 +590,7 @@
 
 
 
+
 function showCoinRain(){
     var btn=document.querySelector('.save-btn');
     var rect=btn?btn.getBoundingClientRect():{left:window.innerWidth/2-30,top:window.innerHeight-100,width:60};
@@ -1518,12 +1519,12 @@ function copyReview(){
         '@All 想成長者完成月復盤',
         '上家會跟你說目前你的狀況可以怎麼調整',
         '',
-        '🪐益生菌',
+        '🌿纖體組',
         '叫貨 '+get('rv_pro_order')+'組',
         '銷售 '+get('rv_pro_sell')+'組',
         '剩餘 '+get('rv_pro_left')+'組',
         '',
-        '🪐果凍',
+        '✨美肌組',
         '叫貨 '+get('rv_jelly_order')+'組',
         '銷售 '+get('rv_jelly_sell')+'組',
         '剩餘 '+get('rv_jelly_left')+'組',
@@ -2488,6 +2489,7 @@ var curveCharts = {}; // legacy stubs kept for safety
 
 
 
+
 </script>
 <!-- ════════ 復盤 ════════ -->
 <div id="tab-review" class="container">
@@ -2516,14 +2518,14 @@ var curveCharts = {}; // legacy stubs kept for safety
     <!-- 活動庫存 -->
     <div class="card">
         <div class="card-header">🪐 活動庫存</div>
-        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px;">益生菌 / 果凍各填叫貨、銷售、剩餘</div>
-        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">🪐 益生菌</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px;">纖體組 / 美肌組各填叫貨、銷售、剩餘</div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">🌿 纖體組</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
             <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_pro_order" class="custom-input" placeholder="0組"></div>
             <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_pro_sell" class="custom-input" placeholder="0組"></div>
             <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_pro_left" class="custom-input" placeholder="0組"></div>
         </div>
-        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">🪐 果凍</div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">✨ 美肌組</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
             <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_jelly_order" class="custom-input" placeholder="0組"></div>
             <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_jelly_sell" class="custom-input" placeholder="0組"></div>
