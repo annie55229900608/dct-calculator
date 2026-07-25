@@ -591,6 +591,8 @@
 
 
 
+
+
 function showCoinRain(){
     var btn=document.querySelector('.save-btn');
     var rect=btn?btn.getBoundingClientRect():{left:window.innerWidth/2-30,top:window.innerHeight-100,width:60};
@@ -1519,12 +1521,12 @@ function copyReview(){
         '@All 想成長者完成月復盤',
         '上家會跟你說目前你的狀況可以怎麼調整',
         '',
-        '🌿纖體組',
+        '💊肽纖飲活動',
         '叫貨 '+get('rv_pro_order')+'組',
         '銷售 '+get('rv_pro_sell')+'組',
         '剩餘 '+get('rv_pro_left')+'組',
         '',
-        '✨美肌組',
+        '',
         '叫貨 '+get('rv_jelly_order')+'組',
         '銷售 '+get('rv_jelly_sell')+'組',
         '剩餘 '+get('rv_jelly_left')+'組',
@@ -1696,11 +1698,13 @@ function skipDMOnboarding(){
 
 if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
 var products={
-        "肽纖飲組合":{cat:"本月活動",unit:"組",L2:1740,L3_sup:1905,L3_ret:1980,intern:2340,retail:2490,vip:2490,discount:2490,msrp:2490},
-    "纖體組（活動）":{cat:"上月活動",unit:"組",L2:2640,L3_sup:2865,L3_ret:2970,intern:3480,retail:3840,vip:3840,discount:3840,msrp:12120},
-    "美肌組（活動）":{cat:"上月活動",unit:"組",L2:2290,L3_sup:2565,L3_ret:2660,intern:3070,retail:3560,vip:3560,discount:3560,msrp:5250},
-    "益生菌（買三送一）":{cat:"上月活動",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
-    "葉黃素凍（買三送一）":{cat:"上月活動",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
+            "葉黃素活動":{cat:"本月活動",unit:"盒",L2:1920,L3_sup:2085,L3_ret:2160,intern:2520,retail:2700,vip:2700,discount:2700,msrp:2700},
+    "法樂蓬活動":{cat:"本月活動",unit:"組",L2:2050,L3_sup:2220,L3_ret:2300,intern:2670,retail:2900,vip:2900,discount:2900,msrp:2900},
+    "肽纖飲組合":{cat:"上月活動",unit:"組",L2:1740,L3_sup:1905,L3_ret:1980,intern:2340,retail:2490,vip:2490,discount:2490,msrp:2490},
+    "纖體組（活動）":{cat:"_hidden",unit:"組",L2:2640,L3_sup:2865,L3_ret:2970,intern:3480,retail:3840,vip:3840,discount:3840,msrp:12120},
+    "美肌組（活動）":{cat:"_hidden",unit:"組",L2:2290,L3_sup:2565,L3_ret:2660,intern:3070,retail:3560,vip:3560,discount:3560,msrp:5250},
+    "益生菌（買三送一）":{cat:"_hidden",unit:"組",L2:2310,L3_sup:2490,L3_ret:2580,intern:2970,vip:3300,discount:3300,retail:3300},
+    "葉黃素凍（買三送一）":{cat:"_hidden",unit:"組",L2:1230,L3_sup:1320,L3_ret:1365,intern:1590,vip:1800,discount:1800,retail:1800},
     "纖纖飲X":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
     "纖飄錠":{cat:"纖體",unit:"盒",L2:880,L3_sup:955,L3_ret:990,intern:1160,vip:1280,discount:1380,retail:1480},
     "雪花紫纖飲":{cat:"纖體",unit:"盒",L2:580,L3_sup:635,L3_ret:660,intern:780,vip:830,discount:900,retail:990},
@@ -2122,7 +2126,7 @@ function renderChartTableFiltered(){
     var data=getMonthlyData();
     var manualD=getManualData();
     var th='';
-    Object.keys(data).filter(function(k){ return !yr||k.startsWith(yr); }).sort(function(a,b){ return b.localeCompare(a); }).forEach(function(k){
+    Object.keys(data).filter(function(k){ return !yr||k.startsWith(yr); }).sort(function(a,b){ var sa=a.split('-'),sb=b.split('-'); return parseInt(sb[0])-parseInt(sa[0])||parseInt(sb[1])-parseInt(sa[1]); }).forEach(function(k){
         var d=data[k],[y,mo]=k.split('-'),tot=d.retail+d.team;
         var mk='edit_'+k.replace('-','_'),hasManual=!!manualD[k];
         th+=`<div style="padding:12px 0;border-bottom:1px solid var(--beige-dark);">
@@ -2237,7 +2241,7 @@ function renderChart(){
         data[k].retail+=manualD[k].retail||0;
         data[k].team+=manualD[k].team||0;
     });
-    var keys=Object.keys(data).sort();
+    var keys=Object.keys(data).sort(function(a,b){ var sa=a.split('-'),sb=b.split('-'); return parseInt(sa[0])-parseInt(sb[0])||parseInt(sa[1])-parseInt(sb[1]); });
     if(!keys.length){document.getElementById('chartWrap').innerHTML='<div style="text-align:center;padding:20px;font-size:.82rem;color:var(--text-muted)">尚無數據，請先新增訂單</div>';document.getElementById('chartTable').innerHTML='';return;}
     var VISIBLE=18;
     var _wrap=document.getElementById('chartWrap');
@@ -2490,6 +2494,8 @@ var curveCharts = {}; // legacy stubs kept for safety
 
 
 
+
+
 </script>
 <!-- ════════ 復盤 ════════ -->
 <div id="tab-review" class="container">
@@ -2518,18 +2524,10 @@ var curveCharts = {}; // legacy stubs kept for safety
     <!-- 活動庫存 -->
     <div class="card">
         <div class="card-header">🪐 活動庫存</div>
-        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px;">纖體組 / 美肌組各填叫貨、銷售、剩餘</div>
-        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">🌿 纖體組</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
             <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_pro_order" class="custom-input" placeholder="0組"></div>
             <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_pro_sell" class="custom-input" placeholder="0組"></div>
             <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_pro_left" class="custom-input" placeholder="0組"></div>
-        </div>
-        <div style="font-size:.8rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">✨ 美肌組</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-            <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_jelly_order" class="custom-input" placeholder="0組"></div>
-            <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_jelly_sell" class="custom-input" placeholder="0組"></div>
-            <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_jelly_left" class="custom-input" placeholder="0組"></div>
         </div>
     </div>
 
