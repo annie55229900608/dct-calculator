@@ -593,6 +593,9 @@
 
 
 
+
+
+
 function showCoinRain(){
     var btn=document.querySelector('.save-btn');
     var rect=btn?btn.getBoundingClientRect():{left:window.innerWidth/2-30,top:window.innerHeight-100,width:60};
@@ -1441,7 +1444,7 @@ function loadReviewData(){
     var fields=['rv_target','rv_score','rv_score_reason','rv_compare','rv_breakthrough','rv_improve',
         'rv_next_profit','rv_next_recruit','rv_next_reels','rv_next_todo','rv_next_avoid','rv_next_challenge',
         'rv_self_note','rv_question','rv_new_member','rv_direct','rv_indirect','rv_reels','rv_story','rv_fans_growth',
-        'rv_pro_order','rv_pro_sell','rv_pro_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
+        'rv_falap_order','rv_falap_sell','rv_falap_left','rv_yls_order','rv_yls_sell','rv_yls_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
     fields.forEach(function(f){
         var el=document.getElementById(f);
         if(el) el.value=saved[f]!==undefined?saved[f]:'';
@@ -1501,7 +1504,7 @@ function saveReview(){
         'rv_compare','rv_breakthrough','rv_improve','rv_next_profit','rv_next_recruit','rv_next_reels',
         'rv_next_todo','rv_next_avoid','rv_next_challenge','rv_self_note','rv_question',
         'rv_new_member','rv_direct','rv_indirect','rv_reels','rv_story','rv_fans_growth',
-        'rv_pro_order','rv_pro_sell','rv_pro_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
+        'rv_falap_order','rv_falap_sell','rv_falap_left','rv_yls_order','rv_yls_sell','rv_yls_left','rv_jelly_order','rv_jelly_sell','rv_jelly_left','rv_tiktok','rv_ig'];
     var data={};
     fields.forEach(function(f){var el=document.getElementById(f);if(el) data[f]=el.value;});
     var all=getReviews();
@@ -1521,10 +1524,16 @@ function copyReview(){
         '@All 想成長者完成月復盤',
         '上家會跟你說目前你的狀況可以怎麼調整',
         '',
-        '💊肽纖飲活動',
-        '叫貨 '+get('rv_pro_order')+'組',
-        '銷售 '+get('rv_pro_sell')+'組',
-        '剩餘 '+get('rv_pro_left')+'組',
+        '🌿法樂蓬活動',
+        '叫貨 '+get('rv_falap_order')+'組',
+        '銷售 '+get('rv_falap_sell')+'組',
+        '剩餘 '+get('rv_falap_left')+'組',
+        '',
+        '✨葉黃素活動',
+        '叫貨 '+get('rv_yls_order')+'組',
+        '銷售 '+get('rv_yls_sell')+'組',
+        '剩餘 '+get('rv_yls_left')+'組',
+        
         '',
         '',
         '叫貨 '+get('rv_jelly_order')+'組',
@@ -1698,8 +1707,10 @@ function skipDMOnboarding(){
 
 if(typeof Chart!=="undefined"&&typeof ChartDataLabels!=="undefined") Chart.register(ChartDataLabels);
 var products={
-            "葉黃素活動":{cat:"本月活動",unit:"盒",L2:1920,L3_sup:2085,L3_ret:2160,intern:2520,retail:2700,vip:2700,discount:2700,msrp:2700},
-    "法樂蓬活動":{cat:"本月活動",unit:"組",L2:2050,L3_sup:2220,L3_ret:2300,intern:2670,retail:2900,vip:2900,discount:2900,msrp:2900},
+            "葉黃素活動":{cat:"上月活動",unit:"盒",L2:1920,L3_sup:2085,L3_ret:2160,intern:2520,retail:2700,vip:2700,discount:2700,msrp:2700},
+    "法樂蓬活動":{cat:"上月活動",unit:"組",L2:2050,L3_sup:2220,L3_ret:2300,intern:2670,retail:2900,vip:2900,discount:2900,msrp:2900},
+        "婕肌零組合":{cat:"本月活動",unit:"組",L2:1160,L3_sup:1270,L3_ret:1320,intern:1560,retail:1660,vip:1660,discount:1660,msrp:2330},
+    "雪聚露組合":{cat:"本月活動",unit:"組",L2:1540,L3_sup:1660,L3_ret:1720,intern:1980,retail:2200,vip:2200,discount:2200,msrp:3550},
     "肽纖飲組合":{cat:"上月活動",unit:"組",L2:1740,L3_sup:1905,L3_ret:1980,intern:2340,retail:2490,vip:2490,discount:2490,msrp:2490},
     "纖體組（活動）":{cat:"_hidden",unit:"組",L2:2640,L3_sup:2865,L3_ret:2970,intern:3480,retail:3840,vip:3840,discount:3840,msrp:12120},
     "美肌組（活動）":{cat:"_hidden",unit:"組",L2:2290,L3_sup:2565,L3_ret:2660,intern:3070,retail:3560,vip:3560,discount:3560,msrp:5250},
@@ -2496,6 +2507,9 @@ var curveCharts = {}; // legacy stubs kept for safety
 
 
 
+
+
+
 </script>
 <!-- ════════ 復盤 ════════ -->
 <div id="tab-review" class="container">
@@ -2524,10 +2538,17 @@ var curveCharts = {}; // legacy stubs kept for safety
     <!-- 活動庫存 -->
     <div class="card">
         <div class="card-header">🪐 活動庫存</div>
+        <div style="font-size:.78rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">🌿 法樂蓬活動</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_falap_order" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_falap_sell" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_falap_left" class="custom-input" placeholder="0組"></div>
+        </div>
+        <div style="font-size:.78rem;font-weight:600;color:var(--rose-deep);margin-bottom:8px;">✨ 葉黃素活動</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-            <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_pro_order" class="custom-input" placeholder="0組"></div>
-            <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_pro_sell" class="custom-input" placeholder="0組"></div>
-            <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_pro_left" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">叫貨</span><input type="number" id="rv_yls_order" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">銷售</span><input type="number" id="rv_yls_sell" class="custom-input" placeholder="0組"></div>
+            <div class="input-group" style="margin-bottom:0"><span class="input-label">剩餘</span><input type="number" id="rv_yls_left" class="custom-input" placeholder="0組"></div>
         </div>
     </div>
 
