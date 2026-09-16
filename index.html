@@ -600,6 +600,7 @@
 
 
 
+
 function showCoinRain(){
     var btn=document.querySelector('.save-btn');
     var rect=btn?btn.getBoundingClientRect():{left:window.innerWidth/2-30,top:window.innerHeight-100,width:60};
@@ -1357,51 +1358,68 @@ function importAllData(e){
     var reader = new FileReader();
     reader.onload = function(ev){
         try {
-            var data = JSON.parse(ev.target.result);
+            var raw = ev.target.result;
+            var data = JSON.parse(raw);
+            if(!data || typeof data !== 'object') throw new Error('不是有效的 JSON 物件');
             var isUnified = data.version === 'unified_v1';
-            var mOrders  = isUnified ? (data.money_orders  || []) : (data.orders || []);
-            var mManual  = isUnified ? (data.money_manual  || {}) : (data.manualMonths || {});
-            var mCurve   = isUnified ? (data.money_curve   || {}) : (data.curveData || {});
-            var mProfile = isUnified ? (data.money_profile || {}) : (data.profile || {});
-            var mGoal    = isUnified ? (data.money_goal    || '0') : (data.goal || '0');
-            var mReview  = isUnified ? (data.money_review  || {}) : (data.review || {});
-            if(Array.isArray(mOrders) && mOrders.length){
-                var ex = JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]');
-                var merged = ex.slice();
-                mOrders.forEach(function(o){ if(!merged.find(function(m2){ return m2.id===o.id; })) merged.push(o); });
+            // --- Money data ---
+            var mOrders  = (isUnified ? data.money_orders  : data.orders)  || [];
+            var mManual  = (isUnified ? data.money_manual  : data.manualMonths) || {};
+            var mCurve   = (isUnified ? data.money_curve   : data.curveData) || {};
+            var mProfile = (isUnified ? data.money_profile : data.profile)  || {};
+            var mGoal    = (isUnified ? data.money_goal    : data.goal)     || '0';
+            var mReview  = (isUnified ? data.money_review  : data.review)   || {};
+            if(!Array.isArray(mOrders)) mOrders=[];
+            if(typeof mManual !== 'object' || !mManual) mManual={};
+            if(typeof mCurve  !== 'object' || !mCurve)  mCurve={};
+            if(typeof mReview !== 'object' || !mReview) mReview={};
+            // Merge orders
+            if(mOrders.length){
+                var ex=JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]')||[];
+                var merged=ex.slice();
+                mOrders.forEach(function(o){ if(o&&o.id&&!merged.find(function(x){ return x.id===o.id; })) merged.push(o); });
                 saveOrders(merged);
             }
-            if(mManual && Object.keys(mManual).length) saveManualDataStore(Object.assign({}, getManualData(), mManual));
-            if(mCurve && Object.keys(mCurve).length){
-                var ex2 = JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}');
-                localStorage.setItem('dct_monthly_data_v1', JSON.stringify(Object.assign({}, mCurve, ex2)));
-                curveDB = JSON.parse(localStorage.getItem('dct_monthly_data_v1'));
+            // Merge manual
+            if(Object.keys(mManual).length){
+                var exM=getManualData();
+                saveManualDataStore(Object.assign({},mManual,exM));
             }
-            if(mProfile && mProfile.name && !getProfile().name){ saveProfileData(mProfile); loadProfileUI(); }
-            if(mGoal) localStorage.setItem('dct_goal', mGoal);
-            if(mReview && Object.keys(mReview).length){
-                var exR = JSON.parse(localStorage.getItem('dct_money_review_v1')||'{}');
-                localStorage.setItem('dct_money_review_v1', JSON.stringify(Object.assign({}, mReview, exR)));
+            // Merge curve
+            if(Object.keys(mCurve).length){
+                var exC=JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}')||{};
+                localStorage.setItem('dct_monthly_data_v1',JSON.stringify(Object.assign({},mCurve,exC)));
+                curveDB=JSON.parse(localStorage.getItem('dct_monthly_data_v1'));
             }
+            if(mProfile&&mProfile.name&&!getProfile().name){ saveProfileData(mProfile); loadProfileUI(); }
+            if(mGoal&&mGoal!=='0') localStorage.setItem('dct_goal',mGoal);
+            if(Object.keys(mReview).length){
+                var exR=JSON.parse(localStorage.getItem('dct_money_review_v1')||'{}')||{};
+                localStorage.setItem('dct_money_review_v1',JSON.stringify(Object.assign({},mReview,exR)));
+            }
+            // --- Promax data (cross-app) ---
             if(isUnified){
-                var pO=data.pro_orders||[]; var pM=data.pro_manual||{}; var pC=data.pro_curve||{};
-                var pP=data.pro_profile||{}; var pG=data.pro_goal||'0'; var pRv=data.pro_review||{};
-                if(pO.length){ var exPO=JSON.parse(localStorage.getItem('dctpro_v1')||'[]'); var mPO=exPO.slice(); pO.forEach(function(o){ if(!mPO.find(function(m2){ return m2.id===o.id; })) mPO.push(o); }); localStorage.setItem('dctpro_v1',JSON.stringify(mPO)); }
-                if(Object.keys(pM).length){ var exPM=JSON.parse(localStorage.getItem('dctpro_manual')||'{}'); localStorage.setItem('dctpro_manual',JSON.stringify(Object.assign({},pM,exPM))); }
-                if(Object.keys(pC).length){ var exPC=JSON.parse(localStorage.getItem('dctpro_curve_v1')||'{}'); localStorage.setItem('dctpro_curve_v1',JSON.stringify(Object.assign({},pC,exPC))); }
-                if(pP.name){ var exPP=JSON.parse(localStorage.getItem('dctpro_profile')||'{}'); if(!exPP.name) localStorage.setItem('dctpro_profile',JSON.stringify(pP)); }
-                if(pG) localStorage.setItem('dctpro_goal',pG);
-                if(Object.keys(pRv).length){ var exPR=JSON.parse(localStorage.getItem('dctpro_review_v1')||'{}'); localStorage.setItem('dctpro_review_v1',JSON.stringify(Object.assign({},pRv,exPR))); }
+                var pO=data.pro_orders||[]; if(!Array.isArray(pO)) pO=[];
+                var pM=data.pro_manual||{}; if(typeof pM!=='object'||!pM) pM={};
+                var pC=data.pro_curve||{};  if(typeof pC!=='object'||!pC) pC={};
+                var pP=data.pro_profile||{}; var pG=data.pro_goal||'0';
+                var pRv=data.pro_review||{}; if(typeof pRv!=='object'||!pRv) pRv={};
+                if(pO.length){ var exPO=JSON.parse(localStorage.getItem('dctpro_v1')||'[]')||[]; var mgP=exPO.slice(); pO.forEach(function(o){ if(o&&o.id&&!mgP.find(function(x){ return x.id===o.id; })) mgP.push(o); }); localStorage.setItem('dctpro_v1',JSON.stringify(mgP)); }
+                if(Object.keys(pM).length){ var exPM=JSON.parse(localStorage.getItem('dctpro_manual')||'{}')||{}; localStorage.setItem('dctpro_manual',JSON.stringify(Object.assign({},pM,exPM))); }
+                if(Object.keys(pC).length){ var exPC=JSON.parse(localStorage.getItem('dctpro_curve_v1')||'{}')||{}; localStorage.setItem('dctpro_curve_v1',JSON.stringify(Object.assign({},pC,exPC))); }
+                if(pP&&pP.name){ var exPP=JSON.parse(localStorage.getItem('dctpro_profile')||'{}')||{}; if(!exPP.name) localStorage.setItem('dctpro_profile',JSON.stringify(pP)); }
+                if(pG&&pG!=='0'){ var exPG=localStorage.getItem('dctpro_goal'); if(!exPG||exPG==='0') localStorage.setItem('dctpro_goal',pG); }
+                if(Object.keys(pRv).length){ var exPR=JSON.parse(localStorage.getItem('dctpro_review_v1')||'{}')||{}; localStorage.setItem('dctpro_review_v1',JSON.stringify(Object.assign({},pRv,exPR))); }
             }
             loadDashboards(); renderChart(); renderCurveCharts(); renderCurveTableFiltered();
-            showToast('✓ 還原成功！兩個 App 的資料都已合併匯入');
+            showToast('✓ 還原成功！資料已合併匯入');
         } catch(err) {
             console.error('Import error:', err);
-            showToast('⚠ 匯入失敗：' + (err.message||'格式錯誤'), '#C8748A');
+            showToast('⚠ 匯入失敗：' + (err&&err.message?err.message:'檔案格式不符'), '#C8748A');
         }
     };
     reader.readAsText(file);
-    e.target.value = '';
+    e.target.value='';
 }
 
 
@@ -2489,6 +2507,7 @@ var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
 
 
 
