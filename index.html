@@ -599,6 +599,7 @@
 
 
 
+
 function showCoinRain(){
     var btn=document.querySelector('.save-btn');
     var rect=btn?btn.getBoundingClientRect():{left:window.innerWidth/2-30,top:window.innerHeight-100,width:60};
@@ -1395,7 +1396,8 @@ function importAllData(e){
             loadDashboards(); renderChart(); renderCurveCharts(); renderCurveTableFiltered();
             showToast('✓ 還原成功！兩個 App 的資料都已合併匯入');
         } catch(err) {
-            showToast('⚠ 檔案格式錯誤，請確認是正確的備份檔');
+            console.error('Import error:', err);
+            showToast('⚠ 匯入失敗：' + (err.message||'格式錯誤'), '#C8748A');
         }
     };
     reader.readAsText(file);
@@ -2487,6 +2489,7 @@ var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
 
 
 
