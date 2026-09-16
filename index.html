@@ -598,6 +598,7 @@
 
 
 
+
 function showCoinRain(){
     var btn=document.querySelector('.save-btn');
     var rect=btn?btn.getBoundingClientRect():{left:window.innerWidth/2-30,top:window.innerHeight-100,width:60};
@@ -1327,54 +1328,72 @@ function renderCurveCharts(){
 function exportAllData(){
     var payload = {
         exportDate: new Date().toISOString().slice(0,10),
-        orders:      JSON.parse(localStorage.getItem('dct_v9_ultimate')   || '[]'),
-        manualMonths:JSON.parse(localStorage.getItem('dct_manual_months') || '{}'),
-        curveData:   JSON.parse(localStorage.getItem('dct_monthly_data_v1')|| '{}'),
-        profile:     JSON.parse(localStorage.getItem('dct_profile')       || '{}'),
-        goal:        localStorage.getItem('dct_goal') || '0',
+        version: 'unified_v1',
+        money_orders:  JSON.parse(localStorage.getItem('dct_v9_ultimate')    || '[]'),
+        money_manual:  JSON.parse(localStorage.getItem('dct_manual_months')  || '{}'),
+        money_curve:   JSON.parse(localStorage.getItem('dct_monthly_data_v1')|| '{}'),
+        money_profile: JSON.parse(localStorage.getItem('dct_profile')        || '{}'),
+        money_goal:    localStorage.getItem('dct_goal') || '0',
+        money_review:  JSON.parse(localStorage.getItem('dct_money_review_v1')|| '{}'),
+        pro_orders:    JSON.parse(localStorage.getItem('dctpro_v1')          || '[]'),
+        pro_manual:    JSON.parse(localStorage.getItem('dctpro_manual')      || '{}'),
+        pro_curve:     JSON.parse(localStorage.getItem('dctpro_curve_v1')    || '{}'),
+        pro_profile:   JSON.parse(localStorage.getItem('dctpro_profile')     || '{}'),
+        pro_goal:      localStorage.getItem('dctpro_goal') || '0',
+        pro_review:    JSON.parse(localStorage.getItem('dctpro_review_v1')   || '{}')
     };
     var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'DCT_Money_備份_' + payload.exportDate + '.json';
+    a.download = 'DCT_雙App備份_' + payload.exportDate + '.json';
     a.click();
-    showToast('✓ 備份已匯出！請存至安全的地方');
+    showToast('✓ 已匯出！此備份可同時還原兩個 App 的所有資料');
 }
 
 function importAllData(e){
     var file = e.target.files[0];
     if(!file) return;
     var reader = new FileReader();
-    reader.onload = function(ev) {
+    reader.onload = function(ev){
         try {
             var data = JSON.parse(ev.target.result);
-            // Merge orders
-            if(Array.isArray(data.orders)){
-                var existing = JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]');
-                var merged = existing.slice();
-                data.orders.forEach(function(o){ if(!merged.find(function(e){ return e.id===o.id; })) merged.push(o); });
+            var isUnified = data.version === 'unified_v1';
+            var mOrders  = isUnified ? (data.money_orders  || []) : (data.orders || []);
+            var mManual  = isUnified ? (data.money_manual  || {}) : (data.manualMonths || {});
+            var mCurve   = isUnified ? (data.money_curve   || {}) : (data.curveData || {});
+            var mProfile = isUnified ? (data.money_profile || {}) : (data.profile || {});
+            var mGoal    = isUnified ? (data.money_goal    || '0') : (data.goal || '0');
+            var mReview  = isUnified ? (data.money_review  || {}) : (data.review || {});
+            if(Array.isArray(mOrders) && mOrders.length){
+                var ex = JSON.parse(localStorage.getItem('dct_v9_ultimate')||'[]');
+                var merged = ex.slice();
+                mOrders.forEach(function(o){ if(!merged.find(function(m2){ return m2.id===o.id; })) merged.push(o); });
                 saveOrders(merged);
             }
-            // Merge manual months
-            if(data.manualMonths){
-                var ex = getManualData();
-                saveManualDataStore(Object.assign({},data.manualMonths,ex));
-            }
-            // Merge curve data
-            if(data.curveData){
-                var ex = JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}');
-                localStorage.setItem('dct_monthly_data_v1', JSON.stringify(Object.assign({},data.curveData,ex)));
+            if(mManual && Object.keys(mManual).length) saveManualDataStore(Object.assign({}, getManualData(), mManual));
+            if(mCurve && Object.keys(mCurve).length){
+                var ex2 = JSON.parse(localStorage.getItem('dct_monthly_data_v1')||'{}');
+                localStorage.setItem('dct_monthly_data_v1', JSON.stringify(Object.assign({}, mCurve, ex2)));
                 curveDB = JSON.parse(localStorage.getItem('dct_monthly_data_v1'));
             }
-            // Restore profile (only if not already set)
-            if(data.profile && !getProfile().name){
-                saveProfileData(data.profile);
-                loadProfileUI();
+            if(mProfile && mProfile.name && !getProfile().name){ saveProfileData(mProfile); loadProfileUI(); }
+            if(mGoal) localStorage.setItem('dct_goal', mGoal);
+            if(mReview && Object.keys(mReview).length){
+                var exR = JSON.parse(localStorage.getItem('dct_money_review_v1')||'{}');
+                localStorage.setItem('dct_money_review_v1', JSON.stringify(Object.assign({}, mReview, exR)));
             }
-            // Restore goal
-            if(data.goal) localStorage.setItem('dct_goal', data.goal);
+            if(isUnified){
+                var pO=data.pro_orders||[]; var pM=data.pro_manual||{}; var pC=data.pro_curve||{};
+                var pP=data.pro_profile||{}; var pG=data.pro_goal||'0'; var pRv=data.pro_review||{};
+                if(pO.length){ var exPO=JSON.parse(localStorage.getItem('dctpro_v1')||'[]'); var mPO=exPO.slice(); pO.forEach(function(o){ if(!mPO.find(function(m2){ return m2.id===o.id; })) mPO.push(o); }); localStorage.setItem('dctpro_v1',JSON.stringify(mPO)); }
+                if(Object.keys(pM).length){ var exPM=JSON.parse(localStorage.getItem('dctpro_manual')||'{}'); localStorage.setItem('dctpro_manual',JSON.stringify(Object.assign({},pM,exPM))); }
+                if(Object.keys(pC).length){ var exPC=JSON.parse(localStorage.getItem('dctpro_curve_v1')||'{}'); localStorage.setItem('dctpro_curve_v1',JSON.stringify(Object.assign({},pC,exPC))); }
+                if(pP.name){ var exPP=JSON.parse(localStorage.getItem('dctpro_profile')||'{}'); if(!exPP.name) localStorage.setItem('dctpro_profile',JSON.stringify(pP)); }
+                if(pG) localStorage.setItem('dctpro_goal',pG);
+                if(Object.keys(pRv).length){ var exPR=JSON.parse(localStorage.getItem('dctpro_review_v1')||'{}'); localStorage.setItem('dctpro_review_v1',JSON.stringify(Object.assign({},pRv,exPR))); }
+            }
             loadDashboards(); renderChart(); renderCurveCharts(); renderCurveTableFiltered();
-            showToast('✓ 還原成功！資料已合併匯入');
+            showToast('✓ 還原成功！兩個 App 的資料都已合併匯入');
         } catch(err) {
             showToast('⚠ 檔案格式錯誤，請確認是正確的備份檔');
         }
@@ -2468,6 +2487,7 @@ var CURVE_CONFIG  = 'dct_curve_config_v1';
 var curveDB  = JSON.parse(localStorage.getItem(CURVE_STORAGE) || '{}');
 var curveCfg = JSON.parse(localStorage.getItem(CURVE_CONFIG)  || '{}');
 var curveCharts = {}; // legacy stubs kept for safety
+
 
 
 
